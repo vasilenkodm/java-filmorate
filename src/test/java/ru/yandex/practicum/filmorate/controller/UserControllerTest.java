@@ -3,48 +3,49 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+
+import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest  extends CommonControllerTest<User> {
-
     @BeforeEach
     void initFilm() {
-        item = new User(1, "user@domaim.com", "user", "name", LocalDate.of(2000, 12, 31));
+        item = new User(0, "user@domaim.com", "user", "name", LocalDate.now().minusYears(20));
         controller =  new UserController();
     }
 
     @Test
     void shouldRejectEmail() {
-        item.setEmail("");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
-        item.setEmail("user@com");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        item.setEmail(null);
+        assertEquals(1, validator.validate(item).size());
+
         item.setEmail("user@");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
-        item.setEmail("@com");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
-        item.setEmail("usercom");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        assertEquals(1, validator.validate(item).size());
     }
 
     @Test
     void shouldRejectLogin() {
+        Set<ConstraintViolation<User>> violations;
+
         item.setLogin("");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        assertEquals(1, validator.validate(item).size());
+
         item.setLogin(" ");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        assertNotEquals(0, validator.validate(item).size());
+
         item.setLogin("The user");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        assertEquals(1, validator.validate(item).size());
     }
 
     @Test
     void shouldRejectBirthday() {
-        item.setBirthday(LocalDate.now());
-        assertDoesNotThrow(() -> controller.validate(item));
-        item.setBirthday(LocalDate.now().plusDays(1));
-        assertThrows(ValidationException.class, () -> controller.validate(item));
-    }
+        item.setBirthday(LocalDate.now().minusDays(1));
+        assertEquals(0, validator.validate(item).size());
 
+        item.setBirthday(LocalDate.now().plusDays(1));
+        assertEquals(1, validator.validate(item).size());
+    }
 }

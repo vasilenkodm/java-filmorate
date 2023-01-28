@@ -8,43 +8,43 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest extends CommonControllerTest<Film> {
-
     @BeforeEach
     void initFilm() {
-        item = new Film(1, "Film name", "Description", LocalDate.of(2000, 12, 31), 90*60);
+        item = new Film(0, "Film name", "Description", LocalDate.now(), 90*60);
         controller =  new FilmController();
     }
 
     @Test
     void shouldRejectName() {
         item.setName("");
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        assertEquals(1, validator.validate(item).size());
     }
 
     @Test
     void shouldRejectDescription() {
         StringBuilder sb = new StringBuilder();
-        while (sb.length()<=FilmController.MAX_DESCRIPTION_LENGTH) {
+        while (sb.length()<=Film.MAX_DESCRIPTION_LENGTH) {
             sb.append("Another line of description.\n");
         }
         item.setDescription(sb.toString());
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        assertEquals(1, validator.validate(item).size());
     }
 
     @Test
     void shouldRejectReleaseDate() {
-        item.setReleaseDate(FilmController.MINMAL_RELEASE_DATE);
-        assertDoesNotThrow(() -> controller.validate(item));
-        item.setReleaseDate(FilmController.MINMAL_RELEASE_DATE.minusDays(1));
-        assertThrows(ValidationException.class, () -> controller.validate(item));
+        item.setReleaseDate(LocalDate.of(1895,12,28));
+        assertEquals(0, validator.validate(item).size());
+
+        item.setReleaseDate(item.getReleaseDate().minusDays(1));
+        assertEquals(1, validator.validate(item).size());
     }
 
     @Test
     void shouldRejectDuration() {
         item.setDuration(1);
-        assertDoesNotThrow(() -> controller.validate(item));
-        item.setDuration(0);
-        assertThrows(ValidationException.class, () -> controller.validate(item));
-    }
+        assertEquals(0, validator.validate(item).size());
 
+        item.setDuration(0);
+        assertEquals(1, validator.validate(item).size());
+    }
 }

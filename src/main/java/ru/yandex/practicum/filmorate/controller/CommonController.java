@@ -1,15 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Item;
 
-import org.slf4j.Logger;
-
+import javax.validation.Valid;
 import java.util.*;
 
+@Slf4j
 @RestController
 public abstract class CommonController<T extends Item> {
-    protected Logger log;
     private int lastId;
     private int getnewId() {return ++lastId;}
 
@@ -21,51 +22,40 @@ public abstract class CommonController<T extends Item> {
     }
 
     @PostMapping
-    public T create(@RequestBody final T item) {
-        try {
-            validate(item);
-        } catch (ValidationException e) {
-            log.error("{} Сбой добавления. {}",e.getMessage(), item);
-            throw e;
-        }
-
-
+    public T create(@Valid @RequestBody final T item) {
         int key = getnewId();
         item.setId(key);
         if (!itemsMap.containsKey(key)) {
-            log.info("Добавление {}", item);
             itemsMap.put(key, item);
         }
+        log.info("Добавление {}", item);
         return item;
     }
     @PutMapping
-    public T update(@RequestBody final T item) {
-        try {
-            validate(item);
-        } catch (ValidationException e) {
-            log.error("{} Сбой обновления. {}",e.getMessage(), item);
-            throw e;
-        }
-
+    public T update(@Valid @RequestBody final T item) {
         int key = item.getId();
+
         if (itemsMap.containsKey(key)) {
-            log.info("Обновление {}", item);
             itemsMap.replace(key, item);
         } else {
-            ValidationException exception = new ValidationException("Не нейден ключ "+key+"!");
-            log.error("{} Сбой обновления. {}",exception.getMessage(), item);
-            throw exception;
+            throw new KeyNotFoundException("Обновление: не найден ключ "+key+"! "+item.toString(), item.getClass(), log);
         }
 
+        log.info("Обновление {}", item);
         return item;
     }
 
     @DeleteMapping
     public void remove(@RequestBody T item) {
-        itemsMap.remove(item.getId());
+        int key = item.getId();
+
+        if (itemsMap.containsKey(key)) {
+            itemsMap.remove(item.getId());
+        } else {
+            throw new KeyNotFoundException("Удаление: не найден ключ "+key+"! "+item.toString(), item.getClass(), log);
+        }
+
         log.info("Удаление {}", item);
     }
-
-    public abstract void validate(T item) throws ValidationException;
 
 }
