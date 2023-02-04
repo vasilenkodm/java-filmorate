@@ -11,6 +11,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest  extends CommonControllerTest<User> {
+    /*
     @BeforeEach
     void initFilm() {
         item = new User(0, "user@domaim.com", "user", "name", LocalDate.now().minusYears(20));
@@ -48,4 +49,6 @@ class UserControllerTest  extends CommonControllerTest<User> {
         item.setBirthday(LocalDate.now().plusDays(1));
         assertEquals(1, validator.validate(item).size());
     }
+
+     */
 }

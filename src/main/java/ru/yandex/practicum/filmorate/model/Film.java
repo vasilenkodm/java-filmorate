@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 import ru.yandex.practicum.filmorate.constraint.LocalDateConstraint;
+import ru.yandex.practicum.filmorate.type.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -10,17 +11,18 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class Film implements Item {
+public class Film {
     public static final int MAX_DESCRIPTION_LENGTH = 200;
     public static final String LocalDateS  = "";
 
     @Getter @Setter
-    private int id; //  целочисленный идентификатор — id;
+    private FilmIdType id; //  целочисленный идентификатор — id;
 
     @Getter @Setter @NotBlank(message = "Название не может быть пустым!")
     private String name; //название — name;
 
-    @Getter @Setter @NotNull(message = "Требуется указать описание!") @Size(max=MAX_DESCRIPTION_LENGTH, message = "Максимальная длина описания — " + MAX_DESCRIPTION_LENGTH + " символов!")
+    @Getter @Setter @NotNull(message = "Требуется указать описание!")
+    @Size(max=MAX_DESCRIPTION_LENGTH, message = "Максимальная длина описания — " + MAX_DESCRIPTION_LENGTH + " символов!")
     private String description; //описание — description;
 
     @Getter @Setter @NotNull(message = "Требуется указать дату резиза!") @LocalDateConstraint(minDate= "1895-12-28", message = "Релиз не может быть ранее 28.12.1895!")

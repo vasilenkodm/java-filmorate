@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
+import ru.yandex.practicum.filmorate.type.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -9,11 +10,10 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Item {
+public class User {
     @Getter @Setter
-    private int id; //целочисленный идентификатор — id;
+    private UserIdType id; //целочисленный идентификатор — id;
 
-    //@Getter @Setter @Email @NotBlank(message = "Электронная почта не может быть пустой!")
     @Getter @Setter @NotBlank(message = "Укажите электронную почту") @Email(message = "Нужен корректный адрес электронной почты!")
     private String email; //электронная почта — email;
 

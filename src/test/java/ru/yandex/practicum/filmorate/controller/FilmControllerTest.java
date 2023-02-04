@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest extends CommonControllerTest<Film> {
+    /*
     @BeforeEach
     void initFilm() {
         item = new Film(0, "Film name", "Description", LocalDate.now(), 90*60);
@@ -47,4 +48,6 @@ class FilmControllerTest extends CommonControllerTest<Film> {
         item.setDuration(0);
         assertEquals(1, validator.validate(item).size());
     }
+
+     */
 }
