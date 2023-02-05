@@ -2,17 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.type.*;
+import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import javax.validation.Valid;
-import java.time.Duration;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +17,7 @@ import java.util.Set;
 @RequestMapping("/films")
 public class FilmController {
 
-    private FilmService service;
+    private final FilmService service;
     @Autowired
     public FilmController(FilmService service) {
         this.service = service;
@@ -43,23 +39,23 @@ public class FilmController {
         return service.update(film);
     }
 
-    @GetMapping("/{id}")
-    public Film getFilm(@PathVariable FilmIdType id) {
-        Film film = service.get(id);
-        log.info("Получение по ключу {} {}", id, film);
+    @GetMapping("/{filmId}")
+    public Film getFilm(@PathVariable FilmIdType filmId) {
+        Film film = service.get(filmId);
+        log.info("Получение по ключу {} {}", filmId, film);
         return film;
     }
 
     //PUT /films/{id}/like/{userId}  — пользователь ставит лайк фильму.
-    @PutMapping("/{id}/like/{userId}")
-    public void addLike(FilmIdType filmId, UserIdType userId) {
+    @PutMapping("/{filmId}/like/{userId}")
+    public void addLike(@PathVariable FilmIdType filmId, @PathVariable UserIdType userId) {
         log.info("Добавление лайка для фильма {} от пользователя {}", filmId, userId);
         service.addLike(filmId, userId);
     }
 
     //DELETE /films/{id}/like/{userId}  — пользователь удаляет лайк.
-    @DeleteMapping("/{id}/like/{userId}")
-    public void removeLike(FilmIdType filmId, UserIdType userId) {
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public void removeLike(@PathVariable FilmIdType filmId, @PathVariable UserIdType userId) {
         log.info("Удаление лайка для фильма {} от пользователя {}", filmId, userId);
         service.removeLike(filmId, userId);
     }

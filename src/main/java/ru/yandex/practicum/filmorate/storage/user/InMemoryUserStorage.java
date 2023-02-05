@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.type.UserIdType;
@@ -9,7 +8,6 @@ import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage{
-    @Getter
     private final Map<UserIdType, User> users;
 
     private final Map<UserIdType, Set<UserIdType>> friends;
@@ -19,18 +17,31 @@ public class InMemoryUserStorage implements UserStorage{
         friends =  new TreeMap<>();
     }
 
+    public List<User> getUsers() {
+        return new ArrayList<>(users.values());
+    }
+    public boolean notExits(UserIdType userId) {
+        return !users.containsKey(userId);
+    }
+
+    public void addUser(User user) {
+        users.put(user.getId(), user);
+    }
+
+    public void updateUser(User user) {
+        users.replace(user.getId(), user);
+    }
+    public User getUser(UserIdType userId) {
+        return users.get(userId);
+    }
+    
     public void addFriend(UserIdType userId, UserIdType friendId) {
-        Set<UserIdType> friendsSet = friends.get(userId);
-        if (friendsSet==null) {
-            friendsSet = new TreeSet<>();
-            friends.put(userId, friendsSet);
-        }
-        friendsSet.add(friendId);
+        friends.computeIfAbsent(userId, k -> new TreeSet<>()).add(friendId);
     }
     public void deleteFriend(UserIdType userId, UserIdType friendId) {
         Set<UserIdType> friendsSet = friends.get(userId);
 
-        if (friendsSet==null) {
+        if (friendsSet!=null) {
             friendsSet.remove(friendId);
         }
     }
@@ -38,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage{
     public Set<User> friendsList(UserIdType userId) {
         Set<User> result = new LinkedHashSet<>();
         if ( friends.containsKey(userId)) {
-            friends.get(userId).stream().forEach(id -> result.add(users.get(id)));
+            friends.get(userId).forEach(id -> result.add(users.get(id)));
         }
         return result;
     }

@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 
-public class AbstractTypeSerializer extends StdSerializer<AbstractType> {
+public class AbstractTypeSerializer extends StdSerializer<AbstractType<?>> {
     public AbstractTypeSerializer() {
         this(null);
     }
-    public AbstractTypeSerializer(Class<AbstractType> t) {
+    public AbstractTypeSerializer(Class<AbstractType<?>> t) {
         super(t);
     }
 

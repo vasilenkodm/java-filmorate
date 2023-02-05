@@ -15,13 +15,13 @@ public class LocalDateConstraintValidator implements ConstraintValidator<LocalDa
         if (!parmMinDate.isBlank()) {
             String[] parts = parmMinDate.split("\\D");
             if (parts.length==3) {
-                minDate = LocalDate.of(Integer.valueOf(parts[0]), Integer.valueOf(parts[1]), Integer.valueOf(parts[2]));
+                minDate = LocalDate.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
             }
         }
         if (!parmMaxDate.isBlank()) {
             String[] parts = parmMaxDate.split("\\D");
             if (parts.length==3) {
-                maxDate = LocalDate.of(Integer.valueOf(parts[0]), Integer.valueOf(parts[1]), Integer.valueOf(parts[2]));
+                maxDate = LocalDate.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
             }
         }
     }

@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
-import ru.yandex.practicum.filmorate.type.*;
+import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;

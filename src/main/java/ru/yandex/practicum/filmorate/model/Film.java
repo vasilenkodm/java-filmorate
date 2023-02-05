@@ -2,9 +2,12 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
 import ru.yandex.practicum.filmorate.constraint.LocalDateConstraint;
-import ru.yandex.practicum.filmorate.type.*;
+import ru.yandex.practicum.filmorate.type.FilmIdType;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @ToString
@@ -13,7 +16,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Film {
     public static final int MAX_DESCRIPTION_LENGTH = 200;
-    public static final String LocalDateS  = "";
 
     @Getter @Setter
     private FilmIdType id; //  целочисленный идентификатор — id;

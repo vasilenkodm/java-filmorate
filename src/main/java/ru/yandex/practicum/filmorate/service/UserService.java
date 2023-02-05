@@ -8,18 +8,17 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
 @Service
 public class UserService {
-    private UserStorage storage;
+    private final UserStorage storage;
     private UserIdType lastUserId;
     
     @Autowired
-    UserService(UserStorage storage) {
+    public UserService(UserStorage storage) {
         this.storage = storage;
         lastUserId =  new UserIdType(0L);
     }
@@ -30,42 +29,42 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return new ArrayList<>(storage.getUsers().values());
+        return storage.getUsers();
     }
 
     public User create(final User user) {
         UserIdType key = getNewId();
         user.setId(key);
-        storage.getUsers().put(key, user);
+        storage.addUser(user);
         return user;
     }
 
     public User update(final User user) {
         UserIdType key = user.getId();
 
-        if (!storage.getUsers().containsKey(key)) {
-            throw new KeyNotFoundException("Обновление: не найден ключ "+key+"! "+user.toString(), this.getClass(), log);
+        if (storage.notExits(key)) {
+            throw new KeyNotFoundException("Обновление: не найден ключ "+key+"! "+ user, this.getClass(), log);
         }
 
-        storage.getUsers().replace(key, user);
+        storage.updateUser(user);
 
         log.info("Обновление {}", user);
         return user;
     }
 
     public User get(UserIdType key) {
-        if (!storage.getUsers().containsKey(key)) {
+        if (storage.notExits(key)) {
             throw new KeyNotFoundException("Получение: не найден ключ "+key+"!", this.getClass(), log);
         }
-        return storage.getUsers().get(key);
+        return storage.getUser(key);
     }
 
     //PUT /users/{id}/friends/{friendId}  — добавление в друзья.
     public void addFriend(UserIdType userId, UserIdType friendId) {
-        if (!storage.getUsers().containsKey(userId)) {
+        if (storage.notExits(userId)) {
             throw new KeyNotFoundException("Добавление друга: не найден пользователь "+userId, this.getClass(), log);
         }
-        if (!storage.getUsers().containsKey(friendId)) {
+        if (storage.notExits(friendId)) {
             throw new KeyNotFoundException("Добавление друга: не найден друг "+friendId, this.getClass(), log);
         }
         storage.addFriend(userId, friendId);
@@ -75,10 +74,10 @@ public class UserService {
 
     //DELETE /users/{id}/friends/{friendId} — удаление из друзей.
     public void deleteFriend(UserIdType userId, UserIdType friendId) {
-        if (!storage.getUsers().containsKey(userId)) {
+        if (storage.notExits(userId)) {
             throw new KeyNotFoundException("Удаление друга: не найден пользователь "+userId, this.getClass(), log);
         }
-        if (!storage.getUsers().containsKey(friendId)) {
+        if (storage.notExits(friendId)) {
             throw new KeyNotFoundException("Удаление друга: не найден друг "+friendId, this.getClass(), log);
         }
         storage.deleteFriend(userId, friendId);

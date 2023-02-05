@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
-import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -51,9 +50,9 @@ public class ControllerExceptionHandler {
         bodyMap.put("timestamp", Instant.now());
         bodyMap.put("status", HttpStatus.BAD_REQUEST);
         bodyMap.put("path", request.getRequest().getRequestURI());
-        bodyMap.put("dataclass", ex.getObjectName());
+        bodyMap.put("dataClass", ex.getObjectName());
         bodyMap.put("error", ex.getMessage());
-        bodyMap.put("errorlist", errorList);
+        bodyMap.put("errorList", errorList);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
