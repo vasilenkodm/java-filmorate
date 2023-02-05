@@ -10,14 +10,9 @@ import java.util.*;
 
 @Component
 public class InMemoryUserStorage implements UserStorage{
-    private final Map<UserIdType, User> users;
+    private final Map<UserIdType, User> users = new TreeMap<>();;
 
-    private final Map<UserIdType, Set<UserIdType>> friends;
-
-    public InMemoryUserStorage() {
-        users = new TreeMap<>();
-        friends =  new TreeMap<>();
-    }
+    private final Map<UserIdType, Set<UserIdType>> friends = new TreeMap<>();;
 
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
@@ -44,11 +39,7 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     public void deleteFriend(UserIdType userId, UserIdType friendId) {
-        Set<UserIdType> friendsSet = friends.get(userId);
-
-        if (friendsSet!=null) {
-            friendsSet.remove(friendId);
-        }
+        friends.get(userId).remove(friendId);
     }
 
     public Set<User> friendsList(UserIdType userId) {

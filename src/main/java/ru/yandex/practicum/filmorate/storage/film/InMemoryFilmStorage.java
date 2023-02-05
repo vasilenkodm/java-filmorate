@@ -12,17 +12,11 @@ import java.util.*;
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage{
-    private final Map<FilmIdType, Film> films;
+    private final Map<FilmIdType, Film> films = new TreeMap<>();
 
-    private final Map<FilmIdType, Set<UserIdType>> likes;
+    private final Map<FilmIdType, Set<UserIdType>> likes = new TreeMap<>();
 
-    private final TreeMap<Integer, Set<FilmIdType>> rating;
-
-    public InMemoryFilmStorage() {
-        this.films = new TreeMap<>();
-        this.likes =  new TreeMap<>();
-        this.rating = new TreeMap<>();
-    }
+    private final TreeMap<Integer, Set<FilmIdType>> rating = new TreeMap<>();
 
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
@@ -54,13 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     }
 
     private void addFilmToRating(FilmIdType filmId, int likeCount) {
-        if (rating.containsKey(-likeCount)) {
-            rating.get(-likeCount).add(filmId);
-        } else {
-            Set<FilmIdType> positionSet = new TreeSet<>();
-            positionSet.add(filmId);
-            rating.put(-likeCount, positionSet);
-        }
+        rating.computeIfAbsent(-likeCount, k -> new TreeSet<>()).add(filmId);
     }
 
     public void addLike(FilmIdType filmId, UserIdType userId) {
