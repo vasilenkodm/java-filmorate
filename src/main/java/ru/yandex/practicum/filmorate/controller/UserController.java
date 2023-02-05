@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +13,11 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
     private final UserService service;
-    @Autowired
-    public UserController(UserService service) {
-        this.service = service;
-    }
 
     @GetMapping()
     public List<User> getAllUsers() {
@@ -32,6 +29,7 @@ public class UserController {
         log.info("Добавление {}", user);
         return service.create(user);
     }
+
     @PutMapping
     public User update(@Valid @RequestBody final User user) {
         log.info("Обновление {}", user);
@@ -51,7 +49,6 @@ public class UserController {
         service.addFriend(userId, friendId);
     }
 
-
     //DELETE /users/{id}/friends/{friendId} — удаление из друзей.
     @DeleteMapping("/{userId}/friends/{friendId}")
     public void friendsDel(@PathVariable UserIdType userId, @PathVariable UserIdType friendId) {
@@ -69,5 +66,4 @@ public class UserController {
     public Set<User> commonFriends(@PathVariable UserIdType userId, @PathVariable UserIdType otherId) {
         return service.commonFriends(userId, otherId);
     }
-
 }

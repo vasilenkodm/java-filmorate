@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class KeyNotFoundException extends RuntimeException{
     @Getter
     private final Class<?> keyOwnerClass;
+
     public KeyNotFoundException(String message, Class<?> keyOwnerClass,  Logger log) {
         super(message);
         this.keyOwnerClass = keyOwnerClass;

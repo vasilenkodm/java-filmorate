@@ -15,9 +15,9 @@ import java.util.Set;
 @Service
 public class UserService {
     private final UserStorage storage;
+
     private UserIdType lastUserId;
     
-    @Autowired
     public UserService(UserStorage storage) {
         this.storage = storage;
         lastUserId =  new UserIdType(0L);
@@ -93,5 +93,4 @@ public class UserService {
     public Set<User> commonFriends(UserIdType userId, UserIdType otherId) {
         return storage.commonFriends(userId, otherId);
     }
-
 }

@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.type.UserIdType;
@@ -20,6 +22,7 @@ public class InMemoryUserStorage implements UserStorage{
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
+
     public boolean notExits(UserIdType userId) {
         return !users.containsKey(userId);
     }
@@ -31,6 +34,7 @@ public class InMemoryUserStorage implements UserStorage{
     public void updateUser(User user) {
         users.replace(user.getId(), user);
     }
+
     public User getUser(UserIdType userId) {
         return users.get(userId);
     }
@@ -38,6 +42,7 @@ public class InMemoryUserStorage implements UserStorage{
     public void addFriend(UserIdType userId, UserIdType friendId) {
         friends.computeIfAbsent(userId, k -> new TreeSet<>()).add(friendId);
     }
+
     public void deleteFriend(UserIdType userId, UserIdType friendId) {
         Set<UserIdType> friendsSet = friends.get(userId);
 
@@ -63,5 +68,4 @@ public class InMemoryUserStorage implements UserStorage{
         }
         return result;
     }
-
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-
     @ExceptionHandler(value = {KeyNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, Object>> validationException(KeyNotFoundException ex, ServletWebRequest request) {
@@ -58,5 +57,4 @@ public class ControllerExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(bodyMap);
     }
-
 }

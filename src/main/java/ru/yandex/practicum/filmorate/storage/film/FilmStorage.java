@@ -9,7 +9,6 @@ import java.util.Set;
 
 public interface FilmStorage {
     List<Film> getFilms();
-
     boolean notExits(FilmIdType filmId);
     void addFilm(Film film);
     void updateFilm(Film film);

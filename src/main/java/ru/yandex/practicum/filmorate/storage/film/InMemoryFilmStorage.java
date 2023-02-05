@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,6 +15,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     private final Map<FilmIdType, Film> films;
 
     private final Map<FilmIdType, Set<UserIdType>> likes;
+
     private final TreeMap<Integer, Set<FilmIdType>> rating;
 
     public InMemoryFilmStorage() {
@@ -21,9 +23,11 @@ public class InMemoryFilmStorage implements FilmStorage{
         this.likes =  new TreeMap<>();
         this.rating = new TreeMap<>();
     }
+
     public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
+
     public boolean notExits(FilmIdType filmId) {
         return !films.containsKey(filmId);
     }
@@ -36,6 +40,7 @@ public class InMemoryFilmStorage implements FilmStorage{
     public void updateFilm(Film film) {
         films.replace(film.getId(), film);
     }
+
     public Film getFilm(FilmIdType filmId) {
         return films.get(filmId);
     }
@@ -83,5 +88,4 @@ public class InMemoryFilmStorage implements FilmStorage{
         }
         return result;
     }
-
 }

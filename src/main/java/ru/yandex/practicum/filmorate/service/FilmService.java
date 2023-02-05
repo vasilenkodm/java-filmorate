@@ -17,10 +17,11 @@ import java.util.Set;
 @Service
 public class FilmService  {
     final private FilmStorage filmStorage;
+
     final private UserStorage userStorage;
+
     private FilmIdType lastFilmId;
 
-    @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
@@ -85,5 +86,4 @@ public class FilmService  {
     public Set<Film> getPopular(int maxCount) {
         return filmStorage.getPopular(maxCount);
     }
-
 }
