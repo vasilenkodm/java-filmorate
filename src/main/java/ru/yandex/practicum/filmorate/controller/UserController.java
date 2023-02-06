@@ -57,13 +57,13 @@ public class UserController {
 
     //GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
     @GetMapping("/{userId}/friends")
-    public Set<User> friendsList(@PathVariable UserIdType userId) {
+    public List<User> friendsList(@PathVariable UserIdType userId) {
         return service.friendsList(userId);
     }
 
     //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
     @GetMapping("/{userId}/friends/common/{otherId}")
-    public Set<User> commonFriends(@PathVariable UserIdType userId, @PathVariable UserIdType otherId) {
+    public List<User> commonFriends(@PathVariable UserIdType userId, @PathVariable UserIdType otherId) {
         return service.commonFriends(userId, otherId);
     }
 }

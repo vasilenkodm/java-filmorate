@@ -8,8 +8,11 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,14 +43,11 @@ public class UserService {
     }
 
     public User update(final User user) {
-        UserIdType key = user.getId();
-
-        if (storage.notExits(key)) {
-            throw new KeyNotFoundException("Обновление: не найден ключ "+key+"! "+ user, this.getClass(), log);
+        UserIdType id = user.getId();
+        if (storage.notExits(id)) {
+            throw new KeyNotFoundException("Обновление: не найден ключ "+id+"! "+ user, this.getClass(), log);
         }
-
         storage.updateUser(user);
-
         log.info("Обновление {}", user);
         return user;
     }
@@ -61,36 +61,70 @@ public class UserService {
 
     //PUT /users/{id}/friends/{friendId}  — добавление в друзья.
     public void addFriend(UserIdType userId, UserIdType friendId) {
-        if (storage.notExits(userId)) {
+        User user = storage.getUser(userId);
+        if (user == null) {
             throw new KeyNotFoundException("Добавление друга: не найден пользователь "+userId, this.getClass(), log);
         }
-        if (storage.notExits(friendId)) {
+        User friend = storage.getUser(friendId);
+        if (friend == null) {
             throw new KeyNotFoundException("Добавление друга: не найден друг "+friendId, this.getClass(), log);
         }
-        storage.addFriend(userId, friendId);
-        storage.addFriend(friendId, userId);
+        user.addFriend(friendId);
+        friend.addFriend(userId);
     }
 
 
     //DELETE /users/{id}/friends/{friendId} — удаление из друзей.
     public void deleteFriend(UserIdType userId, UserIdType friendId) {
-        if (storage.notExits(userId)) {
+        User user = storage.getUser(userId);
+        if (user == null) {
             throw new KeyNotFoundException("Удаление друга: не найден пользователь "+userId, this.getClass(), log);
         }
-        if (storage.notExits(friendId)) {
+        User friend = storage.getUser(friendId);
+        if (friend == null) {
             throw new KeyNotFoundException("Удаление друга: не найден друг "+friendId, this.getClass(), log);
         }
-        storage.deleteFriend(userId, friendId);
-        storage.deleteFriend(friendId, userId);
+        user.removeFriend(friendId);
+        friend.removeFriend(userId);
     }
 
     //GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
-    public Set<User> friendsList(UserIdType userId) {
-        return storage.friendsList(userId);
+    public List<User> friendsList(UserIdType userId) {
+        User user = storage.getUser(userId);
+        if (user == null) {
+            throw new KeyNotFoundException("Список друзей: не найден пользователь "+userId, this.getClass(), log);
+        }
+        return user .getFriendsIds()
+                    .stream()
+                    .collect( ArrayList::new,
+                                (list, id) -> list.add(storage.getUser(id)),
+                                ArrayList::addAll);
     }
 
     //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
-    public Set<User> commonFriends(UserIdType userId, UserIdType otherId) {
-        return storage.commonFriends(userId, otherId);
+    public List<User> commonFriends(UserIdType userId, UserIdType friendId) {
+        User user = storage.getUser(userId);
+        if (user == null) {
+            throw new KeyNotFoundException("Общие друзья: не найден пользователь "+userId, this.getClass(), log);
+        }
+        User friend = storage.getUser(friendId);
+        if (friend == null) {
+            throw new KeyNotFoundException("Общие друзья: не найден друг "+friendId, this.getClass(), log);
+        }
+        List<UserIdType> firstIds = user.getFriendsIds();
+        List<UserIdType> secondIds = friend.getFriendsIds();
+        List<UserIdType> smallIdsList;
+        List<UserIdType> bigIdsList;
+        if (firstIds.size() < secondIds.size()) {
+            smallIdsList = firstIds;
+            bigIdsList = secondIds;
+        } else {
+            smallIdsList = secondIds;
+            bigIdsList = firstIds;
+        }
+        List<UserIdType> temp = smallIdsList.stream().filter(p -> bigIdsList.contains(p)).collect(Collectors.toList());
+        List<User> result = temp.stream().collect(ArrayList::new, (list, id)->list.add(storage.getUser(id)), List::addAll);
+        return result;
     }
+
 }

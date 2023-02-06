@@ -12,8 +12,6 @@ import java.util.*;
 public class InMemoryUserStorage implements UserStorage{
     private final Map<UserIdType, User> users = new TreeMap<>();;
 
-    private final Map<UserIdType, Set<UserIdType>> friends = new TreeMap<>();;
-
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
@@ -27,36 +25,11 @@ public class InMemoryUserStorage implements UserStorage{
     }
 
     public void updateUser(User user) {
-        users.replace(user.getId(), user);
+        users.get(user.getId()).updateWith(user);
     }
 
     public User getUser(UserIdType userId) {
         return users.get(userId);
     }
     
-    public void addFriend(UserIdType userId, UserIdType friendId) {
-        friends.computeIfAbsent(userId, k -> new TreeSet<>()).add(friendId);
-    }
-
-    public void deleteFriend(UserIdType userId, UserIdType friendId) {
-        friends.get(userId).remove(friendId);
-    }
-
-    public Set<User> friendsList(UserIdType userId) {
-        Set<User> result = new LinkedHashSet<>();
-        if ( friends.containsKey(userId)) {
-            friends.get(userId).forEach(id -> result.add(users.get(id)));
-        }
-        return result;
-    }
-
-    public Set<User> commonFriends(UserIdType userId, UserIdType otherId) {
-        Set<User> result = new LinkedHashSet<>();
-        if ( friends.containsKey(userId) && friends.containsKey(otherId)) {
-            Set<UserIdType> tempSet = new HashSet<>(friends.get(userId));
-            tempSet.retainAll(friends.get(otherId));
-            tempSet.forEach(id -> result.add(users.get(id)));
-        }
-        return result;
-    }
 }

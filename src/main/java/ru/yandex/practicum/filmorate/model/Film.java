@@ -3,12 +3,15 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.*;
 import ru.yandex.practicum.filmorate.constraint.LocalDateConstraint;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.TreeSet;
 
 @ToString
 @EqualsAndHashCode
@@ -32,4 +35,27 @@ public class Film {
 
     @Getter @Setter @Positive(message = "Продолжительность фильма должна быть положительной!")
     private int duration; //продолжительность фильма — duration.
+
+    private final transient Set<UserIdType>  likers = new TreeSet<>();
+    public Set<UserIdType> getLikers() {
+        return Set.copyOf(likers);
+    }
+
+    public void updateWith(Film film) {
+        this.name = film.name;
+        this.description = film.description;
+        this.releaseDate = film.releaseDate;
+        this.duration = film.duration;
+    }
+
+    public void addLike(UserIdType userId) {
+        likers.add(userId);
+    }
+    public void removeLike(UserIdType userId) {
+        likers.remove(userId);
+    }
+    public int getRating() {
+        return likers.size();
+    }
+
 }

@@ -13,7 +13,4 @@ public interface FilmStorage {
     void addFilm(Film film);
     void updateFilm(Film film);
     Film getFilm(FilmIdType filmId);
-    void addLike(FilmIdType filmId, UserIdType userId);
-    void removeLike(FilmIdType filmId, UserIdType userId);
-    Set<Film> getPopular(int maxCount);
 }

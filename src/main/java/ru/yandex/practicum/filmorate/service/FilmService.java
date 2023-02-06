@@ -10,16 +10,16 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
 public class FilmService  {
-    final private FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
 
-    final private UserStorage userStorage;
+    private final UserStorage userStorage;
 
+    private final TreeMap<Integer, Set<FilmIdType>> rating = new TreeMap<>();
     private FilmIdType lastFilmId;
 
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
@@ -41,18 +41,17 @@ public class FilmService  {
         FilmIdType key = getNewId();
         film.setId(key);
         filmStorage.addFilm(film);
+        addFilmToRating(film.getId(), film.getRating());
         return film;
     }
 
     public Film update(final Film film) {
-        FilmIdType key = film.getId();
+        FilmIdType id = film.getId();
 
-        if (filmStorage.notExits(key)) {
-            throw new KeyNotFoundException("Обновление: не найден ключ "+key+"! "+ film, this.getClass(), log);
+        if (filmStorage.notExits(id)) {
+            throw new KeyNotFoundException("Обновление: не найден ключ "+id+"! "+ film, this.getClass(), log);
         }
-
         filmStorage.updateFilm(film);
-
         log.info("Обновление {}", film);
         return film;
     }
@@ -71,7 +70,10 @@ public class FilmService  {
         if (userStorage.notExits(userId)) {
             throw new KeyNotFoundException("Добавление лайков: не найден пользователь "+userId+"!", this.getClass(), log);
         }
-        filmStorage.addLike(filmId, userId);
+        Film film = filmStorage.getFilm(filmId);
+        removeFilmFromRating(film.getId(), film.getRating());
+        film.addLike(userId);
+        addFilmToRating(film.getId(), film.getRating());
     }
 
     public void removeLike(FilmIdType filmId, UserIdType userId) {
@@ -81,9 +83,28 @@ public class FilmService  {
         if (userStorage.notExits(userId)) {
             throw new KeyNotFoundException("Удаление лайков: не найден пользователь "+userId+"!", this.getClass(), log);
         }
-        filmStorage.removeLike(filmId, userId);
+        Film film = filmStorage.getFilm(filmId);
+        removeFilmFromRating(film.getId(), film.getRating());
+        film.removeLike(userId);
+        addFilmToRating(film.getId(), film.getRating());
     }
-    public Set<Film> getPopular(int maxCount) {
-        return filmStorage.getPopular(maxCount);
+
+    private void removeFilmFromRating(FilmIdType filmId, int likeCount) {
+        rating.get(-likeCount).remove(filmId);
+    }
+
+    private void addFilmToRating(FilmIdType filmId, int likeCount) {
+        rating.computeIfAbsent(-likeCount, k -> new TreeSet<>()).add(filmId);
+    }
+    public List<Film> getPopular(int maxCount) {
+        List<Film> result = new LinkedList<>();
+        for (Set<FilmIdType> filmSet : rating.values()) {
+            for (FilmIdType id: filmSet) {
+                result.add(filmStorage.getFilm(id));
+                if (result.size()>=maxCount) { break; }
+            }
+            if (result.size()>=maxCount) { break; }
+        }
+        return result;
     }
 }

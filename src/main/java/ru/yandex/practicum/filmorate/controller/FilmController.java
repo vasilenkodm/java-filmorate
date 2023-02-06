@@ -60,7 +60,7 @@ public class FilmController {
 
     //GET /films/popular?count={count}
     @GetMapping("/popular")
-    public Set<Film> getPopular(@RequestParam(defaultValue="10") int count) {
+    public List<Film> getPopular(@RequestParam(defaultValue="10") int count) {
         log.info("Получение {} полуярных фильмов", count);
         return service.getPopular(count);
     }
