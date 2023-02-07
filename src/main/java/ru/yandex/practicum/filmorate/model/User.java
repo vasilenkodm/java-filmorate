@@ -33,9 +33,10 @@ public class User {
     private final transient Set<UserIdType> friendsIds = new TreeSet<>();
 
     public List<UserIdType> getFriendsIds() {
-        return new ArrayList(friendsIds);
+        return new ArrayList<>(friendsIds);
     }
 
+    @SuppressWarnings("unused")
     public String getName() {
         return (name==null || name.isBlank()) ? login : name;
     }

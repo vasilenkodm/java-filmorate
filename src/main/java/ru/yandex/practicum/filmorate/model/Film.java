@@ -36,7 +36,9 @@ public class Film {
     @Getter @Setter @Positive(message = "Продолжительность фильма должна быть положительной!")
     private int duration; //продолжительность фильма — duration.
 
+    @SuppressWarnings("SpellCheckingInspection")
     private final transient Set<UserIdType>  likers = new TreeSet<>();
+    @SuppressWarnings("SpellCheckingInspection")
     public Set<UserIdType> getLikers() {
         return Set.copyOf(likers);
     }

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -9,10 +8,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -107,10 +103,12 @@ public class UserService {
         if (user == null) {
             throw new KeyNotFoundException("Общие друзья: не найден пользователь "+userId, this.getClass(), log);
         }
+
         User friend = storage.getUser(friendId);
         if (friend == null) {
             throw new KeyNotFoundException("Общие друзья: не найден друг "+friendId, this.getClass(), log);
         }
+
         List<UserIdType> firstIds = user.getFriendsIds();
         List<UserIdType> secondIds = friend.getFriendsIds();
         List<UserIdType> smallIdsList;
@@ -122,9 +120,10 @@ public class UserService {
             smallIdsList = secondIds;
             bigIdsList = firstIds;
         }
-        List<UserIdType> temp = smallIdsList.stream().filter(p -> bigIdsList.contains(p)).collect(Collectors.toList());
-        List<User> result = temp.stream().collect(ArrayList::new, (list, id)->list.add(storage.getUser(id)), List::addAll);
-        return result;
+
+        return smallIdsList.stream()
+                            .filter(bigIdsList::contains)
+                            .collect(ArrayList::new, (list, id)->list.add(storage.getUser(id)), List::addAll);
     }
 
 }

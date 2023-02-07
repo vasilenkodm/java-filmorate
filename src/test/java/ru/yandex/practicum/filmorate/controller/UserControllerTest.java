@@ -10,12 +10,10 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,8 +76,6 @@ class UserControllerTest {
 
     @Test
     void shouldRejectLogin() {
-        Set<ConstraintViolation<ru.yandex.practicum.filmorate.model.User>> violations;
-
         user.setLogin("");
         assertEquals(1, validator.validate(user).size());
 

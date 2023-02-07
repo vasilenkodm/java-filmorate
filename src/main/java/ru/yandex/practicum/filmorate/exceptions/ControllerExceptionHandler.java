@@ -16,9 +16,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
+    @SuppressWarnings("unused")
     @ExceptionHandler(value = {KeyNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, Object>> validationException(KeyNotFoundException ex, ServletWebRequest request) {
@@ -35,6 +37,7 @@ public class ControllerExceptionHandler {
                 .body(bodyMap);
     }
 
+    @SuppressWarnings("unused")
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, Object>> methodArgumentNotValidException(MethodArgumentNotValidException ex, ServletWebRequest request) {

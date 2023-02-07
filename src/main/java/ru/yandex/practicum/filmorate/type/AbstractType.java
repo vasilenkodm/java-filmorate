@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.type;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.Objects;
-
 @JsonSerialize(using = AbstractTypeSerializer.class)
 public abstract class AbstractType<T extends Comparable<T>> implements java.io.Serializable, Comparable<AbstractType<?>>{
     private final T value;
