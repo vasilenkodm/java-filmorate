@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ru.yandex.practicum.filmorate.constraint.LocalDateConstraint;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
@@ -37,7 +38,8 @@ public class Film {
     private int duration; //продолжительность фильма — duration.
 
     @SuppressWarnings("SpellCheckingInspection")
-    private final transient Set<UserIdType>  likers = new TreeSet<>();
+    @JsonIgnore
+    private final Set<UserIdType>  likers = new TreeSet<>();
     @SuppressWarnings("SpellCheckingInspection")
     public Set<UserIdType> getLikers() {
         return Set.copyOf(likers);

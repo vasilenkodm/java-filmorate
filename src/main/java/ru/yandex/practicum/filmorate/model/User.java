@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
@@ -30,7 +31,8 @@ public class User {
     @Getter @Setter @NotNull @Past(message = "Дата рождения не может быть в будущем!")
     private LocalDate birthday; // дата рождения — birthday.
 
-    private final transient Set<UserIdType> friendsIds = new TreeSet<>();
+    @JsonIgnore
+    private final Set<UserIdType> friendsIds = new TreeSet<>();
 
     public List<UserIdType> getFriendsIds() {
         return new ArrayList<>(friendsIds);
