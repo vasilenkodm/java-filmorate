@@ -1,50 +1,103 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.type.FilmIdType;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.filmorate.model.Film.MAX_DESCRIPTION_LENGTH;
 
-class FilmControllerTest extends CommonControllerTest<Film> {
+class FilmControllerTest {
+    protected Film film;
+    protected FilmController controller;
+
+    protected static Validator validator;
+    protected static ValidatorFactory validatorFactory;
+    @BeforeAll
+    public static void beforeAll() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+
+    }
+    @AfterAll
+    public static void afterAll() {
+        validatorFactory.close();
+    }
+
     @BeforeEach
     void initFilm() {
-        item = new Film(0, "Film name", "Description", LocalDate.now(), 90*60);
-        controller =  new FilmController();
+        film = new Film(new FilmIdType(1L), "Film name", "Description", LocalDate.now(), 90*60);
+        controller =  new FilmController(new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage()));
+    }
+
+    @Test
+    void testItemOperations() {
+        Film blankItem = new Film();
+
+        assertEquals(0, validator.validate(film).size(), "Объект неправильно инициализирован");
+
+        assertNotEquals(0, validator.validate(blankItem).size());
+        blankItem.setId(new FilmIdType( -1* film.getId().getValue()));
+        assertNotEquals(0, validator.validate(blankItem).size());
+        assertThrows(KeyNotFoundException.class, ()->controller.update(blankItem));
+
+        assertEquals(0, controller.getAllFilms().size());
+
+        assertDoesNotThrow(()->controller.create(film));
+        assertEquals(1, controller.getAllFilms().size());
+
+
+        assertDoesNotThrow(()->controller.update(film));
+        assertEquals(1, controller.getAllFilms().size());
+
+        assertNotEquals(0, validator.validate(blankItem).size());
+
     }
 
     @Test
     void shouldRejectName() {
-        item.setName("");
-        assertEquals(1, validator.validate(item).size());
+        film.setName("");
+        assertEquals(1, validator.validate(film).size());
     }
 
     @Test
     void shouldRejectDescription() {
         StringBuilder sb = new StringBuilder();
-        while (sb.length()<=Film.MAX_DESCRIPTION_LENGTH) {
+        while (sb.length()<= MAX_DESCRIPTION_LENGTH) {
             sb.append("Another line of description.\n");
         }
-        item.setDescription(sb.toString());
-        assertEquals(1, validator.validate(item).size());
+        film.setDescription(sb.toString());
+        assertEquals(1, validator.validate(film).size());
     }
 
     @Test
     void shouldRejectReleaseDate() {
-        item.setReleaseDate(LocalDate.of(1895,12,28));
-        assertEquals(0, validator.validate(item).size());
+        film.setReleaseDate(LocalDate.of(1895,12,28));
+        assertEquals(0, validator.validate(film).size());
 
-        item.setReleaseDate(item.getReleaseDate().minusDays(1));
-        assertEquals(1, validator.validate(item).size());
+        film.setReleaseDate(film.getReleaseDate().minusDays(1));
+        assertEquals(1, validator.validate(film).size());
     }
 
     @Test
     void shouldRejectDuration() {
-        item.setDuration(1);
-        assertEquals(0, validator.validate(item).size());
+        film.setDuration(1);
+        assertEquals(0, validator.validate(film).size());
 
-        item.setDuration(0);
-        assertEquals(1, validator.validate(item).size());
+        film.setDuration(0);
+        assertEquals(1, validator.validate(film).size());
     }
+
 }

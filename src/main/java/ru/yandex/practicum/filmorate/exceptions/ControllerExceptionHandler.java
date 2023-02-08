@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
-import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,10 +16,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
-
+    @SuppressWarnings("unused")
     @ExceptionHandler(value = {KeyNotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, Object>> validationException(KeyNotFoundException ex, ServletWebRequest request) {
@@ -37,6 +37,7 @@ public class ControllerExceptionHandler {
                 .body(bodyMap);
     }
 
+    @SuppressWarnings("unused")
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, Object>> methodArgumentNotValidException(MethodArgumentNotValidException ex, ServletWebRequest request) {
@@ -51,13 +52,12 @@ public class ControllerExceptionHandler {
         bodyMap.put("timestamp", Instant.now());
         bodyMap.put("status", HttpStatus.BAD_REQUEST);
         bodyMap.put("path", request.getRequest().getRequestURI());
-        bodyMap.put("dataclass", ex.getObjectName());
+        bodyMap.put("dataClass", ex.getObjectName());
         bodyMap.put("error", ex.getMessage());
-        bodyMap.put("errorlist", errorList);
+        bodyMap.put("errorList", errorList);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(bodyMap);
     }
-
 }
