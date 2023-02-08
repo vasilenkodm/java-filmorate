@@ -7,8 +7,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -92,9 +92,8 @@ public class UserService {
         }
         return user .getFriendsIds()
                     .stream()
-                    .collect( ArrayList::new,
-                                (list, id) -> list.add(storage.getUser(id)),
-                                ArrayList::addAll);
+                    .map(storage::getUser)
+                    .collect(Collectors.toList());
     }
 
     //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
@@ -123,7 +122,8 @@ public class UserService {
 
         return smallIdsList.stream()
                             .filter(bigIdsList::contains)
-                            .collect(ArrayList::new, (list, id)->list.add(storage.getUser(id)), List::addAll);
+                            .map(storage::getUser)
+                            .collect(Collectors.toList());
     }
 
 }

@@ -39,7 +39,8 @@ public class Film {
 
     @SuppressWarnings("SpellCheckingInspection")
     @JsonIgnore
-    private final Set<UserIdType>  likers = new TreeSet<>();
+    private final transient Set<UserIdType>  likers = new TreeSet<>();
+
     @SuppressWarnings("SpellCheckingInspection")
     public Set<UserIdType> getLikers() {
         return Set.copyOf(likers);
