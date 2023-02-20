@@ -1,6 +1,7 @@
 ![Схема БД](https://github.com/vasilenkodm/java-filmorate/raw/main/Filmorate_database_schema.png)
 
 https://dbdiagram.io/d/63f28c35296d97641d821eec
+
 //Filmorate
 Table UserInfo {
   user_id bigint [pk, not null, increment]
@@ -21,7 +22,7 @@ Table Genre {
 }
 
 Table RatingMPA {
-  rating_id int [pk, not null]
+  ratingMPA_id int [pk, not null]
   rating_name varchar(10) [unique]
   descriprion varchar(200) [not null]
   order int [not null, unique]
@@ -33,10 +34,10 @@ Table Film {
   descriprion varchar(2000) [not null]
   release_date date [not null]
   duration int [not null, default:1]
-  ratingMPA_id varchar(10) [not null, ref: > RatingMPA.rating_id]
+  ratingMPA_id int [not null, ref: > RatingMPA.ratingMPA_id]
 }
 
-Table FilmLikes {
+Table FilmLikers {
   film_id bigint [pk, ref: > Film.film_id]
   user_id bigint [pk, ref: > UserInfo.user_id]
 }
