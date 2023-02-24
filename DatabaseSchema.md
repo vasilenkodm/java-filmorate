@@ -69,8 +69,8 @@ Table FilmLikers {
     note: 'Код пользователя']
   Note: 'Фильмы, понравившиеся пользователям'
 }
-Ref film_id_Film_film_id: FilmLikers.film_id > Film.film_id [delete:restrict, update: cascade]
-Ref user_id_UserInfo_user_id: FilmLikers.user_id > UserInfo.user_id [delete:restrict, update: cascade]
+Ref FilmLikers_film_id_Film_film_id: FilmLikers.film_id > Film.film_id [delete:restrict, update: cascade]
+Ref FilmLikers_user_id_UserInfo_user_id: FilmLikers.user_id > UserInfo.user_id [delete:restrict, update: cascade]
 
 Table FilmGenre {
   film_id BIGINT [pk,
@@ -79,5 +79,6 @@ Table FilmGenre {
     note: 'Код жанра']
   Note: 'Жанры, к котрым относится фильм'
 }
-Ref film_id_Film_film_id: FilmGenre.film_id > Film.film_id [delete:restrict, update: cascade]
-Ref user_id_UserInfo_user_id: FilmGenre.genre_id > Genre.genre_id [delete:restrict, update: cascade]
+Ref FilmGenre_film_id_Film_film_id: FilmGenre.film_id > Film.film_id [delete:restrict, update: cascade]
+Ref FilmGenre_user_id_UserInfo_user_id: FilmGenre.genre_id > Genre.genre_id [delete:restrict, update: cascade]
+
