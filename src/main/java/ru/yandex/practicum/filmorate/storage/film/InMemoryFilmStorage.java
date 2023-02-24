@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -31,4 +32,13 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film getFilm(FilmIdType filmId) {
         return films.get(filmId);
     }
+
+    public List<Film> getPopular(int maxCount) {
+        return films.values()
+                    .stream()
+                    .sorted(Comparator.comparingInt(Film::getRating).thenComparing(Film::getId).reversed())
+                    .limit(maxCount)
+                    .collect(Collectors.toList());
+    }
+
 }

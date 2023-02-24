@@ -11,4 +11,6 @@ public interface FilmStorage {
     void addFilm(Film film);
     void updateFilm(Film film);
     Film getFilm(FilmIdType filmId);
+    List<Film> getPopular(int maxCount);
+
 }

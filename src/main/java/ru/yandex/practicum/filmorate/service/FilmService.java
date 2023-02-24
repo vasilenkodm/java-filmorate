@@ -9,7 +9,10 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 @Slf4j
 @Service
@@ -96,14 +99,6 @@ public class FilmService  {
         rating.computeIfAbsent(-likeCount, k -> new TreeSet<>()).add(filmId);
     }
     public List<Film> getPopular(int maxCount) {
-        List<Film> result = new LinkedList<>();
-        for (Set<FilmIdType> filmSet : rating.values()) {
-            for (FilmIdType id: filmSet) {
-                result.add(filmStorage.getFilm(id));
-                if (result.size()>=maxCount) { break; }
-            }
-            if (result.size()>=maxCount) { break; }
-        }
-        return result;
+        return filmStorage.getPopular(maxCount);
     }
 }
