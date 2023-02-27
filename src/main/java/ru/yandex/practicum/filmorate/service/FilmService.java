@@ -2,103 +2,42 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 @Slf4j
 @Service
-public class FilmService  {
-    private final FilmStorage filmStorage;
+public class FilmService  extends DefaultService<FilmIdType, Film, FilmStorage> {
 
-    private final UserStorage userStorage;
-
-    private final TreeMap<Integer, Set<FilmIdType>> rating = new TreeMap<>();
     private FilmIdType lastFilmId;
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+    FilmService(FilmStorage _storage) {
+        super(_storage);
         this.lastFilmId =  new FilmIdType(0L);
     }
+        
 
     private synchronized FilmIdType getNewId() {
+        log.debug("Вызов {}.getNewId()", this.getClass().getName());
         lastFilmId =  new FilmIdType(lastFilmId.getValue()+1);
         return lastFilmId;
     }
 
-    public List<Film> getAllFilms() {
-        return filmStorage.getFilms();
+    public void addLike(FilmIdType _filmId, UserIdType _userId) {
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _filmId,  _userId);
+        storage.addLike(_filmId, _userId);
     }
 
-    public Film create(final Film film) {
-        FilmIdType key = getNewId();
-        film.setId(key);
-        filmStorage.addFilm(film);
-        addFilmToRating(film.getId(), film.getRating());
-        return film;
+    public void removeLike(FilmIdType _filmId, UserIdType _userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId,  _userId);
+        storage.removeLike(_filmId, _userId);
     }
 
-    public Film update(final Film film) {
-        FilmIdType id = film.getId();
-
-        if (filmStorage.notExits(id)) {
-            throw new KeyNotFoundException("Обновление: не найден ключ "+id+"! "+ film, this.getClass(), log);
-        }
-        filmStorage.updateFilm(film);
-        log.info("Обновление {}", film);
-        return film;
-    }
-
-    public Film get(FilmIdType key) {
-        if (filmStorage.notExits(key)) {
-            throw new KeyNotFoundException("Получение: не найден ключ "+key+"!", this.getClass(), log);
-        }
-        return filmStorage.getFilm(key);
-    }
-
-    public void addLike(FilmIdType filmId, UserIdType userId) {
-        if (filmStorage.notExits(filmId)) {
-            throw new KeyNotFoundException("Добавление лайков: не найден фильм "+filmId+"!", this.getClass(), log);
-        }
-        if (userStorage.notExits(userId)) {
-            throw new KeyNotFoundException("Добавление лайков: не найден пользователь "+userId+"!", this.getClass(), log);
-        }
-        Film film = filmStorage.getFilm(filmId);
-        removeFilmFromRating(film.getId(), film.getRating());
-        film.addLike(userId);
-        addFilmToRating(film.getId(), film.getRating());
-    }
-
-    public void removeLike(FilmIdType filmId, UserIdType userId) {
-        if (filmStorage.notExits(filmId)) {
-            throw new KeyNotFoundException("Удаление лайков: не найден фильм "+filmId+"!", this.getClass(), log);
-        }
-        if (userStorage.notExits(userId)) {
-            throw new KeyNotFoundException("Удаление лайков: не найден пользователь "+userId+"!", this.getClass(), log);
-        }
-        Film film = filmStorage.getFilm(filmId);
-        removeFilmFromRating(film.getId(), film.getRating());
-        film.removeLike(userId);
-        addFilmToRating(film.getId(), film.getRating());
-    }
-
-    private void removeFilmFromRating(FilmIdType filmId, int likeCount) {
-        rating.get(-likeCount).remove(filmId);
-    }
-
-    private void addFilmToRating(FilmIdType filmId, int likeCount) {
-        rating.computeIfAbsent(-likeCount, k -> new TreeSet<>()).add(filmId);
-    }
     public List<Film> getPopular(int maxCount) {
-        return filmStorage.getPopular(maxCount);
+        return storage.getPopular(maxCount);
     }
 }

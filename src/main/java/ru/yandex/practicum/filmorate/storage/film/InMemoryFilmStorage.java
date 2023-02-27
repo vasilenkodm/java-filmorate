@@ -1,44 +1,83 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.BaseItemInMemoryStorage;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage{
-    private final Map<FilmIdType, Film> films = new TreeMap<>();
+@Primary
+public class InMemoryFilmStorage extends BaseItemInMemoryStorage<FilmIdType, Film> implements FilmStorage {
+    private final Map<FilmIdType, Set<UserIdType>> likers = new TreeMap<>();
 
-    public List<Film> getFilms() {
-        return new ArrayList<>(films.values());
+    @Override
+    protected String idNotFoundMsg(FilmIdType _id) {
+        return String.format("Не найден фильм с кодом %s!", _id);
     }
 
-    public boolean notExits(FilmIdType filmId) {
-        return !films.containsKey(filmId);
+    @Override
+    public Film createItem(Film _item) {
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
+        likers.put(_item.getId(), new TreeSet<>());
+        return super.createItem(_item);
     }
 
-    public void addFilm(Film film) {
-        films.put(film.getId(), film);
+    @Override
+    public void deleteItem(FilmIdType _id) {
+        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
+        likers.remove(_id);
+        super.deleteItem(_id);
     }
 
-    public void updateFilm(Film film) {
-        films.get(film.getId()).updateWith(film);
+    @Override
+    public int getLikesCount(FilmIdType _id) {
+        Set<UserIdType> users = likers.get(_id);
+        if (users == null) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(_id), this.getClass(), log);
+        }
+        int result = users.size();
+        log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), _id);
+        return  result;
     }
 
-    public Film getFilm(FilmIdType filmId) {
-        return films.get(filmId);
-    }
-
-    public List<Film> getPopular(int maxCount) {
-        return films.values()
+    @Override
+    public List<Film> getPopular(int _maxCount) {
+        List<Film> result = items.keySet()
                     .stream()
-                    .sorted(Comparator.comparingInt(Film::getRating).thenComparing(Film::getId).reversed())
-                    .limit(maxCount)
+                    .sorted(Comparator.comparing(this::getLikesCount).reversed().thenComparing(FilmIdType::getValue))
+                    .limit(_maxCount)
+                    .map(k -> items.get(k))
                     .collect(Collectors.toList());
+        log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), _maxCount);
+        return result;
+    }
+
+    @Override
+    public void addLike(FilmIdType _filmId, UserIdType _userId) {
+        Set<UserIdType> users = likers.get(_filmId);
+        if (users == null) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
+        }
+        users.add(_userId);
+        log.info("Выполнено {}.addLike({}, {})", this.getClass().getName(), _filmId, _userId);
+    }
+
+    @Override
+    public void removeLike(FilmIdType _filmId, UserIdType _userId) {
+        Set<UserIdType> users = likers.get(_filmId);
+        if (users == null) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
+        }
+        users.remove(_userId);
+        log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
     }
 
 }

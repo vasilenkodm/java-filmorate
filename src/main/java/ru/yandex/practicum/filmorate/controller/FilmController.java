@@ -1,65 +1,45 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
+@Component
 @RestController
 @RequestMapping("/films")
-public class FilmController {
-    private final FilmService service;
+public class FilmController extends BaseController<FilmIdType, Film> {
+    private final FilmService filmService;
 
-    @GetMapping()
-    public List<Film> getAllFilms() {
-        return service.getAllFilms();
-    }
-
-    @PostMapping
-    public Film create(@Valid @RequestBody final Film film) {
-        log.info("Добавление {}", film);
-        return service.create(film);
-    }
-
-    @PutMapping
-    public Film update(@Valid @RequestBody final Film film) {
-        log.info("Обновление {}", film);
-        return service.update(film);
-    }
-
-    @GetMapping("/{filmId}")
-    public Film getFilm(@PathVariable FilmIdType filmId) {
-        Film film = service.get(filmId);
-        log.info("Получение по ключу {} {}", filmId, film);
-        return film;
+    public FilmController(FilmService _filmService) {
+        super(_filmService);
+        filmService = _filmService;
     }
 
     //PUT /films/{id}/like/{userId}  — пользователь ставит лайк фильму.
     @PutMapping("/{filmId}/like/{userId}")
-    public void addLike(@PathVariable FilmIdType filmId, @PathVariable UserIdType userId) {
-        log.info("Добавление лайка для фильма {} от пользователя {}", filmId, userId);
-        service.addLike(filmId, userId);
+    public void addLike(@PathVariable(name="filmId") FilmIdType _filmId, @PathVariable(name="userId") UserIdType _userId) {
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _filmId, _userId);
+        filmService.addLike(_filmId, _userId);
     }
 
     //DELETE /films/{id}/like/{userId}  — пользователь удаляет лайк.
     @DeleteMapping("/{filmId}/like/{userId}")
-    public void removeLike(@PathVariable FilmIdType filmId, @PathVariable UserIdType userId) {
-        log.info("Удаление лайка для фильма {} от пользователя {}", filmId, userId);
-        service.removeLike(filmId, userId);
+    public void removeLike(@PathVariable(name="filmId") FilmIdType _filmId, @PathVariable(name="userId") UserIdType _userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
+        filmService.removeLike(_filmId, _userId);
     }
 
     //GET /films/popular?count={count}
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue="10") int count) {
-        log.info("Получение {} полуярных фильмов", count);
-        return service.getPopular(count);
+    public List<Film> getPopular(@RequestParam(name = "count", defaultValue="10") int _count) {
+        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _count);
+        return filmService.getPopular(_count);
     }
 }
