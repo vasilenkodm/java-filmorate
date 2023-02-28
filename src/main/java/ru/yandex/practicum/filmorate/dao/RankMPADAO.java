@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RankMPADAO implements BaseItemDAO<RankMPAIdType, RankMPA> {
+public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
     public static final String ID_FIELD = "rankMPA_id";
     public static final String NAME_FIELD = "rankMPA_name";
     public static final String DESCRIPTION_FIELD = "description";

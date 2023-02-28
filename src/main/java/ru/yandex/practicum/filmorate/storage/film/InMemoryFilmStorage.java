@@ -17,17 +17,26 @@ import java.util.stream.Collectors;
 @Primary
 public class InMemoryFilmStorage extends BaseItemInMemoryStorage<FilmIdType, Film> implements FilmStorage {
     private final Map<FilmIdType, Set<UserIdType>> likers = new TreeMap<>();
+    private FilmIdType lastId = FilmIdType.of(0L);
+
+    @Override
+    protected FilmIdType newItemId() {
+        lastId = FilmIdType.of(lastId.getValue() + 1);
+        return lastId;
+    }
 
     @Override
     protected String idNotFoundMsg(FilmIdType _id) {
         return String.format("Не найден фильм с кодом %s!", _id);
     }
 
+
     @Override
     public Film createItem(Film _item) {
         log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        likers.put(_item.getId(), new TreeSet<>());
-        return super.createItem(_item);
+        Film result = super.createItem(_item);
+        likers.put(result.getId(), new TreeSet<>());
+        return result;
     }
 
     @Override
@@ -75,6 +84,9 @@ public class InMemoryFilmStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
         Set<UserIdType> users = likers.get(_filmId);
         if (users == null) {
             throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
+        }
+        if (!users.contains(_userId)) {
+            throw new KeyNotFoundException(String.format("Лайк пользователя %s не найден!", _userId), this.getClass(), log);
         }
         users.remove(_userId);
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);

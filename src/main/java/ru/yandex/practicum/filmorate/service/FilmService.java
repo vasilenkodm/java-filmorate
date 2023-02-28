@@ -11,21 +11,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class FilmService  extends DefaultService<FilmIdType, Film, FilmStorage> {
-
-    private FilmIdType lastFilmId;
+public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> {
 
     FilmService(FilmStorage _storage) {
         super(_storage);
-        this.lastFilmId =  new FilmIdType(0L);
     }
         
-
-    private synchronized FilmIdType getNewId() {
-        log.debug("Вызов {}.getNewId()", this.getClass().getName());
-        lastFilmId =  new FilmIdType(lastFilmId.getValue()+1);
-        return lastFilmId;
-    }
 
     public void addLike(FilmIdType _filmId, UserIdType _userId) {
         log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _filmId,  _userId);
@@ -37,7 +28,8 @@ public class FilmService  extends DefaultService<FilmIdType, Film, FilmStorage> 
         storage.removeLike(_filmId, _userId);
     }
 
-    public List<Film> getPopular(int maxCount) {
-        return storage.getPopular(maxCount);
+    public List<Film> getPopular(int _maxCount) {
+        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _maxCount);
+        return storage.getPopular(_maxCount);
     }
 }

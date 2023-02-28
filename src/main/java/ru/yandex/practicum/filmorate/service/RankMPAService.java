@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 
 @Slf4j
 @Service
-public class RankMPAService extends DefaultService<RankMPAIdType, RankMPA, RankMPAStorage> {
+public class RankMPAService extends BaseItemService<RankMPAIdType, RankMPA, RankMPAStorage> {
     RankMPAService(RankMPAStorage _storage) {
         super(_storage);
     }

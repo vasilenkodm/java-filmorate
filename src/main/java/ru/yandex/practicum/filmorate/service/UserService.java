@@ -2,123 +2,46 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.type.UserIdType;
+
+import java.util.List;
 
 @Slf4j
 @Service
-public class UserService {
-    /*
-    private final UserStorage storage;
+public class UserService  extends BaseItemService<UserIdType, User, UserStorage> {
 
-    private UserIdType lastUserId;
-    
-    public UserService(UserStorage storage) {
-        this.storage = storage;
-        lastUserId =  new UserIdType(0L);
+    public UserService(UserStorage _storage) {
+        super(_storage);
     }
 
-    private synchronized UserIdType getNewId() {
-        lastUserId =  new UserIdType(lastUserId.getValue()+1);
-        return lastUserId;
-    }
-
-    public List<User> getAllUsers() {
-        List<User> result = storage.getAllItems();
-        return result;
-    }
-
-    public User create(final User user) {
-        UserIdType key = getNewId();
-        user.setId(key);
-        storage.createItem(user);
-        return user;
-    }
-
-    public User update(final User user) {
-        UserIdType id = user.getId();
-        if (storage.notExits(id)) {
-            throw new KeyNotFoundException("Обновление: не найден ключ "+id+"! "+ user, this.getClass(), log);
-        }
-        storage.updateItem(user);
-        log.info("Обновление {}", user);
-        return user;
-    }
-
-    public User get(UserIdType key) {
-        if (storage.notExits(key)) {
-            throw new KeyNotFoundException("Получение: не найден ключ "+key+"!", this.getClass(), log);
-        }
-        return storage.readItem(key);
-    }
 
     //PUT /users/{id}/friends/{friendId}  — добавление в друзья.
-    public void addFriend(UserIdType userId, UserIdType friendId) {
-        User user = storage.readItem(userId);
-        if (user == null) {
-            throw new KeyNotFoundException("Добавление друга: не найден пользователь "+userId, this.getClass(), log);
-        }
-        User friend = storage.readItem(friendId);
-        if (friend == null) {
-            throw new KeyNotFoundException("Добавление друга: не найден друг "+friendId, this.getClass(), log);
-        }
-        user.addFriend(friendId);
-        friend.addFriend(userId);
+    public void addFriend(UserIdType _userId, UserIdType _friendId) {
+        log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        storage.addFriend(_userId, _friendId);
+        storage.addFriend(_friendId, _userId);
     }
 
 
     //DELETE /users/{id}/friends/{friendId} — удаление из друзей.
-    public void deleteFriend(UserIdType userId, UserIdType friendId) {
-        User user = storage.readItem(userId);
-        if (user == null) {
-            throw new KeyNotFoundException("Удаление друга: не найден пользователь "+userId, this.getClass(), log);
-        }
-        User friend = storage.readItem(friendId);
-        if (friend == null) {
-            throw new KeyNotFoundException("Удаление друга: не найден друг "+friendId, this.getClass(), log);
-        }
-        user.removeFriend(friendId);
-        friend.removeFriend(userId);
+    public void deleteFriend(UserIdType _userId, UserIdType _friendId) {
+        log.debug("Вызов {}.deleteFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        storage.removeFriend(_userId, _friendId);
+        storage.removeFriend(_friendId, _userId);
     }
 
     //GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
-    public Set<User> friendsList(UserIdType userId) {
-        User user = storage.readItem(userId);
-        if (user == null) {
-            throw new KeyNotFoundException("Список друзей: не найден пользователь "+userId, this.getClass(), log);
-        }
-        return user .getFriendsIds()
-                    .stream()
-                    .map(storage::readItem)
-                    .collect(Collectors.toList());
+    public List<User> friendsList(UserIdType _userId) {
+        log.debug("Вызов {}.friendsList({})", this.getClass().getName(), _userId);
+        return storage.getFriends(_userId);
     }
 
     //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
-    public List<User> commonFriends(UserIdType userId, UserIdType friendId) {
-        User user = storage.readItem(userId);
-        if (user == null) {
-            throw new KeyNotFoundException("Общие друзья: не найден пользователь "+userId, this.getClass(), log);
-        }
-
-        User friend = storage.readItem(friendId);
-        if (friend == null) {
-            throw new KeyNotFoundException("Общие друзья: не найден друг "+friendId, this.getClass(), log);
-        }
-
-        List<UserIdType> firstIds = user.getFriendsIds();
-        List<UserIdType> secondIds = friend.getFriendsIds();
-        List<UserIdType> smallIdsList;
-        List<UserIdType> bigIdsList;
-        if (firstIds.size() < secondIds.size()) {
-            smallIdsList = firstIds;
-            bigIdsList = secondIds;
-        } else {
-            smallIdsList = secondIds;
-            bigIdsList = firstIds;
-        }
-
-        return smallIdsList.stream()
-                            .filter(bigIdsList::contains)
-                            .map(storage::readItem)
-                            .collect(Collectors.toList());
+    public List<User> commonFriends(UserIdType _userId1, UserIdType _userId2) {
+        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), _userId1, _userId2);
+        return storage.commonFriends(_userId1, _userId2);
     }
-    */
+
 }

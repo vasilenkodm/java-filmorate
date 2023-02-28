@@ -2,18 +2,11 @@ package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.UserDAO;
-import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.BaseItemDbStorage;
-import ru.yandex.practicum.filmorate.type.UserIdType;
-
-import java.util.Set;
 
 @Slf4j
 @Component
 //@Primary
-public class UserDbStorage extends BaseItemDbStorage<UserIdType, User> implements UserStorage {
+public class UserDbStorage {/*extends BaseItemDbStorage<UserIdType, User> implements UserStorage {
     UserDbStorage(UserDAO dao) { super(dao); }
 
     @Override
@@ -46,4 +39,5 @@ public class UserDbStorage extends BaseItemDbStorage<UserIdType, User> implement
         set.remove(_friendId);
         log.info("Выполнено {}.removeFriend({}, {})", this.getClass().getName(), _userId, _friendId);
     }
+    */
 }

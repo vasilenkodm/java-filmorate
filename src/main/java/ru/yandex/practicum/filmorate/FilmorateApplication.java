@@ -23,6 +23,6 @@ public class FilmorateApplication {
 
 	@PostConstruct
 	public void printEnpoints() {
-		requestMappingHandlerMapping.getHandlerMethods().forEach((k,v) -> log.info(k + " -> "+ v));
+		requestMappingHandlerMapping.getHandlerMethods().forEach((k,v) -> log.info(String.format("Mapped %s -> %s", k, v)));
 	}
 }

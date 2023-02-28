@@ -1,47 +1,21 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
-public class UserController {
-    private final UserService service;
-
-    @GetMapping()
-    public List<User> getAllUsers() {
-        return service.getAllUsers();
+public class UserController  extends BaseItemController<UserIdType, User, UserService> {
+    public UserController(UserService _service) {
+        super(_service);
     }
 
-    @PostMapping
-    public User create(@Valid @RequestBody final User user) {
-        log.info("Добавление {}", user);
-        return service.create(user);
-    }
-
-    @PutMapping
-    public User update(@Valid @RequestBody final User user) {
-        log.info("Обновление {}", user);
-        return service.update(user);
-    }
-
-    @SuppressWarnings("unused")
-    @GetMapping("/{userId}")
-    public User getUser(@PathVariable UserIdType userId) {
-        User user = service.get(userId);
-        log.info("Получение по ключу {} {}", userId, user);
-        return user;
-    }
-    
     //PUT /users/{id}/friends/{friendId}  — добавление в друзья.
     @SuppressWarnings("unused")
     @PutMapping("/{userId}/friends/{friendId}")

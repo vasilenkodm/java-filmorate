@@ -6,8 +6,9 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 import javax.validation.constraints.NotBlank;
 
 @Setter @Getter @Builder @ToString @EqualsAndHashCode
-public class RankMPA implements BaseItem<RankMPAIdType, RankMPA> {
+public class RankMPA implements Item<RankMPAIdType, RankMPA> {
     private RankMPAIdType id;
+
     @NotBlank
     private String name;
 

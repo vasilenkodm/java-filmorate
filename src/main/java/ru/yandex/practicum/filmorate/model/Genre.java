@@ -6,8 +6,9 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 import javax.validation.constraints.NotBlank;
 
 @Setter @Getter @Builder @ToString @EqualsAndHashCode
-public class Genre implements BaseItem<GenreIdType, Genre> {
+public class Genre implements Item<GenreIdType, Genre> {
     private GenreIdType id;
+
     @NotBlank
     private String name;
 

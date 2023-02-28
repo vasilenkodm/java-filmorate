@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.dao.BaseItemDAO;
-import ru.yandex.practicum.filmorate.model.BaseItem;
+import ru.yandex.practicum.filmorate.dao.ItemDAO;
+import ru.yandex.practicum.filmorate.model.Item;
 import ru.yandex.practicum.filmorate.type.SomeType;
 
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Primary
 //public interface BaseItemStorage<K extends SomeType<?>, T extends BaseItem> {
-public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends BaseItem<K, T>> implements BaseItemStorage <K, T>
+public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends Item<K, T>> implements ItemStorage<K, T>
 {
-    private final BaseItemDAO<K, T> dao;
+    private final ItemDAO<K, T> dao;
 
     @Override
     public List<T> getAllItems() {

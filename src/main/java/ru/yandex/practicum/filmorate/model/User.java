@@ -7,20 +7,18 @@ import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Setter @Getter @Builder @ToString @EqualsAndHashCode
-public class User implements BaseItem<UserIdType, User> {
-    @Getter @Setter
-    private UserIdType id; //целочисленный идентификатор — id;
+public class User implements Item<UserIdType, User> {
+    private UserIdType id;
 
-    @Getter @Setter @NotBlank(message = "Укажите электронную почту") @Email(message = "Нужен корректный адрес электронной почты!")
+    @NotBlank(message = "Укажите электронную почту") @Email(message = "Нужен корректный адрес электронной почты!")
     private String email; //электронная почта — email;
 
-    @Getter @Setter @NotBlank(message = "Логин не может быть пустым!") @Pattern(regexp = "\\S*$", message = "Логин не может содержать пробелы!")
+    @NotBlank(message = "Логин не может быть пустым!") @Pattern(regexp = "\\S*$", message = "Логин не может содержать пробелы!")
     private String login; //логин пользователя — login;
 
-    @Setter
     private String name; //имя для отображения — name;
 
-    @Getter @Setter @NotNull @Past(message = "Дата рождения не может быть в будущем!")
+    @NotNull @Past(message = "Дата рождения не может быть в будущем!")
     private LocalDate birthday; // дата рождения — birthday.
 
     @SuppressWarnings("unused")

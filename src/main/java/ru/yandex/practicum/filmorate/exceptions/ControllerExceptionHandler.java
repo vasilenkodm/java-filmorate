@@ -21,7 +21,7 @@ import java.util.Map;
 public class ControllerExceptionHandler {
     @SuppressWarnings("unused")
     @ExceptionHandler(value = {KeyNotFoundException.class})
-    public ResponseEntity<Map<String, Object>> validationException(KeyNotFoundException ex, ServletWebRequest request) {
+    public ResponseEntity<Map<String, Object>> exceptionHandler(KeyNotFoundException ex, ServletWebRequest request) {
         Map<String, Object> bodyMap = new LinkedHashMap<>();
         bodyMap.put("timestamp", Instant.now());
         bodyMap.put("status", HttpStatus.NOT_FOUND);
@@ -35,7 +35,7 @@ public class ControllerExceptionHandler {
 
     @SuppressWarnings("unused")
     @ExceptionHandler(value = {FeatureNotSupportedException.class})
-    public ResponseEntity<Map<String, Object>> validationException(FeatureNotSupportedException ex, ServletWebRequest request) {
+    public ResponseEntity<Map<String, Object>> exceptionHandler(FeatureNotSupportedException ex, ServletWebRequest request) {
         Map<String, Object> bodyMap = new LinkedHashMap<>();
         bodyMap.put("timestamp", Instant.now());
         bodyMap.put("status", HttpStatus.NOT_IMPLEMENTED);
@@ -44,6 +44,20 @@ public class ControllerExceptionHandler {
         bodyMap.put("error", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_IMPLEMENTED)
+                .body(bodyMap);
+    }
+
+    @SuppressWarnings("unused")
+    @ExceptionHandler(value = {UnexpectedErrorException.class})
+    public ResponseEntity<Map<String, Object>> exceptionHandler(UnexpectedErrorException ex, ServletWebRequest request) {
+        Map<String, Object> bodyMap = new LinkedHashMap<>();
+        bodyMap.put("timestamp", Instant.now());
+        bodyMap.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
+        bodyMap.put("path", request.getRequest().getRequestURI());
+        bodyMap.put("dataclass", ex.getKeyOwnerClass().getSimpleName());
+        bodyMap.put("error", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(bodyMap);
     }
 

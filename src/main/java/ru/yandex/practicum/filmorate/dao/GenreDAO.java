@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GenreDAO implements BaseItemDAO<GenreIdType, Genre> {
+public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
 
     public static final String ID_FIELD = "genre_id";
     public static final String NAME_FIELD = "genre_name";

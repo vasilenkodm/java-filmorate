@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserDAO implements BaseItemDAO<UserIdType, User> {
+public class UserDAO implements ItemDAO<UserIdType, User> {
 
     public static final String ID_FIELD = "user_id";
     public static final String NAME_FIELD = "user_name";

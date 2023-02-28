@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.BaseItem;
-import ru.yandex.practicum.filmorate.service.BaseItemService;
+import ru.yandex.practicum.filmorate.model.Item;
+import ru.yandex.practicum.filmorate.service.ItemService;
 import ru.yandex.practicum.filmorate.type.SomeType;
 
 import javax.validation.Valid;
@@ -12,8 +12,8 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseController<K extends SomeType<?>, T extends BaseItem> {
-    private final BaseItemService<K, T>  service;
+public abstract class BaseItemController<K extends SomeType<?>, T extends Item, S extends ItemService<K, T>> {
+    protected final S service;
 
     @GetMapping()
     public List<T> getAllItems() {
@@ -29,7 +29,7 @@ public abstract class BaseController<K extends SomeType<?>, T extends BaseItem> 
 
     @PostMapping
     public T createItem(@Valid @RequestBody final T _item) {
-        log.debug("'Вызов {}.createItem({})", this.getClass().getName(), _item);
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
         return service.createItem(_item);
     }
 
