@@ -15,9 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Primary
 //public interface BaseItemStorage<K extends SomeType<?>, T extends BaseItem> {
-public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends Item<K, T>> implements ItemStorage<K, T>
+public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends Item<K, T>, D extends ItemDAO<K, T>> implements ItemStorage<K, T>
 {
-    private final ItemDAO<K, T> dao;
+    protected final D dao;
 
     @Override
     public List<T> getAllItems() {
@@ -33,7 +33,7 @@ public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends Item<K,
 
     @Override
     public T createItem(T _item) {
-        log.debug("'Вызов {}.createItem({})", this.getClass().getName(), _item);
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
         K id = dao.create(_item);
         return dao.read(id);
     }

@@ -10,6 +10,6 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 @Slf4j
 @Component
 //@Primary
-public class RankMPADbStorage extends BaseItemDbStorage<RankMPAIdType, RankMPA> implements RankMPAStorage {
+public class RankMPADbStorage extends BaseItemDbStorage<RankMPAIdType, RankMPA, RankMPADAO> implements RankMPAStorage {
     RankMPADbStorage(RankMPADAO dao) { super(dao); }
 }

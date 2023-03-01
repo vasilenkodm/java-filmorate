@@ -1,10 +1,3 @@
 --
-insert into Genre (genre_name) values('Драма');
-insert into Genre (genre_name) values('Комедия');
-insert into Genre (genre_name) values('Детский');
-insert into Genre (genre_name) values('Фантакстика');
-insert into Genre (genre_name) values('Детектив');
-insert into Genre (genre_name) values('Триллер');
-insert into Genre (genre_name) values('Ужасы');
-insert into Genre (genre_name) values('Документальный');
-
+insert into RankMPA (rankMPA_name) values ('G'), ('PG'), ('PG-13'), ('R'), ('NC-17');
+insert into Genre (genre_name) values('Комедия'), ('Драма'), ('Мультфильм'), ('Триллер'), ('Документальный'), ('Боевик');

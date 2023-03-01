@@ -21,7 +21,7 @@ public class UserService  extends BaseItemService<UserIdType, User, UserStorage>
     public void addFriend(UserIdType _userId, UserIdType _friendId) {
         log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
         storage.addFriend(_userId, _friendId);
-        storage.addFriend(_friendId, _userId);
+        //storage.addFriend(_friendId, _userId);
     }
 
 
@@ -29,7 +29,7 @@ public class UserService  extends BaseItemService<UserIdType, User, UserStorage>
     public void deleteFriend(UserIdType _userId, UserIdType _friendId) {
         log.debug("Вызов {}.deleteFriend({}, {})", this.getClass().getName(), _userId, _friendId);
         storage.removeFriend(_userId, _friendId);
-        storage.removeFriend(_friendId, _userId);
+        //storage.removeFriend(_friendId, _userId);
     }
 
     //GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.

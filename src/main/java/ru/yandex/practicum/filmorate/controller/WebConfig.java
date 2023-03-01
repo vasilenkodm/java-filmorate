@@ -5,6 +5,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import ru.yandex.practicum.filmorate.type.StringToFilmIdTypeConverter;
 import ru.yandex.practicum.filmorate.type.StringToGenreIdTypeConverter;
+import ru.yandex.practicum.filmorate.type.StringToRankMPAIdTypeConverter;
 import ru.yandex.practicum.filmorate.type.StringToUserIdTypeConverter;
 
 @Configuration
@@ -14,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverter(new StringToUserIdTypeConverter());
         registry.addConverter(new StringToFilmIdTypeConverter());
         registry.addConverter(new StringToGenreIdTypeConverter());
+        registry.addConverter(new StringToRankMPAIdTypeConverter());
     }
 
 }

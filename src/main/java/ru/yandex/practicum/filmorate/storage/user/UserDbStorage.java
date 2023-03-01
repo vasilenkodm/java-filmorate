@@ -1,43 +1,40 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.UserDAO;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.BaseItemDbStorage;
+import ru.yandex.practicum.filmorate.type.UserIdType;
+
+import java.util.List;
 
 @Slf4j
 @Component
-//@Primary
-public class UserDbStorage {/*extends BaseItemDbStorage<UserIdType, User> implements UserStorage {
-    UserDbStorage(UserDAO dao) { super(dao); }
+@Primary
+public class UserDbStorage extends BaseItemDbStorage<UserIdType, User, UserDAO> implements UserStorage {
+    UserDbStorage(UserDAO _dao) { super(_dao); }
 
     @Override
-    public Set<UserIdType> getFriendsIds(UserIdType _userId) {
-        Set<UserIdType> result = friends.get(_userId);
-
-        if (result == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
-        }
-
-        log.info("Выполнено {}.getFriendsIds({})", this.getClass().getName(), _userId);
-        return result;
+    public List<User> getFriends(UserIdType _userId) {
+        log.debug("Вызов {}.getFriends({})", this.getClass().getName(), _userId);
+        return dao.getFrields(_userId);
     }
-    public void addFriend(UserIdType _userId, UserIdType _friendId) {
-        Set<UserIdType> set = friends.get(_userId);
 
-        if (set == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
-        }
-        set.add(_friendId);
-        log.info("Выполнено {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+    @Override
+    public List<User> commonFriends(UserIdType _userId1, UserIdType _userId2) {
+        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), _userId1, _userId2);
+        return dao.getCommonFrields(_userId1, _userId2);
+    }
+
+    public void addFriend(UserIdType _userId, UserIdType _friendId) {
+        log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        dao.addFriend(_userId, _friendId);
     }
 
     public void removeFriend(UserIdType _userId, UserIdType _friendId) {
-        Set<UserIdType> set = friends.get(_userId);
-
-        if (set == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
-        }
-        set.remove(_friendId);
-        log.info("Выполнено {}.removeFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        log.debug("Вызов {}.removeFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        dao.removeFriend(_userId, _friendId);
     }
-    */
 }

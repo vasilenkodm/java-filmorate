@@ -10,6 +10,6 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 @Slf4j
 @Component
 //@Primary
-public class GenreDbStorage extends BaseItemDbStorage<GenreIdType, Genre> implements GenreStorage {
+public class GenreDbStorage extends BaseItemDbStorage<GenreIdType, Genre, GenreDAO> implements GenreStorage {
     GenreDbStorage(GenreDAO dao) { super(dao); }
 }
