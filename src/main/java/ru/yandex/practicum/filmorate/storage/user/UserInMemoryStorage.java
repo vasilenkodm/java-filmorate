@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class InMemoryUserStorage extends BaseItemInMemoryStorage<UserIdType, User> implements UserStorage {
+public class UserInMemoryStorage extends BaseItemInMemoryStorage<UserIdType, User> implements UserStorage {
 
-    private Map<UserIdType, Set<UserIdType>> friends =  new TreeMap<>();
+    private final Map<UserIdType, Set<UserIdType>> friends = new TreeMap<>();
     private UserIdType lastId = UserIdType.of(0L);
 
     @Override
@@ -77,7 +77,7 @@ public class InMemoryUserStorage extends BaseItemInMemoryStorage<UserIdType, Use
         if (friendsIds == null) {
             throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
         }
-        List<User> result = friendsIds.stream().map(k -> items.get(k)).collect(Collectors.toList());
+        List<User> result = friendsIds.stream().map(items::get).collect(Collectors.toList());
         log.info("Выполнено {}.getFriends({})", this.getClass().getName(), _userId);
         return result;
     }
@@ -94,9 +94,9 @@ public class InMemoryUserStorage extends BaseItemInMemoryStorage<UserIdType, Use
             throw new KeyNotFoundException(this.idNotFoundMsg(_userId2), this.getClass(), log);
         }
 
-        Set<UserIdType> commonFriendsIds = new HashSet(friendsIds1);
+        Set<UserIdType> commonFriendsIds = new HashSet<>(friendsIds1);
         commonFriendsIds.retainAll(friendsIds2);
-        List<User> result = commonFriendsIds.stream().map(k -> items.get(k)).collect(Collectors.toList());
+        List<User> result = commonFriendsIds.stream().map(items::get).collect(Collectors.toList());
         log.info("Выполнено {}.commonFriends({}, {})", this.getClass().getName(), _userId1, _userId2);
         return result;
     }

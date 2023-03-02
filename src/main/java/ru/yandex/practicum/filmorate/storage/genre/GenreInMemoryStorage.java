@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 
 @Slf4j
 @Component
-public class InMemoryGenreStorage extends BaseItemInMemoryStorage<GenreIdType, Genre> implements GenreStorage {
+public class GenreInMemoryStorage extends BaseItemInMemoryStorage<GenreIdType, Genre> implements GenreStorage {
     private GenreIdType lastId = GenreIdType.of(0);
 
     @Override

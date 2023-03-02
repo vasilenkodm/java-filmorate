@@ -50,7 +50,7 @@ public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType,
         this.description = film.description;
         this.releaseDate = film.releaseDate;
         this.duration = film.duration;
-        this.genres = (film.genres == null) ? null : new ArrayList(film.genres);
+        this.genres = (film.genres == null) ? null : new ArrayList<>(film.genres);
         if ((film.mpa == null)) {
             this.mpa = null;
         } else {

@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
@@ -20,6 +21,7 @@ public class RankMPA extends BaseItem<RankMPAIdType, RankMPA> implements Item<Ra
     }
 
     @NotBlank
+    @Size(max = 10)
     private String name;
 
     @Override

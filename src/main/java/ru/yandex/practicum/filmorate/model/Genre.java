@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.type.GenreIdType;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
@@ -20,6 +21,7 @@ public class Genre extends BaseItem<GenreIdType, Genre> implements Item<GenreIdT
     }
 
     @NotBlank
+    @Size(max = 100)
     private String name;
 
     @Override

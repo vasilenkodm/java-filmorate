@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 
 @Slf4j
 @Component
-public class InMemoryRankMPAStorage extends BaseItemInMemoryStorage<RankMPAIdType, RankMPA> implements RankMPAStorage {
+public class RankMPAInMemoryStorage extends BaseItemInMemoryStorage<RankMPAIdType, RankMPA> implements RankMPAStorage {
     private RankMPAIdType lastId = RankMPAIdType.of(0);
 
     @Override

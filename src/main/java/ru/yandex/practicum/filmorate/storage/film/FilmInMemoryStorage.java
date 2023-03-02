@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage extends BaseItemInMemoryStorage<FilmIdType, Film> implements FilmStorage {
+public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Film> implements FilmStorage {
     private final Map<FilmIdType, Set<UserIdType>> likers = new TreeMap<>();
     private FilmIdType lastId = FilmIdType.of(0L);
 
@@ -58,10 +58,10 @@ public class InMemoryFilmStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
     @Override
     public List<Film> getPopular(int _maxCount) {
         List<Film> result = items.keySet()
-                    .stream()
-                    .sorted(Comparator.comparing(this::getLikesCount).reversed().thenComparing(FilmIdType::getValue))
-                    .limit(_maxCount)
-                    .map(k -> items.get(k))
+                .stream()
+                .sorted(Comparator.comparing(this::getLikesCount).reversed().thenComparing(FilmIdType::getValue))
+                .limit(_maxCount)
+                .map(items::get)
                     .collect(Collectors.toList());
         log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), _maxCount);
         return result;

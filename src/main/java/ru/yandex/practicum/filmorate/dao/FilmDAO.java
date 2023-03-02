@@ -203,7 +203,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         final String sqlStatement = String.format("insert into  FilmLikers (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKERS_FILM_ID, FILMLIKERS_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKERS_FILM_ID, _filmId.getValue())
-                .addValue(FILMLIKERS_USER_ID, _filmId.getValue());
+                .addValue(FILMLIKERS_USER_ID, _userId.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
@@ -217,7 +217,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         final String sqlStatement = String.format("delete from FilmLikers where %1$s = :%1$s and %2$s = :%2$s", FILMLIKERS_FILM_ID, FILMLIKERS_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKERS_FILM_ID, _filmId.getValue())
-                .addValue(FILMLIKERS_USER_ID, _filmId.getValue());
+                .addValue(FILMLIKERS_USER_ID, _userId.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
