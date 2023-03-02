@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @ToString
 @EqualsAndHashCode
-abstract class BaseItem<K, T extends Item> implements Item<K, T> {
+abstract class BaseItem<K, T extends BaseItem<K, T>> {
     protected K id;
 
     BaseItem() {

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseItemController<K extends SomeType<?>, T extends Item, S extends ItemService<K, T>> {
+public abstract class BaseItemController<K extends SomeType<?>, T extends Item<K, T>, S extends ItemService<K, T>> {
     protected final S service;
 
     @GetMapping()

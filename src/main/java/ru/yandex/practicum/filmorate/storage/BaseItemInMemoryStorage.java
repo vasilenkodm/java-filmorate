@@ -56,7 +56,9 @@ public abstract class BaseItemInMemoryStorage<K extends SomeType<?>, T extends I
             Method builderMethod = _item.getClass().getMethod("builder");
             Object builder = builderMethod.invoke(null);
             Method buildMethod = builder.getClass().getMethod("build");
-            result = (T)buildMethod.invoke(builder);
+            @SuppressWarnings("unchecked")
+            T tObj = (T) buildMethod.invoke(builder);
+            result = tObj;
         } catch (Exception e) {
             throw new UnexpectedErrorException(e.getMessage(), this.getClass(), log);
         }

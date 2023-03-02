@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Film> implements FilmStorage {
-    private final Map<FilmIdType, Set<UserIdType>> likers = new TreeMap<>();
+    private final Map<FilmIdType, Set<UserIdType>> likes = new TreeMap<>();
     private FilmIdType lastId = FilmIdType.of(0L);
 
     @Override
@@ -33,20 +33,20 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
     public Film createItem(Film _item) {
         log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
         Film result = super.createItem(_item);
-        likers.put(result.getId(), new TreeSet<>());
+        likes.put(result.getId(), new TreeSet<>());
         return result;
     }
 
     @Override
     public void deleteItem(FilmIdType _id) {
         log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
-        likers.remove(_id);
+        likes.remove(_id);
         super.deleteItem(_id);
     }
 
     @Override
     public int getLikesCount(FilmIdType _id) {
-        Set<UserIdType> users = likers.get(_id);
+        Set<UserIdType> users = likes.get(_id);
         if (users == null) {
             throw new KeyNotFoundException(this.idNotFoundMsg(_id), this.getClass(), log);
         }
@@ -69,7 +69,7 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
 
     @Override
     public void addLike(FilmIdType _filmId, UserIdType _userId) {
-        Set<UserIdType> users = likers.get(_filmId);
+        Set<UserIdType> users = likes.get(_filmId);
         if (users == null) {
             throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
         }
@@ -79,7 +79,7 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
 
     @Override
     public void removeLike(FilmIdType _filmId, UserIdType _userId) {
-        Set<UserIdType> users = likers.get(_filmId);
+        Set<UserIdType> users = likes.get(_filmId);
         if (users == null) {
             throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
         }

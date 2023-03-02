@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -62,8 +63,8 @@ public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
-        RankMPAIdType result = RankMPAIdType.of(keyHolder.getKey().intValue());
-        log.info("Выполнено {}.create({}) =>", this.getClass().getName(), _rankMPA, result);
+        RankMPAIdType result = RankMPAIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _rankMPA, result);
 
         return result;
     }

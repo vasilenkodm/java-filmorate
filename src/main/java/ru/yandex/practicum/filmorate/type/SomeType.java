@@ -29,8 +29,10 @@ public abstract class SomeType<T extends Comparable<T>> implements java.io.Seria
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || o.getClass()!=this.getClass()) return false;
+        if (o == null || o.getClass() != this.getClass()) return false;
 
-        return this.value.equals(((SomeType<T>)o).value);
+        @SuppressWarnings("unchecked")
+        SomeType<T> bro = (SomeType<T>) o;
+        return this.value.equals(bro.value);
     }
 }

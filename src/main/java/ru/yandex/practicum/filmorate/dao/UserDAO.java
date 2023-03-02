@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.type.UserIdType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -76,7 +77,7 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update( sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
-        UserIdType result = UserIdType.of(keyHolder.getKey().longValue());
+        UserIdType result = UserIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _user, result);
         return result;
     }
@@ -123,27 +124,27 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
                 .build();
     }
 
-    public List<User> getFrields(UserIdType _id) {
+    public List<User> getFriends(UserIdType _id) {
         final String sqlStatement = String.format(" select u.* " +
-                        " from Friendship inv /* Приглашение к дружбе */ " +
+                " from Friendship inv /* Приглашение к дружбе */ " +
 //                        " join Friendship acp /* Принятые приглашения*/ " +
 //                        "    on acp.proposer_id = inv.invited_id /* \"протянутая\" рука */ " +
 //                        "    and inv.proposer_id = acp.invited_id  /* \"встречная\" рука*/ " +
-                        " join UserInfo u " +
-                        "    on u.user_id = inv.invited_id " +
-                        " where inv.proposer_id = :%1$s " +
-                        " order by u.user_id ", ID_FIELD);
+                " join UserInfo u " +
+                "    on u.user_id = inv.invited_id " +
+                " where inv.proposer_id = :%1$s " +
+                " order by u.user_id ", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, _id.getValue());
 
         List<User> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeUser(rs));
 
-        log.info("Выполнено {}.getFrields({})", this.getClass().getName(), _id);
+        log.info("Выполнено {}.getFriends({})", this.getClass().getName(), _id);
 
         return result;
     }
 
-    public List<User> getCommonFrields(UserIdType _id1, UserIdType _id2) {
+    public List<User> getCommonFriends(UserIdType _id1, UserIdType _id2) {
         final String sqlStatement = String.format("    select * " +
                 "    from " +
                 "    (select inv.invited_id " +
@@ -170,7 +171,7 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
 
         List<User> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeUser(rs));
 
-        log.info("Выполнено {}.getCommonFrields({}, {})", this.getClass().getName(), _id1, _id2);
+        log.info("Выполнено {}.getCommonFriends({}, {})", this.getClass().getName(), _id1, _id2);
 
         return result;
     }

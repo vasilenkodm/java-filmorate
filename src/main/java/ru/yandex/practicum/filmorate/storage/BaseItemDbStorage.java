@@ -42,7 +42,7 @@ public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends Item<K,
     public T updateItem(T _item) {
         log.debug("Вызов {}.updateItem({})", this.getClass().getName(), _item);
         dao.update(_item);
-        return dao.read((K)_item.getId());
+        return dao.read(_item.getId());
     }
 
     @Override

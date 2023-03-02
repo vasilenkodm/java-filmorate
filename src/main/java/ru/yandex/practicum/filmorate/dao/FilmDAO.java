@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -30,14 +31,14 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
 
     public static final String ID_FIELD = "film_id";
     public static final String NAME_FIELD = "film_name";
-    public static final String DESCRIPRION_FIELD = "descriprion";
+    public static final String DESCRIPRTION_FIELD = "description";
     public static final String RELEASE_FIELD = "release_date";
     public static final String DURATION_FIELD = "duration";
     public static final String RANKMPA_FIELD = "RankMPA_id";
     public static final String FILMGENRE_GENRE_ID = "genre_id";
     public static final String FILMGENRE_FILM_ID = "film_id";
-    public static final String FILMLIKERS_FILM_ID = "film_id";
-    public static final String FILMLIKERS_USER_ID = "user_id";
+    public static final String FILMLIKES_FILM_ID = "film_id";
+    public static final String FILMLIKES_USER_ID = "user_id";
     public static final String MAX_COUNT = "max_count";
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
@@ -72,10 +73,10 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
 
     public FilmIdType create(Film _film) {
         final String sqlStatement = String.format("insert into Film (%1$s, %2$s, %3$s, %4$s, %5$s) values ( :%1$s, :%2$s, :%3$s, :%4$s, :%5$s )"
-                , NAME_FIELD, DESCRIPRION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
+                , NAME_FIELD, DESCRIPRTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
         MapSqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(NAME_FIELD, _film.getName())
-                .addValue(DESCRIPRION_FIELD, _film.getDescription())
+                .addValue(DESCRIPRTION_FIELD, _film.getDescription())
                 .addValue(RELEASE_FIELD, Date.valueOf(_film.getReleaseDate()))
                 .addValue(DURATION_FIELD, _film.getDuration())
                 .addValue(RANKMPA_FIELD, _film.getMpa().getId().getValue())
@@ -84,7 +85,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
-        FilmIdType result = FilmIdType.of(keyHolder.getKey().longValue());
+        FilmIdType result = FilmIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
 
         updateFilmGenres(result, _film.getGenres());
 
@@ -94,12 +95,12 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
 
     public void update(Film _film) {
         final String sqlStatement4Film = String.format("update Film set %2$s = :%2$s, %3$s = :%3$s, %4$s = :%4$s, %5$s = :%5$s, %6$s = :%6$s  where %1$s = :%1$s"
-                , ID_FIELD, NAME_FIELD, DESCRIPRION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
+                , ID_FIELD, NAME_FIELD, DESCRIPRTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
 
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, _film.getId().getValue())
                 .addValue(NAME_FIELD, _film.getName())
-                .addValue(DESCRIPRION_FIELD, _film.getDescription())
+                .addValue(DESCRIPRTION_FIELD, _film.getDescription())
                 .addValue(RELEASE_FIELD, Date.valueOf(_film.getReleaseDate()))
                 .addValue(DURATION_FIELD, _film.getDuration())
                 .addValue(RANKMPA_FIELD, _film.getMpa().getId().getValue())
@@ -164,7 +165,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         return Film.builder()
                 .id(FilmIdType.of(id))
                 .name(_rs.getString(NAME_FIELD))
-                .description(_rs.getString(DESCRIPRION_FIELD))
+                .description(_rs.getString(DESCRIPRTION_FIELD))
                 .releaseDate(_rs.getDate(RELEASE_FIELD).toLocalDate())
                 .duration(_rs.getInt(DURATION_FIELD))
                 .mpa(RankMPADAO.makeRankMPA(_rs))
@@ -173,11 +174,11 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public List<Film> getPopular(int _maxCount) {
-        final String sqlStatement = String.format(" select top :%1$s film.*, RankMPA.*, Likers.count\n" +
+        final String sqlStatement = String.format(" select top :%1$s film.*, RankMPA.*, Likes.count\n" +
                 "from film\n" +
                 "join RankMPA on RankMPA.rankMPA_id=Film.rankMPA_id\n" +
-                "left outer join (select film_id, count(*) as count from FilmLikers group by film_id) as Likers on Likers.film_id=film.film_id\n" +
-                "order by Likers.count desc, film.film_id", MAX_COUNT);
+                "left outer join (select film_id, count(*) as count from FilmLikes group by film_id) as Likes on Likes.film_id=film.film_id\n" +
+                "order by Likes.count desc, film.film_id", MAX_COUNT);
         SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(MAX_COUNT, _maxCount);
         List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
 
@@ -187,11 +188,11 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public int getLikesCount(FilmIdType _id) {
-        final String sqlStatement = String.format("select count(*) as %2$s from FilmLikers join Film on Film.film_id = FilmLikers.film_id where %1$s = :%1$s", ID_FIELD, MAX_COUNT);
+        final String sqlStatement = String.format("select count(*) as %2$s from FilmLikes join Film on Film.film_id = FilmLikes.film_id where %1$s = :%1$s", ID_FIELD, MAX_COUNT);
         SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(ID_FIELD, _id);
-        Integer result = null;
+        int result;
         try {
-            result = jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> rs.getInt(MAX_COUNT));
+            result = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> rs.getInt(MAX_COUNT)));
         } catch (EmptyResultDataAccessException ex) {
             throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
         }
@@ -200,10 +201,10 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public void addLike(FilmIdType _filmId, UserIdType _userId) {
-        final String sqlStatement = String.format("insert into  FilmLikers (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKERS_FILM_ID, FILMLIKERS_USER_ID);
+        final String sqlStatement = String.format("insert into  FilmLikes (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(FILMLIKERS_FILM_ID, _filmId.getValue())
-                .addValue(FILMLIKERS_USER_ID, _userId.getValue());
+                .addValue(FILMLIKES_FILM_ID, _filmId.getValue())
+                .addValue(FILMLIKES_USER_ID, _userId.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
@@ -214,10 +215,10 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public void removeLike(FilmIdType _filmId, UserIdType _userId) {
-        final String sqlStatement = String.format("delete from FilmLikers where %1$s = :%1$s and %2$s = :%2$s", FILMLIKERS_FILM_ID, FILMLIKERS_USER_ID);
+        final String sqlStatement = String.format("delete from FilmLikes where %1$s = :%1$s and %2$s = :%2$s", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(FILMLIKERS_FILM_ID, _filmId.getValue())
-                .addValue(FILMLIKERS_USER_ID, _userId.getValue());
+                .addValue(FILMLIKES_FILM_ID, _filmId.getValue())
+                .addValue(FILMLIKES_USER_ID, _userId.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {

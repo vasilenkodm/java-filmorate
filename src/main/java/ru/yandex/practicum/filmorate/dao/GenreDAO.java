@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -62,7 +63,7 @@ public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
-        GenreIdType result = GenreIdType.of(keyHolder.getKey().intValue());
+        GenreIdType result = GenreIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _genre, result);
         return result;
     }

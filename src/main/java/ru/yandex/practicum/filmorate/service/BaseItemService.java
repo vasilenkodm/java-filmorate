@@ -12,9 +12,9 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public abstract class BaseItemService<K extends SomeType<?>, T extends Item, S extends ItemStorage<K, T>> implements ItemService<K, T> {
+public abstract class BaseItemService<K extends SomeType<?>, T extends Item<K, T>, S extends ItemStorage<K, T>> implements ItemService<K, T> {
     protected final S storage;
-    
+
     public List<T> getAllItems() {
         log.debug("Вызов {}.getAllItems()", this.getClass().getName());
         return storage.getAllItems();
