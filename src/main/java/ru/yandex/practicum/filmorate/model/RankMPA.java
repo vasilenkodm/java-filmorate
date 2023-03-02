@@ -1,23 +1,29 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 
 import javax.validation.constraints.NotBlank;
 
-@Setter @Getter @Builder @ToString @EqualsAndHashCode
-public class RankMPA implements Item<RankMPAIdType, RankMPA> {
-    private RankMPAIdType id;
+@Setter
+@Getter
+@SuperBuilder(toBuilder = true)
+@ToString
+@EqualsAndHashCode(callSuper = true)
+public class RankMPA extends BaseItem<RankMPAIdType, RankMPA> implements Item<RankMPAIdType, RankMPA> {
+    RankMPA() {
+        super();
+    }
 
     @NotBlank
     private String name;
 
-    @NotBlank
-    private String description;
-
     @Override
     public void updateWith(RankMPA _source) {
         this.name = _source.getName();
-        this.description = _source.getDescription();
     }
 }

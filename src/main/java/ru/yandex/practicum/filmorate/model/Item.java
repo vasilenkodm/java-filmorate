@@ -5,5 +5,6 @@ public interface Item<K, T extends Item> {
 
     void setId(K _id);
 
-    void updateWith(final T _item);
+    default void updateWith(final T _item) {
+    }
 }

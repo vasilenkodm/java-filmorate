@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@Primary
 public class InMemoryFilmStorage extends BaseItemInMemoryStorage<FilmIdType, Film> implements FilmStorage {
     private final Map<FilmIdType, Set<UserIdType>> likers = new TreeMap<>();
     private FilmIdType lastId = FilmIdType.of(0L);

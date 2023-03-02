@@ -23,7 +23,6 @@ import java.util.List;
 public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
     public static final String ID_FIELD = "rankMPA_id";
     public static final String NAME_FIELD = "rankMPA_name";
-    public static final String DESCRIPTION_FIELD = "description";
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
     private String idNotFoundMsg(RankMPAIdType _id) {
@@ -47,7 +46,7 @@ public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
     }
 
     public List<RankMPA> selectAll() {
-        final String sqlStatement = String.format("select * from RankMPA order by %1$s", NAME_FIELD);
+        final String sqlStatement = String.format("select * from RankMPA order by %1$s", ID_FIELD);
         List<RankMPA> result = jdbcNamedTemplate.query(sqlStatement, (rs, row) -> makeRankMPA(rs));
 
         log.info("Выполнено {}.selectAll()", this.getClass().getName());
@@ -61,11 +60,12 @@ public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
                 .addValue(NAME_FIELD, _rankMPA.getName());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcNamedTemplate.update( sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
+        jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
-        log.info("Выполнено {}.create({}) =>", this.getClass().getName(), _rankMPA, keyHolder.getKey());
+        RankMPAIdType result = RankMPAIdType.of(keyHolder.getKey().intValue());
+        log.info("Выполнено {}.create({}) =>", this.getClass().getName(), _rankMPA, result);
 
-        return RankMPAIdType.of(keyHolder.getKey().intValue());
+        return result;
     }
 
     public void update(RankMPA _rankMPA) {
@@ -88,19 +88,19 @@ public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
                 .addValue(ID_FIELD, _id.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
-        if (rowCount==0) {
+        if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
         }
 
         log.info("Выполнено {}.delete({})", this.getClass().getName(), _id);
     }
 
-    private RankMPA makeRankMPA(ResultSet rs) throws SQLException {
+    public static RankMPA makeRankMPA(ResultSet _rs) throws SQLException {
+        log.debug("Вызов {}.makeRankMPA({})", RankMPADAO.class.getName(), _rs);
         return RankMPA.builder()
-                    .id(RankMPAIdType.of(rs.getInt(ID_FIELD)))
-                    .name(rs.getString(NAME_FIELD))
-                    .description(rs.getString(DESCRIPTION_FIELD))
-                    .build();
+                .id(RankMPAIdType.of(_rs.getInt(ID_FIELD)))
+                .name(_rs.getString(NAME_FIELD))
+                .build();
     }
 
 }

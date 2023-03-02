@@ -46,7 +46,7 @@ public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
     }
 
     public List<Genre> selectAll() {
-        final String sqlStatement = String.format("select * from Genre order by %1$s", NAME_FIELD);
+        final String sqlStatement = String.format("select * from Genre order by %1$s", ID_FIELD);
         List<Genre> result = jdbcNamedTemplate.query(sqlStatement, (rs, row) -> makeGenre(rs));
 
         log.info("Выполнено {}.selectAll()", this.getClass().getName());
@@ -60,11 +60,11 @@ public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
                 .addValue(NAME_FIELD, _genre.getName());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcNamedTemplate.update( sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
+        jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
-        log.info("Выполнено {}.create({}) =>", this.getClass().getName(), _genre, keyHolder.getKey());
-
-        return GenreIdType.of(keyHolder.getKey().intValue());
+        GenreIdType result = GenreIdType.of(keyHolder.getKey().intValue());
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _genre, result);
+        return result;
     }
 
     public void update(Genre _genre) {
@@ -87,18 +87,19 @@ public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
                 .addValue(ID_FIELD, _id.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
-        if (rowCount==0) {
+        if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
         }
 
         log.info("Выполнено {}.delete({})", this.getClass().getName(), _id);
     }
 
-    private Genre makeGenre(ResultSet rs) throws SQLException {
+    public static Genre makeGenre(ResultSet _rs) throws SQLException {
+        log.debug("Вызов {}.makeGenre({})", GenreDAO.class.getName(), _rs);
         return Genre.builder()
-                    .id(GenreIdType.of(rs.getInt(ID_FIELD)))
-                    .name(rs.getString(NAME_FIELD))
-                    .build();
+                .id(GenreIdType.of(_rs.getInt(ID_FIELD)))
+                .name(_rs.getString(NAME_FIELD))
+                .build();
     }
 
 }

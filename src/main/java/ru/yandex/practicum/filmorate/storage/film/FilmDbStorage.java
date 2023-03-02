@@ -1,42 +1,45 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.FilmDAO;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.BaseItemDbStorage;
+import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.UserIdType;
+
+import java.util.List;
 
 @Slf4j
 @Component
-//@Primary
-public class FilmDbStorage //implements FilmStorage
-{
-    /*
-    private final Map<Long, Film> films = new TreeMap<>();
-
-    public List<Film> getFilms() {
-        return new ArrayList<>(films.values());
+@Primary
+public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> implements FilmStorage {
+    FilmDbStorage(FilmDAO _dao) {
+        super(_dao);
     }
 
-    public boolean notExits(Long filmId) {
-        return !films.containsKey(filmId);
+    @Override
+    public List<Film> getPopular(int _maxCount) {
+        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _maxCount);
+        return dao.getPopular(_maxCount);
     }
 
-    public void addFilm(Film film) {
-        films.put(film.getId(), film);
+    @Override
+    public int getLikesCount(FilmIdType _id) {
+        log.debug("Вызов {}.getLikesCount({})", this.getClass().getName(), _id);
+        return dao.getLikesCount(_id);
     }
 
-    public void updateFilm(Film film) {
-        films.get(film.getId()).updateWith(film);
+    @Override
+    public void addLike(FilmIdType _filmId, UserIdType _userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
+        dao.addLike(_filmId, _userId);
     }
 
-    public Film getFilm(Long filmId) {
-        return films.get(filmId);
+    @Override
+    public void removeLike(FilmIdType _filmId, UserIdType _userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
+        dao.removeLike(_filmId, _userId);
     }
-
-    public List<Film> getPopular(int maxCount) {
-        return films.values()
-                    .stream()
-                    .sorted(Comparator.comparingInt(Film::getRating).thenComparing(Film::getId).reversed())
-                    .limit(maxCount)
-                    .collect(Collectors.toList());
-    }
-*/
 }

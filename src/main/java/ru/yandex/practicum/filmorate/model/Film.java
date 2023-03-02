@@ -1,6 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import ru.yandex.practicum.filmorate.constraint.LocalDateConstraint;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
 
@@ -12,16 +16,23 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter @Getter @Builder @ToString @EqualsAndHashCode
-public class Film implements Item<FilmIdType, Film> {
+@Setter
+@Getter
+@SuperBuilder(toBuilder = true)
+@ToString
+@EqualsAndHashCode(callSuper = true)
+public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType, Film> {
+    Film() {
+        super();
+    }
+
     public static final int MAX_DESCRIPTION_LENGTH = 200;
 
-    private FilmIdType id;
     @NotBlank(message = "Название не может быть пустым!")
     private String name; //название — name;
 
     @NotNull(message = "Требуется указать описание!")
-    @Size(max=MAX_DESCRIPTION_LENGTH, message = "Максимальная длина описания — " + MAX_DESCRIPTION_LENGTH + " символов!")
+    @Size(max = MAX_DESCRIPTION_LENGTH, message = "Максимальная длина описания — " + MAX_DESCRIPTION_LENGTH + " символов!")
     private String description; //описание — description;
 
     @NotNull(message = "Требуется указать дату резиза!") @LocalDateConstraint(minDate= "1895-12-28", message = "Релиз не может быть ранее 28.12.1895!")
@@ -31,6 +42,7 @@ public class Film implements Item<FilmIdType, Film> {
     private int duration; //продолжительность фильма — duration.
 
     private RankMPA mpa;
+
     private List<Genre> genres;
 
     public void updateWith(Film film) {
@@ -42,8 +54,7 @@ public class Film implements Item<FilmIdType, Film> {
         if ((film.mpa == null)) {
             this.mpa = null;
         } else {
-            this.mpa = RankMPA.builder().id(film.mpa.getId()).build();
-            this.mpa.updateWith(film.mpa);
+            this.mpa = film.mpa.toBuilder().id(film.mpa.getId()).build();
         }
     }
 

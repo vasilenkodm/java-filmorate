@@ -77,8 +77,7 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
         jdbcNamedTemplate.update( sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
 
         UserIdType result = UserIdType.of(keyHolder.getKey().longValue());
-        log.info("Выполнено {}.create({})", this.getClass().getName(), _user);
-
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _user, result);
         return result;
     }
 
@@ -106,22 +105,22 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
                 .addValue(ID_FIELD, _id.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
-        if (rowCount==0) {
+        if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
         }
 
         log.info("Выполнено {}.delete({})", this.getClass().getName(), _id);
     }
 
-    private User makeUser(ResultSet rs) throws SQLException {
-        log.debug("Вызов {}.makeUser({})", this.getClass().getName(), rs);
+    private static User makeUser(ResultSet _rs) throws SQLException {
+        log.debug("Вызов {}.makeUser({})", UserDAO.class.getName(), _rs);
         return User.builder()
-                    .id(UserIdType.of(rs.getLong(ID_FIELD)))
-                    .name(rs.getString(NAME_FIELD))
-                    .email(rs.getString(EMAIL_FIELD))
-                    .login(rs.getString(LOGIN_FIELD))
-                    .birthday(rs.getDate(BIRTHDAY_FIELD).toLocalDate())
-                    .build();
+                .id(UserIdType.of(_rs.getLong(ID_FIELD)))
+                .name(_rs.getString(NAME_FIELD))
+                .email(_rs.getString(EMAIL_FIELD))
+                .login(_rs.getString(LOGIN_FIELD))
+                .birthday(_rs.getDate(BIRTHDAY_FIELD).toLocalDate())
+                .build();
     }
 
     public List<User> getFrields(UserIdType _id) {
