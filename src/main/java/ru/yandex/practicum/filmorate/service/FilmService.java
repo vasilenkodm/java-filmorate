@@ -13,10 +13,9 @@ import java.util.List;
 @Service
 public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> {
 
-    FilmService(FilmStorage _storage) {
+    public FilmService(FilmStorage _storage) {
         super(_storage);
     }
-        
 
     public void addLike(FilmIdType _filmId, UserIdType _userId) {
         log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _filmId,  _userId);

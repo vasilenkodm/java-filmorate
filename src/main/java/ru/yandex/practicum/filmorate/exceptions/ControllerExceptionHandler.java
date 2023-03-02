@@ -19,15 +19,23 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
+
+    public static final String TIMESTAMP = "timestamp";
+    public static final String DATACLASS = "dataclass";
+    public static final String ERROR = "error";
+    public static final String STATUS = "status";
+    public static final String PATH = "path";
+    public static final String ERROR_LIST = "errorList";
+
     @SuppressWarnings("unused")
     @ExceptionHandler(value = {KeyNotFoundException.class})
     public ResponseEntity<Map<String, Object>> exceptionHandler(KeyNotFoundException ex, ServletWebRequest request) {
         Map<String, Object> bodyMap = new LinkedHashMap<>();
-        bodyMap.put("timestamp", Instant.now());
-        bodyMap.put("status", HttpStatus.NOT_FOUND);
-        bodyMap.put("path", request.getRequest().getRequestURI());
-        bodyMap.put("dataclass", ex.getKeyOwnerClass().getSimpleName());
-        bodyMap.put("error", ex.getMessage());
+        bodyMap.put(STATUS, HttpStatus.NOT_FOUND);
+        bodyMap.put(TIMESTAMP, Instant.now());
+        bodyMap.put(PATH, request.getRequest().getRequestURI());
+        bodyMap.put(DATACLASS, ex.getKeyOwnerClass().getSimpleName());
+        bodyMap.put(ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(bodyMap);
@@ -37,11 +45,11 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {FeatureNotSupportedException.class})
     public ResponseEntity<Map<String, Object>> exceptionHandler(FeatureNotSupportedException ex, ServletWebRequest request) {
         Map<String, Object> bodyMap = new LinkedHashMap<>();
-        bodyMap.put("timestamp", Instant.now());
-        bodyMap.put("status", HttpStatus.NOT_IMPLEMENTED);
-        bodyMap.put("path", request.getRequest().getRequestURI());
-        bodyMap.put("dataclass", ex.getKeyOwnerClass().getSimpleName());
-        bodyMap.put("error", ex.getMessage());
+        bodyMap.put(STATUS, HttpStatus.NOT_IMPLEMENTED);
+        bodyMap.put(TIMESTAMP, Instant.now());
+        bodyMap.put(PATH, request.getRequest().getRequestURI());
+        bodyMap.put(DATACLASS, ex.getKeyOwnerClass().getSimpleName());
+        bodyMap.put(ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_IMPLEMENTED)
                 .body(bodyMap);
@@ -51,11 +59,11 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = {UnexpectedErrorException.class})
     public ResponseEntity<Map<String, Object>> exceptionHandler(UnexpectedErrorException ex, ServletWebRequest request) {
         Map<String, Object> bodyMap = new LinkedHashMap<>();
-        bodyMap.put("timestamp", Instant.now());
-        bodyMap.put("status", HttpStatus.INTERNAL_SERVER_ERROR);
-        bodyMap.put("path", request.getRequest().getRequestURI());
-        bodyMap.put("dataclass", ex.getKeyOwnerClass().getSimpleName());
-        bodyMap.put("error", ex.getMessage());
+        bodyMap.put(STATUS, HttpStatus.INTERNAL_SERVER_ERROR);
+        bodyMap.put(TIMESTAMP, Instant.now());
+        bodyMap.put(PATH, request.getRequest().getRequestURI());
+        bodyMap.put(DATACLASS, ex.getKeyOwnerClass().getSimpleName());
+        bodyMap.put(ERROR, ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(bodyMap);
@@ -66,18 +74,18 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Map<String, Object>> methodArgumentNotValidException(MethodArgumentNotValidException ex, ServletWebRequest request) {
         log.warn(ex.getMessage());
 
-        List<String> errorList=  new ArrayList<>(ex.getAllErrors().size());
-        for (ObjectError error: ex.getAllErrors()) {
-            errorList.add(error.getObjectName()+"."+error.getCode()+":" +error.getDefaultMessage());
+        List<String> errorList = new ArrayList<>(ex.getAllErrors().size());
+        for (ObjectError error : ex.getAllErrors()) {
+            errorList.add(error.getObjectName() + "." + error.getCode() + ":" + error.getDefaultMessage());
         }
 
         Map<String, Object> bodyMap = new LinkedHashMap<>();
-        bodyMap.put("timestamp", Instant.now());
-        bodyMap.put("status", HttpStatus.BAD_REQUEST);
-        bodyMap.put("path", request.getRequest().getRequestURI());
-        bodyMap.put("dataClass", ex.getObjectName());
-        bodyMap.put("error", ex.getMessage());
-        bodyMap.put("errorList", errorList);
+        bodyMap.put(STATUS, HttpStatus.BAD_REQUEST);
+        bodyMap.put(TIMESTAMP, Instant.now());
+        bodyMap.put(PATH, request.getRequest().getRequestURI());
+        bodyMap.put(DATACLASS, ex.getObjectName());
+        bodyMap.put(ERROR, ex.getMessage());
+        bodyMap.put(ERROR_LIST, errorList);
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

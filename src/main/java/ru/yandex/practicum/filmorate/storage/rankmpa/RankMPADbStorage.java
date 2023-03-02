@@ -12,5 +12,7 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 @Component
 @Primary
 public class RankMPADbStorage extends BaseItemDbStorage<RankMPAIdType, RankMPA, RankMPADAO> implements RankMPAStorage {
-    RankMPADbStorage(RankMPADAO dao) { super(dao); }
+    public RankMPADbStorage(RankMPADAO dao) {
+        super(dao);
+    }
 }

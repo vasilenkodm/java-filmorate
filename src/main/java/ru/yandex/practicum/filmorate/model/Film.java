@@ -22,7 +22,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType, Film> {
-    Film() {
+    public Film() {
         super();
     }
 
@@ -45,6 +45,7 @@ public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType,
 
     private List<Genre> genres;
 
+    @Override
     public void updateWith(Film film) {
         this.name = film.name;
         this.description = film.description;

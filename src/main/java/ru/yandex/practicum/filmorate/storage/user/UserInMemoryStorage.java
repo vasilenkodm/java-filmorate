@@ -43,6 +43,7 @@ public class UserInMemoryStorage extends BaseItemInMemoryStorage<UserIdType, Use
         super.deleteItem(_id);
     }
 
+    @Override
     public void addFriend(UserIdType _userId, UserIdType _friendId) {
         Set<UserIdType> set = friends.get(_userId);
 
@@ -57,6 +58,7 @@ public class UserInMemoryStorage extends BaseItemInMemoryStorage<UserIdType, Use
         log.info("Выполнено {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
     }
 
+    @Override
     public void removeFriend(UserIdType _userId, UserIdType _friendId) {
         Set<UserIdType> set = friends.get(_userId);
 

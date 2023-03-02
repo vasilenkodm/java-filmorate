@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseItem<UserIdType, User> implements Item<UserIdType, User> {
-    User() {
+    public User() {
         super();
     }
 
@@ -39,6 +39,7 @@ public class User extends BaseItem<UserIdType, User> implements Item<UserIdType,
         return (name==null || name.isBlank()) ? login : name;
     }
 
+    @Override
     public void updateWith(User user) {
         this.email = user.email;
         this.login = user.login;

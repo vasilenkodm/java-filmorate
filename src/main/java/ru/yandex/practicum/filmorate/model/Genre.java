@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class Genre extends BaseItem<GenreIdType, Genre> implements Item<GenreIdType, Genre> {
-    Genre() {
+    public Genre() {
         super();
     }
 

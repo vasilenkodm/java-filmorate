@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class RankMPA extends BaseItem<RankMPAIdType, RankMPA> implements Item<RankMPAIdType, RankMPA> {
-    RankMPA() {
+    public RankMPA() {
         super();
     }
 

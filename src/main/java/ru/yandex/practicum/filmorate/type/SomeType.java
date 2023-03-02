@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = SomeTypeSerializer.class)
 public abstract class SomeType<T extends Comparable<T>> implements java.io.Serializable, Comparable<SomeType<T>> {
-    private final T value;
+    private final transient T value;
 
-    public SomeType(T value) {
+    protected SomeType(T value) {
         this.value = value;
     }
 

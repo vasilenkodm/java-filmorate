@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 @Primary
 public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> implements FilmStorage {
-    FilmDbStorage(FilmDAO _dao) {
+    public FilmDbStorage(FilmDAO _dao) {
         super(_dao);
     }
 

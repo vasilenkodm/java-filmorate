@@ -12,5 +12,7 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 @Component
 @Primary
 public class GenreDbStorage extends BaseItemDbStorage<GenreIdType, Genre, GenreDAO> implements GenreStorage {
-    GenreDbStorage(GenreDAO dao) { super(dao); }
+    public GenreDbStorage(GenreDAO dao) {
+        super(dao);
+    }
 }

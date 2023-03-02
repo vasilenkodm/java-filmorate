@@ -127,9 +127,6 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
     public List<User> getFriends(UserIdType _id) {
         final String sqlStatement = String.format(" select u.* " +
                 " from Friendship inv /* Приглашение к дружбе */ " +
-//                        " join Friendship acp /* Принятые приглашения*/ " +
-//                        "    on acp.proposer_id = inv.invited_id /* \"протянутая\" рука */ " +
-//                        "    and inv.proposer_id = acp.invited_id  /* \"встречная\" рука*/ " +
                 " join UserInfo u " +
                 "    on u.user_id = inv.invited_id " +
                 " where inv.proposer_id = :%1$s " +
@@ -149,17 +146,11 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
                 "    from " +
                 "    (select inv.invited_id " +
                 "    from Friendship inv /* Приглашение к дружбе */ " +
-//                "    join Friendship acp /* Принятые приглашения*/  " +
-//                "        on acp.proposer_id = inv.invited_id /* \"протянутая\" рука */ " +
-//                "        and inv.proposer_id = acp.invited_id  /* \"встречная\" рука*/ " +
                 "    where inv.proposer_id = :%1$s " +
                 "    ) f1 " +
                 "    join " +
                 "    (select inv.invited_id " +
                 "    from Friendship inv /* Приглашение к дружбе */ " +
-//                "    join Friendship acp /* Принятые приглашения*/  " +
-//                "        on acp.proposer_id = inv.invited_id /* \"протянутая\" рука */ " +
-//                "        and inv.proposer_id = acp.invited_id  /* \"встречная\" рука*/ " +
                 "    where inv.proposer_id = :%2$s " +
                 "    ) f2 on f2.invited_id = f1.invited_id " +
                 "    join UserInfo u " +
