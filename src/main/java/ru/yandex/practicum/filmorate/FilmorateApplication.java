@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 @RequiredArgsConstructor
 @Slf4j
 public class FilmorateApplication {
+
 	private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
 	public static void main(String[] args) {
