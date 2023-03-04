@@ -1,6 +1,6 @@
 ![Схема БД](https://github.com/vasilenkodm/java-filmorate/raw/main/Filmorate_database_schema.png)
 
-https://dbdiagram.io/d/63f28c35296d97641d821eec
+Ссылка на схему: https://dbdiagram.io/d/63f28c35296d97641d821eec
 
 //Filmorate
 Table "UserInfo" {
