@@ -17,7 +17,7 @@ public abstract class BaseItemController<K extends ValueType<?>, T extends Item<
 
     @GetMapping()
     public List<T> readAllItems() {
-        log.debug("Вызов {}.getAllItems()", this.getClass().getName());
+        log.debug("Вызов {}.readAllItems()", this.getClass().getName());
         return service.readAllItems();
     }
 

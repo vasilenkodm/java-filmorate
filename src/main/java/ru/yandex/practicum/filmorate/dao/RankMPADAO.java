@@ -55,17 +55,17 @@ public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
         return result;
     }
 
-    public RankMPAIdType create(RankMPA _rankMPA) {
+    public RankMPA create(RankMPA _source) {
         final String sqlStatement = String.format("insert into RankMPA (%1$s) values ( :%1$s )", NAME_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(NAME_FIELD, _rankMPA.getName());
+                .addValue(NAME_FIELD, _source.getName());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
-
-        RankMPAIdType result = RankMPAIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _rankMPA, result);
-
+        RankMPAIdType newId = RankMPAIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        RankMPA result = (RankMPA) _source.makeCopy(); //Развязываем образец и результат
+        result.setId(newId);
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;
     }
 

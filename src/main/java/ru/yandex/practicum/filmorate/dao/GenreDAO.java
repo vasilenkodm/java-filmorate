@@ -55,16 +55,17 @@ public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
         return result;
     }
 
-    public GenreIdType create(Genre _genre) {
+    public Genre create(Genre _source) {
         final String sqlStatement = String.format("insert into Genre (%1$s) values ( :%1$s )", NAME_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(NAME_FIELD, _genre.getName());
+                .addValue(NAME_FIELD, _source.getName());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
-
-        GenreIdType result = GenreIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _genre, result);
+        GenreIdType newId = GenreIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        Genre result = (Genre) _source.makeCopy(); //Развязываем образец и результат
+        result.setId(newId);
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;
     }
 

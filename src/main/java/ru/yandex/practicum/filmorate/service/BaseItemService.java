@@ -16,7 +16,7 @@ public abstract class BaseItemService<K extends ValueType<?>, T extends Item<K, 
     protected final S storage;
 
     public List<T> readAllItems() {
-        log.debug("Вызов {}.getAllItems()", this.getClass().getName());
+        log.debug("Вызов {}.readAllItems()", this.getClass().getName());
         return storage.readAllItems();
     }
 

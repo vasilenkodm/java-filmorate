@@ -71,25 +71,24 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         return result;
     }
 
-    public FilmIdType create(Film _film) {
+    public Film create(Film _source) {
         final String sqlStatement = String.format("insert into Film (%1$s, %2$s, %3$s, %4$s, %5$s) values ( :%1$s, :%2$s, :%3$s, :%4$s, :%5$s )"
                 , NAME_FIELD, DESCRIPRTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
         MapSqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(NAME_FIELD, _film.getName())
-                .addValue(DESCRIPRTION_FIELD, _film.getDescription())
-                .addValue(RELEASE_FIELD, Date.valueOf(_film.getReleaseDate()))
-                .addValue(DURATION_FIELD, _film.getDuration())
-                .addValue(RANKMPA_FIELD, _film.getMpa().getId().getValue())
-                .addValue(NAME_FIELD, _film.getName());
+                .addValue(NAME_FIELD, _source.getName())
+                .addValue(DESCRIPRTION_FIELD, _source.getDescription())
+                .addValue(RELEASE_FIELD, Date.valueOf(_source.getReleaseDate()))
+                .addValue(DURATION_FIELD, _source.getDuration())
+                .addValue(RANKMPA_FIELD, _source.getMpa().getId().getValue())
+                .addValue(NAME_FIELD, _source.getName());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
-
-        FilmIdType result = FilmIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
-
-        updateFilmGenres(result, _film.getGenres());
-
-        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _film, result);
+        FilmIdType newId = FilmIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        updateFilmGenres(newId, _source.getGenres());
+        Film result = (Film) _source.makeCopy(); //Развязываем образец и результат
+        result.setId(newId);
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;
     }
 

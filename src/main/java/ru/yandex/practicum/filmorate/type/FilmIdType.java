@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.type;
 
-public class FilmIdType extends ValueType<Long> {
-    public FilmIdType(final Long value) {
+import java.io.Serializable;
+
+public final class FilmIdType extends ValueType<Long> implements Serializable {
+    public FilmIdType(Long value) {
         super(value);
     }
 
-    public static FilmIdType of(final Long _value) {
+    public static FilmIdType of(Long _value) {
         return new FilmIdType(_value);
     }
 }

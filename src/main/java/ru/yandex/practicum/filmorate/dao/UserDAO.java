@@ -65,20 +65,21 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
         return result;
     }
 
-    public UserIdType create(User _user) {
+    public User create(User _source) {
         final String sqlStatement = String.format("insert into UserInfo (%1$s, %2$s, %3$s, %4$s) values ( :%1$s, :%2$s, :%3$s, :%4$s )"
-                                        , NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD);
+                , NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(NAME_FIELD, _user.getName())
-                .addValue(LOGIN_FIELD, _user.getLogin())
-                .addValue(EMAIL_FIELD, _user.getEmail())
-                .addValue(BIRTHDAY_FIELD, _user.getBirthday());
+                .addValue(NAME_FIELD, _source.getName())
+                .addValue(LOGIN_FIELD, _source.getLogin())
+                .addValue(EMAIL_FIELD, _source.getEmail())
+                .addValue(BIRTHDAY_FIELD, _source.getBirthday());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcNamedTemplate.update( sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
-
-        UserIdType result = UserIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
-        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _user, result);
+        jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
+        UserIdType newId = UserIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        User result = (User) _source.makeCopy(); //Развязываем образец и результат
+        result.setId(newId);
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;
     }
 

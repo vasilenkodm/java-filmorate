@@ -35,7 +35,7 @@ public abstract class BaseItemInMemoryStorage<K extends ValueType<?>, T extends 
     @Override
     public List<T> readAllItems() {
         List<T> result = new ArrayList<>(items.values());
-        log.info("Выполнено {}.getAllItems()", this.getClass().getName());
+        log.info("Выполнено {}.readAllItems()", this.getClass().getName());
         return result;
     }
 

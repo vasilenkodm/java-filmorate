@@ -19,6 +19,7 @@ import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +51,7 @@ class FilmDbStorageTest {
                 .description(dummyNameOne)
                 .releaseDate(LocalDate.now())
                 .duration(100)
-                .genres(List.of(genre1))
+                .genres(new ArrayList<>(List.of(genre1)))
                 .mpa(mpa1)
                 .build();
         final Film[] item = {filmStorage.createItem(item2Create)};

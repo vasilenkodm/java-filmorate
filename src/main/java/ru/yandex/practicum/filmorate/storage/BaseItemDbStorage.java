@@ -19,7 +19,7 @@ public abstract class BaseItemDbStorage<K extends ValueType<?>, T extends Item<K
 
     @Override
     public List<T> readAllItems() {
-        log.debug("Вызов {}.getAllItems()", this.getClass().getName());
+        log.debug("Вызов {}.readAllItems()", this.getClass().getName());
         return dao.selectAll();
     }
 
@@ -32,8 +32,7 @@ public abstract class BaseItemDbStorage<K extends ValueType<?>, T extends Item<K
     @Override
     public T createItem(T _item) {
         log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        K id = dao.create(_item);
-        return dao.read(id);
+        return dao.create(_item);
     }
 
     @Override

@@ -5,7 +5,7 @@ import ru.yandex.practicum.filmorate.model.Item;
 import java.util.List;
 
 public interface ItemDAO<K, T extends Item<K, T>> {
-    K create(T _item);
+    T create(T _item);
 
     void update(T _item);
 

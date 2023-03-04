@@ -46,17 +46,13 @@ public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType,
     private List<Genre> genres;
 
     @Override
-    public void updateWith(Film film) {
-        this.name = film.name;
-        this.description = film.description;
-        this.releaseDate = film.releaseDate;
-        this.duration = film.duration;
-        this.genres = (film.genres == null) ? null : new ArrayList<>(film.genres);
-        if ((film.mpa == null)) {
-            this.mpa = null;
-        } else {
-            this.mpa = film.mpa.toBuilder().id(film.mpa.getId()).build();
-        }
+    public void updateWith(Film _source) {
+        this.name = _source.name;
+        this.description = _source.description;
+        this.releaseDate = _source.releaseDate;
+        this.duration = _source.duration;
+        this.mpa = _source.mpa;
+        this.genres = (_source.genres == null) ? null : new ArrayList<>(_source.genres);
     }
 
 }

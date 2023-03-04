@@ -40,11 +40,11 @@ public class User extends BaseItem<UserIdType, User> implements Item<UserIdType,
     }
 
     @Override
-    public void updateWith(User user) {
-        this.email = user.email;
-        this.login = user.login;
-        this.name = user.name;
-        this.birthday = user.birthday;
+    public void updateWith(User _user) {
+        this.email = _user.email;
+        this.login = _user.login;
+        this.name = _user.name;
+        this.birthday = _user.birthday;
     }
 
 }

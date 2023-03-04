@@ -2,9 +2,12 @@ package ru.yandex.practicum.filmorate.type;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 @JsonSerialize(using = ValueTypeSerializer.class)
-public abstract class ValueType<T extends Comparable<T>> implements java.io.Serializable, Comparable<ValueType<T>> {
-    private final transient T value;
+public abstract class ValueType<T extends Comparable<T>> implements Serializable, Comparable<ValueType<T>> {
+    private final T value;
 
     protected ValueType(T value) {
         this.value = value;
@@ -37,6 +40,6 @@ public abstract class ValueType<T extends Comparable<T>> implements java.io.Seri
         }
 
         ValueType<?> other = (ValueType<?>) o;
-        return this.value.equals(other.value);
+        return Objects.equals(this.value, other.value);
     }
 }
