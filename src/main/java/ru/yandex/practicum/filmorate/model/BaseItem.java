@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Setter
@@ -11,9 +8,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @ToString
 @EqualsAndHashCode
-abstract class BaseItem<K, T extends BaseItem<K, T>> {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract class BaseItem<K, T extends BaseItem<K, T>> {
     protected K id;
-
-    BaseItem() {
-    }
 }

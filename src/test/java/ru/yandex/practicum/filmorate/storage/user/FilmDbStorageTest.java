@@ -38,7 +38,7 @@ class FilmDbStorageTest {
     void testFilmStorage() {
         final String dummyNameOne = String.valueOf(LocalDate.now().getYear());
         final String dummyNameTwo = dummyNameOne + "+";
-        List<Film> filmList = filmStorage.getAllItems();
+        List<Film> filmList = filmStorage.readAllItems();
         int lastSize = filmList.size();
         Genre genre1 = genreStorage.createItem(Genre.builder().name(dummyNameOne).build());
         RankMPA mpa1 = mpaStorage.createItem(RankMPA.builder().name(dummyNameOne).build());
@@ -58,13 +58,13 @@ class FilmDbStorageTest {
         assertEquals(1, item[0].getGenres().size());
         assertEquals(dummyNameOne, item[0].getGenres().get(0).getName());
         assertEquals(dummyNameOne, item[0].getMpa().getName());
-        assertEquals(1, filmStorage.getAllItems().size() - lastSize);
+        assertEquals(1, filmStorage.readAllItems().size() - lastSize);
 
         item[0].setName(dummyNameTwo);
         item[0].setMpa(mpa2);
         item[0].getGenres().add(genre2);
         assertDoesNotThrow(() -> item[0] = filmStorage.updateItem(item[0]));
-        assertEquals(1, filmStorage.getAllItems().size() - lastSize);
+        assertEquals(1, filmStorage.readAllItems().size() - lastSize);
         assertEquals(dummyNameTwo, item[0].getName());
         assertEquals(2, item[0].getGenres().size());
         assertEquals(dummyNameOne, item[0].getGenres().get(0).getName());
@@ -81,7 +81,7 @@ class FilmDbStorageTest {
         item[0].getGenres().clear();
         assertDoesNotThrow(() -> item[0] = filmStorage.updateItem(item[0]));
         assertDoesNotThrow(() -> filmStorage.deleteItem(item[0].getId()));
-        assertEquals(lastSize, filmStorage.getAllItems().size());
+        assertEquals(lastSize, filmStorage.readAllItems().size());
 
         assertThrows(KeyNotFoundException.class, () -> filmStorage.deleteItem(dummyId[0]));
     }
@@ -94,7 +94,7 @@ class FilmDbStorageTest {
 
         int lastPopularCount = filmStorage.getPopular(100).size();
 
-        RankMPA mpa = mpaStorage.getAllItems().get(0);
+        RankMPA mpa = mpaStorage.readAllItems().get(0);
         Film[] film = {Film.builder().name(nameOne).description(nameOne).duration(100).releaseDate(LocalDate.now()).mpa(mpa).build()
                 , Film.builder().name(nameTwo).description(nameTwo).duration(200).releaseDate(LocalDate.now()).mpa(mpa).build()};
         User userOne = User.builder().name(nameOne).login(nameOne).email(nameOne).birthday(LocalDate.now().minusYears(1)).build();

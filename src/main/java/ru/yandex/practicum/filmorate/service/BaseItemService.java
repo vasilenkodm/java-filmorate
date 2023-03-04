@@ -5,19 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Item;
 import ru.yandex.practicum.filmorate.storage.ItemStorage;
-import ru.yandex.practicum.filmorate.type.SomeType;
+import ru.yandex.practicum.filmorate.type.ValueType;
 
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public abstract class BaseItemService<K extends SomeType<?>, T extends Item<K, T>, S extends ItemStorage<K, T>> implements ItemService<K, T> {
+public abstract class BaseItemService<K extends ValueType<?>, T extends Item<K, T>, S extends ItemStorage<K, T>> implements ItemService<K, T> {
     protected final S storage;
 
-    public List<T> getAllItems() {
+    public List<T> readAllItems() {
         log.debug("Вызов {}.getAllItems()", this.getClass().getName());
-        return storage.getAllItems();
+        return storage.readAllItems();
     }
 
     @Override

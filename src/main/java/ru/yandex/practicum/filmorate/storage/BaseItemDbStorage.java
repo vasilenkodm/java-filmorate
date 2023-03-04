@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.ItemDAO;
 import ru.yandex.practicum.filmorate.model.Item;
-import ru.yandex.practicum.filmorate.type.SomeType;
+import ru.yandex.practicum.filmorate.type.ValueType;
 
 import java.util.List;
 
@@ -14,13 +14,11 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Primary
-//public interface BaseItemStorage<K extends SomeType<?>, T extends BaseItem> {
-public abstract class BaseItemDbStorage<K extends SomeType<?>, T extends Item<K, T>, D extends ItemDAO<K, T>> implements ItemStorage<K, T>
-{
+public abstract class BaseItemDbStorage<K extends ValueType<?>, T extends Item<K, T>, D extends ItemDAO<K, T>> implements ItemStorage<K, T> {
     protected final D dao;
 
     @Override
-    public List<T> getAllItems() {
+    public List<T> readAllItems() {
         log.debug("Вызов {}.getAllItems()", this.getClass().getName());
         return dao.selectAll();
     }

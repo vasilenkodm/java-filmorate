@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface UserStorage extends ItemStorage<UserIdType, User> {
 
-    void addFriend(UserIdType userId, UserIdType _friendId);
+    void addFriend(UserIdType _userId, UserIdType _friendId);
 
-    void removeFriend(UserIdType userId, UserIdType _friendId);
+    void removeFriend(UserIdType _userId, UserIdType _friendId);
 
     List<User> getFriends(UserIdType _userId);
 
-    List<User> commonFriends(UserIdType _userId1, UserIdType _userId2);
+    List<User> commonFriends(UserIdType _userIdOne, UserIdType _userIdTwo);
 
 }

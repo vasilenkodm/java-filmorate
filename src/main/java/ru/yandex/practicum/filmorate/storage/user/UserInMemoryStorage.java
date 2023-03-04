@@ -85,21 +85,21 @@ public class UserInMemoryStorage extends BaseItemInMemoryStorage<UserIdType, Use
     }
 
     @Override
-    public List<User> commonFriends(UserIdType _userId1, UserIdType _userId2) {
-        Set<UserIdType> friendsIds1 = friends.get(_userId1);
-        Set<UserIdType> friendsIds2 = friends.get(_userId2);
+    public List<User> commonFriends(UserIdType _userIdOne, UserIdType _userIdTwo) {
+        Set<UserIdType> friendsIds1 = friends.get(_userIdOne);
+        Set<UserIdType> friendsIds2 = friends.get(_userIdTwo);
 
         if (friendsIds1 == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId1), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(_userIdOne), this.getClass(), log);
         }
         if (friendsIds2 == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId2), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(_userIdTwo), this.getClass(), log);
         }
 
         Set<UserIdType> commonFriendsIds = new HashSet<>(friendsIds1);
         commonFriendsIds.retainAll(friendsIds2);
         List<User> result = commonFriendsIds.stream().map(items::get).collect(Collectors.toList());
-        log.info("Выполнено {}.commonFriends({}, {})", this.getClass().getName(), _userId1, _userId2);
+        log.info("Выполнено {}.commonFriends({}, {})", this.getClass().getName(), _userIdOne, _userIdTwo);
         return result;
     }
 

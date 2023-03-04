@@ -27,19 +27,19 @@ class GenreDbStorageTest {
     void testGenreStorage() {
         final String dummyNameOne = "+++++";
         final String dummyNameTwo = "-----";
-        List<Genre> genreList = genreStorage.getAllItems();
+        List<Genre> genreList = genreStorage.readAllItems();
         int lastSize = genreList.size();
         Genre item2Create = Genre.builder().name(dummyNameOne).build();
         final Genre item = genreStorage.createItem(item2Create);
         final GenreIdType itemId = item.getId();
         assertEquals(dummyNameOne, item.getName());
-        assertEquals(1, genreStorage.getAllItems().size() - lastSize);
+        assertEquals(1, genreStorage.readAllItems().size() - lastSize);
         assertThrows(DataAccessException.class, () -> genreStorage.createItem(item2Create));
         item.setName(dummyNameTwo);
         assertDoesNotThrow(() -> genreStorage.updateItem(item));
-        assertEquals(1, genreStorage.getAllItems().size() - lastSize);
+        assertEquals(1, genreStorage.readAllItems().size() - lastSize);
         assertDoesNotThrow(() -> genreStorage.deleteItem(itemId));
-        assertEquals(lastSize, genreStorage.getAllItems().size());
+        assertEquals(lastSize, genreStorage.readAllItems().size());
         assertThrows(KeyNotFoundException.class, () -> genreStorage.deleteItem(itemId));
     }
 

@@ -7,25 +7,24 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UnexpectedErrorException;
 import ru.yandex.practicum.filmorate.model.Item;
-import ru.yandex.practicum.filmorate.type.SomeType;
+import ru.yandex.practicum.filmorate.type.ValueType;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 @Primary
-//public interface BaseItemStorage<K extends SomeType<?>, T extends BaseItem> {
-public abstract class BaseItemInMemoryStorage<K extends SomeType<?>, T extends Item<K, T>> implements ItemStorage<K, T>
-{
-    protected final Map<K, T> items = new TreeMap<>();
+public abstract class BaseItemInMemoryStorage<K extends ValueType<?>, T extends Item<K, T>> implements ItemStorage<K, T> {
+    protected final Map<K, T> items = new HashMap<>();
 
     /**
      * Генерация теста сообщения о попытке обращения к несуществующему элементу
+     *
      * @param _id Идентификатор элемента
      * @return Текст сообщения о попытке обратиться к несуществующему элементу
      */
@@ -34,7 +33,7 @@ public abstract class BaseItemInMemoryStorage<K extends SomeType<?>, T extends I
     protected abstract K newItemId();
 
     @Override
-    public List<T> getAllItems() {
+    public List<T> readAllItems() {
         List<T> result = new ArrayList<>(items.values());
         log.info("Выполнено {}.getAllItems()", this.getClass().getName());
         return result;

@@ -28,7 +28,7 @@ class UserDbStorageTest {
     void testUserStorage() {
         final String loginOne = Instant.now().toString();
         final String loginTwo = loginOne + "+";
-        List<User> userList = userStorage.getAllItems();
+        List<User> userList = userStorage.readAllItems();
         int lastSize = userList.size();
 
         User user2create = User.builder().name(loginOne).email(loginOne).login(loginOne).birthday(LocalDate.now().minusYears(1)).build();
@@ -37,14 +37,14 @@ class UserDbStorageTest {
         final UserIdType userId = user.getId();
 
         assertEquals(loginOne, user.getName());
-        assertEquals(1, userStorage.getAllItems().size() - lastSize);
+        assertEquals(1, userStorage.readAllItems().size() - lastSize);
         assertThrows(DataAccessException.class, () -> userStorage.createItem(user2create));
         user.setName(loginTwo);
         assertDoesNotThrow(() -> userStorage.updateItem(user));
-        assertEquals(1, userStorage.getAllItems().size() - lastSize);
+        assertEquals(1, userStorage.readAllItems().size() - lastSize);
 
         assertDoesNotThrow(() -> userStorage.deleteItem(userId));
-        assertEquals(lastSize, userStorage.getAllItems().size());
+        assertEquals(lastSize, userStorage.readAllItems().size());
         assertThrows(KeyNotFoundException.class, () -> userStorage.deleteItem(userId));
     }
 

@@ -5,20 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Item;
 import ru.yandex.practicum.filmorate.service.ItemService;
-import ru.yandex.practicum.filmorate.type.SomeType;
+import ru.yandex.practicum.filmorate.type.ValueType;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseItemController<K extends SomeType<?>, T extends Item<K, T>, S extends ItemService<K, T>> {
+public abstract class BaseItemController<K extends ValueType<?>, T extends Item<K, T>, S extends ItemService<K, T>> {
     protected final S service;
 
     @GetMapping()
-    public List<T> getAllItems() {
+    public List<T> readAllItems() {
         log.debug("Вызов {}.getAllItems()", this.getClass().getName());
-        return service.getAllItems();
+        return service.readAllItems();
     }
 
     @GetMapping("/{_id}")

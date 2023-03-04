@@ -27,21 +27,21 @@ class RankMPADbStorageTest {
     void testMPAStorage() {
         final String dummyNameOne = "+++++";
         final String dummyNameTwo = "-----";
-        List<RankMPA> mpaList = mpaStorage.getAllItems();
+        List<RankMPA> mpaList = mpaStorage.readAllItems();
         int lastSize = mpaList.size();
         RankMPA item2Create = RankMPA.builder().name(dummyNameOne).build();
         RankMPA item = mpaStorage.createItem(item2Create);
         final RankMPAIdType itemId = item.getId();
 
         assertEquals(dummyNameOne, item.getName());
-        assertEquals(1, mpaStorage.getAllItems().size() - lastSize);
+        assertEquals(1, mpaStorage.readAllItems().size() - lastSize);
         assertThrows(DataAccessException.class, () -> mpaStorage.createItem(item2Create));
         item.setName(dummyNameTwo);
 
         assertDoesNotThrow(() -> mpaStorage.updateItem(item));
-        assertEquals(1, mpaStorage.getAllItems().size() - lastSize);
+        assertEquals(1, mpaStorage.readAllItems().size() - lastSize);
         assertDoesNotThrow(() -> mpaStorage.deleteItem(itemId));
-        assertEquals(lastSize, mpaStorage.getAllItems().size());
+        assertEquals(lastSize, mpaStorage.readAllItems().size());
         assertThrows(KeyNotFoundException.class, () -> mpaStorage.deleteItem(itemId));
     }
 
