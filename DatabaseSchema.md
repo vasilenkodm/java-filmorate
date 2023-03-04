@@ -1,4 +1,4 @@
-![Схема БД](https://github.com/vasilenkodm/java-filmorate/raw/main/Filmorate_database_schema.png)
+![Схема БД](https://github.com/vasilenkodm/java-filmorate/raw/main/Filmorate_database_schema_new.png)
 
 Ссылка на схему: https://dbdiagram.io/d/63f28c35296d97641d821eec
 
