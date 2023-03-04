@@ -77,7 +77,7 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
         UserIdType newId = UserIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
-        User result = (User) _source.makeCopy(); //Развязываем образец и результат
+        User result = (User) _source.clone(); //Развязываем образец и результат
         result.setId(newId);
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;

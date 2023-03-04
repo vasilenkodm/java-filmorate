@@ -63,7 +63,7 @@ public class GenreDAO implements ItemDAO<GenreIdType, Genre> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
         GenreIdType newId = GenreIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        Genre result = (Genre) _source.makeCopy(); //Развязываем образец и результат
+        Genre result = (Genre) _source.clone(); //Развязываем образец и результат
         result.setId(newId);
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;

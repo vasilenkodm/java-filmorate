@@ -86,7 +86,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
         FilmIdType newId = FilmIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
         updateFilmGenres(newId, _source.getGenres());
-        Film result = (Film) _source.makeCopy(); //Развязываем образец и результат
+        Film result = (Film) _source.clone(); //Развязываем образец и результат
         result.setId(newId);
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;

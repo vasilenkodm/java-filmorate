@@ -25,7 +25,7 @@ class FilmTest {
                         .name("genre")
                         .build())))
                 .build();
-        Film clone = (Film) origin.makeCopy();
+        Film clone = (Film) origin.clone();
 
 
         assertNotSame(origin.getId(), clone.getId(), "getId");

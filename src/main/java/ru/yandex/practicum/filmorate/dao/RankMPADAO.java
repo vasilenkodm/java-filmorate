@@ -63,7 +63,7 @@ public class RankMPADAO implements ItemDAO<RankMPAIdType, RankMPA> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
         RankMPAIdType newId = RankMPAIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        RankMPA result = (RankMPA) _source.makeCopy(); //Развязываем образец и результат
+        RankMPA result = (RankMPA) _source.clone(); //Развязываем образец и результат
         result.setId(newId);
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
         return result;
