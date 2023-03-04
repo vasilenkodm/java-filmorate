@@ -155,6 +155,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     private Film makeFilm(ResultSet _rs) throws SQLException {
+        log.debug("Вызов {}.makeFilm({})", this.getClass().getName(), _rs);
         final long id = _rs.getLong(ID_FIELD);
         final String sqlStatement = String.format("select * from Genre where %1$s in (select %2$s from FilmGenre where %3$s = :%3$s) order by %1$s"
                 , GenreDAO.ID_FIELD, FILMGENRE_GENRE_ID, FILMGENRE_FILM_ID);
