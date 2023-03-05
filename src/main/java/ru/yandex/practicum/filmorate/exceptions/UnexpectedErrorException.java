@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class KeyNotFoundException extends RuntimeException {
+public class UnexpectedErrorException extends RuntimeException {
     @Getter
     private final Class<?> keyOwnerClass;
 
-    public KeyNotFoundException(String message, Class<?> keyOwnerClass,  Logger log) {
+    public UnexpectedErrorException(String message, Class<?> keyOwnerClass, Logger log) {
         super(message);
         this.keyOwnerClass = keyOwnerClass;
         log.warn(message);
