@@ -38,4 +38,11 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
         log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _count);
         return service.getPopular(_count);
     }
+
+    //GET /films/search?query=крад&by=director,title
+    @GetMapping("/search") //Доделать
+    public List<Film> getSearchedFilms(@RequestParam(name = "query") String _query,
+                                       @RequestParam(name = "by") String _by) { //Или by сделать другим типом?
+        return null;
+    }
 }
