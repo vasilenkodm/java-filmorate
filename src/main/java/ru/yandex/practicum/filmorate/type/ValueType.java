@@ -23,7 +23,9 @@ public abstract class ValueType<T extends Comparable<T>> implements Serializable
     }
 
     @Override
-    public int hashCode() {return value.hashCode();}
+    public int hashCode() {
+        return value.hashCode();
+    }
 
     @Override
     public int compareTo(ValueType<T> o) {

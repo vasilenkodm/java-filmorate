@@ -81,8 +81,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
 
     public Film create(Film item) {
         final String sqlStatement = String.format("insert into Film (%1$s, %2$s, %3$s, %4$s, %5$s) "
-                        + "values ( :%1$s, :%2$s, :%3$s, :%4$s, :%5$s )"
-                , NAME_FIELD, DESCRIPTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
+                        + "values ( :%1$s, :%2$s, :%3$s, :%4$s, :%5$s )",
+                NAME_FIELD, DESCRIPTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
         MapSqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(NAME_FIELD, item.getName())
                 .addValue(DESCRIPTION_FIELD, item.getDescription())
@@ -102,8 +102,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public void update(Film item) {
-        final String sqlStatement4Film = String.format("update Film set %2$s = :%2$s, %3$s = :%3$s, %4$s = :%4$s, %5$s = :%5$s, %6$s = :%6$s where %1$s = :%1$s"
-                , ID_FIELD, NAME_FIELD, DESCRIPTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
+        final String sqlStatement4Film = String.format("update Film set %2$s = :%2$s, %3$s = :%3$s, %4$s = :%4$s, %5$s = :%5$s, %6$s = :%6$s where %1$s = :%1$s",
+                ID_FIELD, NAME_FIELD, DESCRIPTION_FIELD, RELEASE_FIELD, DURATION_FIELD, RANKMPA_FIELD);
 
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, item.getId().getValue())
@@ -193,13 +193,13 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         log.debug("Вызов {}.makeFilm({})", this.getClass().getName(), rs);
         final long id = rs.getLong(ID_FIELD);
 
-        final String sqlStatementGenre = String.format("select * from Genre where %1$s in (select %2$s from FilmGenre where %3$s = :%3$s) order by %1$s"
-                , GenreDAO.ID_FIELD, FILMGENRE_GENRE_ID, FILMGENRE_FILM_ID);
+        final String sqlStatementGenre = String.format("select * from Genre where %1$s in (select %2$s from FilmGenre where %3$s = :%3$s) order by %1$s",
+                GenreDAO.ID_FIELD, FILMGENRE_GENRE_ID, FILMGENRE_FILM_ID);
         SqlParameterSource sqlParamsGenre = new MapSqlParameterSource().addValue(FILMGENRE_FILM_ID, id);
         List<Genre> genres = jdbcNamedTemplate.query(sqlStatementGenre, sqlParamsGenre, (subRs, row) -> GenreDAO.makeGenre(subRs));
 
-        final String sqlStatementDirector = String.format("select * from Director where %1$s in (select %2$s from FilmDirector where %3$s = :%3$s) order by %1$s"
-                , DirectorDAO.ID_FIELD, FILMDIRECTOR_DIRECTOR_ID, FILMDIRECTOR_FILM_ID);
+        final String sqlStatementDirector = String.format("select * from Director where %1$s in (select %2$s from FilmDirector where %3$s = :%3$s) order by %1$s",
+                DirectorDAO.ID_FIELD, FILMDIRECTOR_DIRECTOR_ID, FILMDIRECTOR_FILM_ID);
         SqlParameterSource sqlParamsDirector = new MapSqlParameterSource().addValue(FILMDIRECTOR_FILM_ID, id);
         List<Director> directors = jdbcNamedTemplate.query(sqlStatementDirector, sqlParamsDirector, (subRs, row) -> DirectorDAO.makeDirector(subRs));
 

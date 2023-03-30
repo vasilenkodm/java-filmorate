@@ -76,8 +76,8 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
     }
 
     public User create(User item) {
-        final String sqlStatement = String.format("insert into UserInfo (%1$s, %2$s, %3$s, %4$s) values ( :%1$s, :%2$s, :%3$s, :%4$s )"
-                , NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD);
+        final String sqlStatement = String.format("insert into UserInfo (%1$s, %2$s, %3$s, %4$s) values ( :%1$s, :%2$s, :%3$s, :%4$s )",
+                NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(NAME_FIELD, item.getName())
                 .addValue(LOGIN_FIELD, item.getLogin())
@@ -104,7 +104,7 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
                 .addValue(ID_FIELD, item.getId().getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
-        if (rowCount==0) {
+        if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(item.getId()), this.getClass(), log);
         }
 
@@ -182,8 +182,8 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
     }
 
     public void addFriend(UserIdType idFrom, UserIdType idTo) {
-        final String sqlStatement = String.format("insert into Friendship ( %1$s , %2$s ) values ( :%1$s , :%2$s )"
-                , PROPOSER_ID, INVITED_ID);
+        final String sqlStatement = String.format("insert into Friendship ( %1$s , %2$s ) values ( :%1$s , :%2$s )",
+                PROPOSER_ID, INVITED_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(PROPOSER_ID, idFrom.getValue())
                 .addValue(INVITED_ID, idTo.getValue());

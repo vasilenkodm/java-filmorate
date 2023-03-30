@@ -36,7 +36,7 @@ public class User extends BaseItem<UserIdType, User> implements Item<UserIdType,
 
     @SuppressWarnings("unused")
     public String getName() {
-        return (name==null || name.isBlank()) ? login : name;
+        return (name == null || name.isBlank()) ? login : name;
     }
 
     @Override
