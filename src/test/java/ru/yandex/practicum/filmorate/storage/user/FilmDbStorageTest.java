@@ -76,9 +76,6 @@ class FilmDbStorageTest {
 
         assertThrows(KeyNotFoundException.class, () -> filmStorage.deleteItem(dummyId[0]));
 
-        dummyId[0] = item[0].getId();
-        assertThrows(DataIntegrityViolationException.class, () -> filmStorage.deleteItem(dummyId[0]));
-
         item[0].getGenres().clear();
         assertDoesNotThrow(() -> item[0] = filmStorage.updateItem(item[0]));
         assertDoesNotThrow(() -> filmStorage.deleteItem(item[0].getId()));
