@@ -6,6 +6,6 @@ import org.springframework.core.convert.converter.Converter;
 public class StringToReviewIdTypeConverter implements Converter<String, ReviewIdType> {
     @Override
     public ReviewIdType convert(String from) {
-        return ReviewIdType.of(Integer.parseInt(from));
+        return ReviewIdType.of(Long.parseLong(from));
     }
 }
