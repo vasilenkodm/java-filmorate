@@ -17,8 +17,10 @@ import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -37,6 +39,14 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
         return String.format("Не найден отзыв с кодом %s!", id);
     }
 
+    public static String filmIdNotFoundMsg(FilmIdType id) {
+        return String.format("Не найден фильм с кодом %s!", id);
+    }
+
+    public static String userIdNotFoundMsg(UserIdType id) {
+        return String.format("Не найден пользователь с кодом %s!", id);
+    }
+
     @Override
     public Review create(Review item) {
         final String sqlStatement = String.format("insert into Review (%1$s, %2$s, %3$s, %4$s) values ( :%1$s, :%2$s, :%3$s, :%4$s )"
@@ -46,11 +56,12 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
                 .addValue(IS_POSITIVE_FIELD, item.getIsPositive())
                 .addValue(USER_ID_FIELD, item.getUserId())
                 .addValue(FILM_ID_FIELD, item.getFilmId());
-
+        isFilmExists(FilmIdType.of(item.getFilmId()));
+        isUserExists(UserIdType.of(item.getUserId()));
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
-        ReviewIdType newId = ReviewIdType.of(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        Review result = (Review) item.clone();
+        ReviewIdType newId = ReviewIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        Review result = item.clone();
         result.setId(newId);
         log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), item, newId);
         return result;
@@ -58,14 +69,12 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
 
     @Override
     public void update(Review item) {
-        final String sqlStatement = String.format("update Review set %2$s = :%2$s, %3$s = :%3$s, %4$s = :%4$s, %5$s = :%5$s  where %1$s = :%1$s",
-                ID_FIELD, CONTENT_FIELD, IS_POSITIVE_FIELD, USER_ID_FIELD, FILM_ID_FIELD);
+        final String sqlStatement = String.format("update Review set %2$s = :%2$s, %3$s = :%3$s  where %1$s = :%1$s",
+                ID_FIELD, CONTENT_FIELD, IS_POSITIVE_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, item.getId().getValue())
                 .addValue(CONTENT_FIELD, item.getContent())
-                .addValue(IS_POSITIVE_FIELD, item.getIsPositive())
-                .addValue(USER_ID_FIELD, item.getUserId())
-                .addValue(FILM_ID_FIELD, item.getFilmId());
+                .addValue(IS_POSITIVE_FIELD, item.getIsPositive());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount==0) {
@@ -109,7 +118,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     @Override
     public List<Review> selectAll() {
         final String sqlStatement = String.format("select * from Review order by %1$s", "review_id");
-        List<Review> result = jdbcNamedTemplate.query(sqlStatement, (rs, row) -> makeReview(rs));
+        List<Review> result = jdbcNamedTemplate.query(sqlStatement, (rs, row) -> makeReview(rs))
+                .stream().sorted(Comparator.comparing(Review::getUseful).reversed()).collect(Collectors.toList());
 
         log.info("Выполнено {}.selectAll()", this.getClass().getName());
 
@@ -155,7 +165,6 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
         log.info("Выполнено {}.addDisLike({}, {})", this.getClass().getName(), reviewId, userId);
     }
     public void removeDisLike(ReviewIdType reviewId, UserIdType userId){
-        //jdbcTemplate.update("DELETE FROM review_likes where review_id = ? AND user_id = ?", _reviewId, _userId);
         final String sqlStatement = String.format("delete from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, USER_ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue("review_id", reviewId.getValue())
@@ -177,17 +186,20 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
         }
     }
 
-    private List<Review> getReviewsByFilmId(FilmIdType filmId, int count) {final String sqlStatement = String.format("select top :%2$s * from Review where %1$s = :%1$s ", FILM_ID_FIELD, "count");
+    private List<Review> getReviewsByFilmId(FilmIdType filmId, int count) {
+        final String sqlStatement = String.format("select top :%2$s * from Review where %1$s = :%1$s ", FILM_ID_FIELD, "count");
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILM_ID_FIELD, filmId.getValue())
                 .addValue("count", count);
-        List<Review> result =  jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeReview(rs));
+        List<Review> result =  jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeReview(rs))
+                .stream().sorted(Comparator.comparing(Review::getUseful).reversed()).collect(Collectors.toList());
 
         log.info("Выполнено {}.getReviewsForFilm({})", this.getClass().getName(), filmId);
         return result;
     }
 
-    private Integer getUsefulRateForReview(ReviewIdType reviewId) {final String sqlStatement = String.format("select count(*) as %3$s from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, "is_like", "count");
+    private Integer getUsefulRateForReview(ReviewIdType reviewId) {
+        final String sqlStatement = String.format("select count(*) as %3$s from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, "is_like", "count");
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, reviewId.getValue())
                 .addValue("is_like", true);
@@ -212,16 +224,24 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     private Review makeReview(ResultSet rs) throws SQLException {
         log.debug("Вызов {}.makeReview({})", ReviewDAO.class.getName(), rs);
         return Review.builder()
-                .id(ReviewIdType.of(rs.getInt(ID_FIELD)))
+                .reviewId(ReviewIdType.of(rs.getLong(ID_FIELD)))
                 .content(rs.getString(CONTENT_FIELD))
                 .isPositive(rs.getBoolean(IS_POSITIVE_FIELD))
-                .userId(rs.getInt(USER_ID_FIELD))
-                .filmId(rs.getInt(FILM_ID_FIELD))
-                .useful(getUsefulRateForReview(ReviewIdType.of(rs.getInt(ID_FIELD))))
+                .userId(rs.getLong(USER_ID_FIELD))
+                .filmId(rs.getLong(FILM_ID_FIELD))
+                .useful(getUsefulRateForReview(ReviewIdType.of(rs.getLong(ID_FIELD))))
                 .build();
     }
 
-    /*private Integer makeCount(ResultSet rs) throws SQLException {
-        return rs.getInt("count");
-    }*/
+    private void isFilmExists(FilmIdType id) {
+        if(id.getValue() < 0) {
+            throw new KeyNotFoundException(filmIdNotFoundMsg(id), this.getClass(), log);
+        }
+    }
+
+    private void isUserExists(UserIdType id) {
+        if(id.getValue() < 0) {
+            throw new KeyNotFoundException(userIdNotFoundMsg(id), this.getClass(), log);
+        }
+    }
 }
