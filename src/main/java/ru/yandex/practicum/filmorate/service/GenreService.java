@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 @Slf4j
 @Service
 public class GenreService extends BaseItemService<GenreIdType, Genre, GenreStorage> {
-    public GenreService(GenreStorage _storage) {
-        super(_storage);
+    public GenreService(GenreStorage genreStorage) {
+        super(genreStorage);
     }
 }

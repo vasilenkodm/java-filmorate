@@ -15,37 +15,37 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController extends BaseItemController<FilmIdType, Film, FilmService> {
-    public FilmController(FilmService _filmService) {
-        super(_filmService);
+    public FilmController(FilmService filmService) {
+        super(filmService);
     }
 
     //PUT /films/{id}/like/{userId}  — пользователь ставит лайк фильму.
     @PutMapping("/{filmId}/like/{userId}")
-    public void addLike(@PathVariable(name="filmId") FilmIdType _filmId, @PathVariable(name="userId") UserIdType _userId) {
-        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _filmId, _userId);
-        service.addLike(_filmId, _userId);
+    public void addLike(@PathVariable FilmIdType filmId, @PathVariable UserIdType userId) {
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), filmId, userId);
+        service.addLike(filmId, userId);
     }
 
     //DELETE /films/{id}/like/{userId}  — пользователь удаляет лайк.
     @DeleteMapping("/{filmId}/like/{userId}")
-    public void removeLike(@PathVariable(name="filmId") FilmIdType _filmId, @PathVariable(name="userId") UserIdType _userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
-        service.removeLike(_filmId, _userId);
+    public void removeLike(@PathVariable FilmIdType filmId, @PathVariable UserIdType userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+        service.removeLike(filmId, userId);
     }
 
     //GET /films/popular?count={count}
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(name = "count", defaultValue = "10") int _count) {
-        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _count);
-        return service.getPopular(_count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count) {
+        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), count);
+        return service.getPopular(count);
     }
 
     //GET /films/director/{directorId}?sortBy={sortBy}
     @GetMapping("/director/{directorId}")
-    public List<Film> getFilmsByDirector(@PathVariable(name = "directorId") DirectorIdType _directorId
-            , @RequestParam(name = "sortBy", defaultValue = "year") String _sortBy) {
-        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), _directorId, _sortBy);
-        return service.getFilmsByDirector(_directorId, FilmsByDirectorSortByMode.fromString(_sortBy));
+    public List<Film> getFilmsByDirector(@PathVariable DirectorIdType directorId
+            , @RequestParam(defaultValue = "year") String sortBy) {
+        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
+        return service.getFilmsByDirector(directorId, FilmsByDirectorSortByMode.fromString(sortBy));
     }
 
 

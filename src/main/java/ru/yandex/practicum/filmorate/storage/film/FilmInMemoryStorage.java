@@ -27,74 +27,74 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
     }
 
     @Override
-    protected String idNotFoundMsg(FilmIdType _id) {
-        return String.format("Не найден фильм с кодом %s!", _id);
+    protected String idNotFoundMsg(FilmIdType id) {
+        return String.format("Не найден фильм с кодом %s!", id);
     }
 
 
     @Override
-    public Film createItem(Film _item) {
-        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        Film result = super.createItem(_item);
+    public Film createItem(Film item) {
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), item);
+        Film result = super.createItem(item);
         likes.put(result.getId(), new TreeSet<>());
         return result;
     }
 
     @Override
-    public void deleteItem(FilmIdType _id) {
-        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
-        likes.remove(_id);
-        super.deleteItem(_id);
+    public void deleteItem(FilmIdType id) {
+        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), id);
+        likes.remove(id);
+        super.deleteItem(id);
     }
 
     @Override
-    public int getLikesCount(FilmIdType _id) {
-        Set<UserIdType> users = likes.get(_id);
+    public int getLikesCount(FilmIdType id) {
+        Set<UserIdType> users = likes.get(id);
         if (users == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_id), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(id), this.getClass(), log);
         }
         int result = users.size();
-        log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), _id);
-        return  result;
-    }
-
-    @Override
-    public List<Film> getPopular(int _maxCount) {
-        List<Film> result = items.keySet()
-                .stream()
-                .sorted(Comparator.comparing(this::getLikesCount).reversed().thenComparing(FilmIdType::getValue))
-                .limit(_maxCount)
-                .map(items::get)
-                    .collect(Collectors.toList());
-        log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), _maxCount);
+        log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), id);
         return result;
     }
 
     @Override
-    public void addLike(FilmIdType _filmId, UserIdType _userId) {
-        Set<UserIdType> users = likes.get(_filmId);
-        if (users == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
-        }
-        users.add(_userId);
-        log.info("Выполнено {}.addLike({}, {})", this.getClass().getName(), _filmId, _userId);
+    public List<Film> getPopular(int maxCount) {
+        List<Film> result = items.keySet()
+                .stream()
+                .sorted(Comparator.comparing(this::getLikesCount).reversed().thenComparing(FilmIdType::getValue))
+                .limit(maxCount)
+                .map(items::get)
+                .collect(Collectors.toList());
+        log.info("Выполнено {}.getLikeCount({})", this.getClass().getName(), maxCount);
+        return result;
     }
 
     @Override
-    public void removeLike(FilmIdType _filmId, UserIdType _userId) {
-        Set<UserIdType> users = likes.get(_filmId);
+    public void addLike(FilmIdType filmId, UserIdType userId) {
+        Set<UserIdType> users = likes.get(filmId);
         if (users == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_filmId), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(filmId), this.getClass(), log);
         }
-        if (!users.contains(_userId)) {
-            throw new KeyNotFoundException(String.format("Лайк пользователя %s не найден!", _userId), this.getClass(), log);
-        }
-        users.remove(_userId);
-        log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
+        users.add(userId);
+        log.info("Выполнено {}.addLike({}, {})", this.getClass().getName(), filmId, userId);
     }
 
     @Override
-    public List<Film> getFilmsByDirector(DirectorIdType _directorId, FilmsByDirectorSortByMode _sortBy) {
+    public void removeLike(FilmIdType filmId, UserIdType userId) {
+        Set<UserIdType> users = likes.get(filmId);
+        if (users == null) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(filmId), this.getClass(), log);
+        }
+        if (!users.contains(userId)) {
+            throw new KeyNotFoundException(String.format("Лайк пользователя %s не найден!", userId), this.getClass(), log);
+        }
+        users.remove(userId);
+        log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+    }
+
+    @Override
+    public List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy) {
         throw new FeatureNotSupportedException(this.getClass(), log);
     }
 

@@ -21,24 +21,24 @@ public abstract class BaseItemService<K extends ValueType<?>, T extends Item<K, 
     }
 
     @Override
-    public T readItem(final K _id) {
-        log.debug("Вызов {}.readItem({})", this.getClass().getName(), _id);
-        return storage.readItem(_id);
+    public T readItem(final K id) {
+        log.debug("Вызов {}.readItem({})", this.getClass().getName(), id);
+        return storage.readItem(id);
     }
 
-    public T createItem(final T _item) {
-        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        return storage.createItem(_item);
+    public T createItem(final T item) {
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), item);
+        return storage.createItem(item);
     }
 
-    public T updateItem(final T _item) {
-        log.debug("Вызов {}.updateItem({})", this.getClass().getName(), _item);
-        return storage.updateItem(_item);
+    public T updateItem(final T item) {
+        log.debug("Вызов {}.updateItem({})", this.getClass().getName(), item);
+        return storage.updateItem(item);
     }
 
-    public void deleteItem(final K _id) {
-        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
-        storage.deleteItem(_id);
+    public void deleteItem(final K id) {
+        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), id);
+        storage.deleteItem(id);
     }
 
 }

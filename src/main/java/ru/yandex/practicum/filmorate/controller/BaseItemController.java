@@ -21,28 +21,28 @@ public abstract class BaseItemController<K extends ValueType<?>, T extends Item<
         return service.readAllItems();
     }
 
-    @GetMapping("/{_id}")
-    public T readItem(@PathVariable final K _id) {
-        log.debug("Вызов {}.readItem({})", this.getClass().getName(), _id);
-        return service.readItem(_id);
+    @GetMapping("/{id}")
+    public T readItem(@PathVariable final K id) {
+        log.debug("Вызов {}.readItem({})", this.getClass().getName(), id);
+        return service.readItem(id);
     }
 
     @PostMapping
-    public T createItem(@Valid @RequestBody final T _item) {
-        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        return service.createItem(_item);
+    public T createItem(@Valid @RequestBody final T item) {
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), item);
+        return service.createItem(item);
     }
 
     @PutMapping
-    public T updateItem(@Valid @RequestBody final T _item) {
-        log.debug("Вызов {}.updateItem({})", this.getClass().getName(), _item);
-        return service.updateItem(_item);
+    public T updateItem(@Valid @RequestBody final T item) {
+        log.debug("Вызов {}.updateItem({})", this.getClass().getName(), item);
+        return service.updateItem(item);
     }
 
-    @DeleteMapping("/{_id}")
-    public void deleteItem(@PathVariable final K _id) {
-        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
-        service.deleteItem(_id);
+    @DeleteMapping("/{id}")
+    public void deleteItem(@PathVariable final K id) {
+        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), id);
+        service.deleteItem(id);
     }
 
 }

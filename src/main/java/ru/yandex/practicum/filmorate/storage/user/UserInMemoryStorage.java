@@ -24,82 +24,82 @@ public class UserInMemoryStorage extends BaseItemInMemoryStorage<UserIdType, Use
     }
 
     @Override
-    protected String idNotFoundMsg(UserIdType _id) {
-        return String.format("Не найден пользователь с кодом %s!", _id);
+    protected String idNotFoundMsg(UserIdType id) {
+        return String.format("Не найден пользователь с кодом %s!", id);
     }
 
     @Override
-    public User createItem(User _item) {
-        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        User result = super.createItem(_item);
+    public User createItem(User item) {
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), item);
+        User result = super.createItem(item);
         friends.put(result.getId(), new TreeSet<>());
         return result;
     }
 
     @Override
-    public void deleteItem(UserIdType _id) {
-        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
-        friends.remove(_id);
-        super.deleteItem(_id);
+    public void deleteItem(UserIdType id) {
+        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), id);
+        friends.remove(id);
+        super.deleteItem(id);
     }
 
     @Override
-    public void addFriend(UserIdType _userId, UserIdType _friendId) {
-        Set<UserIdType> set = friends.get(_userId);
+    public void addFriend(UserIdType userId, UserIdType friendId) {
+        Set<UserIdType> set = friends.get(userId);
 
         if (set == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(userId), this.getClass(), log);
         }
-        if (!items.containsKey(_friendId)) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_friendId), this.getClass(), log);
+        if (!items.containsKey(friendId)) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(friendId), this.getClass(), log);
         }
 
-        set.add(_friendId);
-        log.info("Выполнено {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        set.add(friendId);
+        log.info("Выполнено {}.addFriend({}, {})", this.getClass().getName(), userId, friendId);
     }
 
     @Override
-    public void removeFriend(UserIdType _userId, UserIdType _friendId) {
-        Set<UserIdType> set = friends.get(_userId);
+    public void removeFriend(UserIdType userId, UserIdType friendId) {
+        Set<UserIdType> set = friends.get(userId);
 
         if (set == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(userId), this.getClass(), log);
         }
-        if (!items.containsKey(_friendId)) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_friendId), this.getClass(), log);
+        if (!items.containsKey(friendId)) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(friendId), this.getClass(), log);
         }
-        set.remove(_friendId);
-        log.info("Выполнено {}.removeFriend({}, {})", this.getClass().getName(), _userId, _friendId);
+        set.remove(friendId);
+        log.info("Выполнено {}.removeFriend({}, {})", this.getClass().getName(), userId, friendId);
     }
 
     @Override
-    public List<User> getFriends(UserIdType _userId) {
-        Set<UserIdType> friendsIds = friends.get(_userId);
+    public List<User> getFriends(UserIdType userId) {
+        Set<UserIdType> friendsIds = friends.get(userId);
 
         if (friendsIds == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userId), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(userId), this.getClass(), log);
         }
         List<User> result = friendsIds.stream().map(items::get).collect(Collectors.toList());
-        log.info("Выполнено {}.getFriends({})", this.getClass().getName(), _userId);
+        log.info("Выполнено {}.getFriends({})", this.getClass().getName(), userId);
         return result;
     }
 
     @Override
-    public List<User> commonFriends(UserIdType _userIdOne, UserIdType _userIdTwo) {
-        Set<UserIdType> friendsIds1 = friends.get(_userIdOne);
-        Set<UserIdType> friendsIds2 = friends.get(_userIdTwo);
+    public List<User> commonFriends(UserIdType userIdOne, UserIdType userIdTwo) {
+        Set<UserIdType> friendsIds1 = friends.get(userIdOne);
+        Set<UserIdType> friendsIds2 = friends.get(userIdTwo);
 
         if (friendsIds1 == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userIdOne), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(userIdOne), this.getClass(), log);
         }
         if (friendsIds2 == null) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_userIdTwo), this.getClass(), log);
+            throw new KeyNotFoundException(this.idNotFoundMsg(userIdTwo), this.getClass(), log);
         }
 
         Set<UserIdType> commonFriendsIds = new HashSet<>(friendsIds1);
         commonFriendsIds.retainAll(friendsIds2);
         List<User> result = commonFriendsIds.stream().map(items::get).collect(Collectors.toList());
-        log.info("Выполнено {}.commonFriends({}, {})", this.getClass().getName(), _userIdOne, _userIdTwo);
+        log.info("Выполнено {}.commonFriends({}, {})", this.getClass().getName(), userIdOne, userIdTwo);
         return result;
     }
 

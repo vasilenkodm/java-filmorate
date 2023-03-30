@@ -9,7 +9,7 @@ import ru.yandex.practicum.filmorate.type.DirectorIdType;
 @Slf4j
 @Service
 public class DirectorService extends BaseItemService<DirectorIdType, Director, DirectorStorage> {
-    public DirectorService(DirectorStorage _storage) {
-        super(_storage);
+    public DirectorService(DirectorStorage directorStorage) {
+        super(directorStorage);
     }
 }

@@ -18,8 +18,8 @@ public class RankMPAInMemoryStorage extends BaseItemInMemoryStorage<RankMPAIdTyp
     }
 
     @Override
-    protected String idNotFoundMsg(RankMPAIdType _id) {
-        return String.format("Не найден рейтинг MPA с кодом %s!", _id);
+    protected String idNotFoundMsg(RankMPAIdType id) {
+        return String.format("Не найден рейтинг MPA с кодом %s!", id);
     }
 
 }

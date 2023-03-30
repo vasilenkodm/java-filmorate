@@ -4,7 +4,7 @@ public enum FilmsByDirectorSortByMode {
     YEAR,
     LIKES;
 
-    public static FilmsByDirectorSortByMode fromString(String _val) {
-        return FilmsByDirectorSortByMode.valueOf(_val.toUpperCase());
+    public static FilmsByDirectorSortByMode fromString(String val) {
+        return FilmsByDirectorSortByMode.valueOf(val.toUpperCase());
     }
 }
