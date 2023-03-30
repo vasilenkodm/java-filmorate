@@ -21,42 +21,42 @@ import java.util.List;
 public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> implements FilmStorage {
     private final DirectorDAO directorDAO;
 
-    public FilmDbStorage(FilmDAO _dao, DirectorDAO _directorDAO) {
-        super(_dao);
-        directorDAO = _directorDAO;
+    public FilmDbStorage(FilmDAO dao, DirectorDAO directorDAO) {
+        super(dao);
+        this.directorDAO = directorDAO;
     }
 
     @Override
-    public List<Film> getPopular(int _maxCount) {
-        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _maxCount);
+    public List<Film> getPopular(int maxCount) {
+        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), maxCount);
 
-        return dao.getPopular(_maxCount);
+        return dao.getPopular(maxCount);
     }
 
     @Override
-    public int getLikesCount(FilmIdType _id) {
-        log.debug("Вызов {}.getLikesCount({})", this.getClass().getName(), _id);
-        return dao.getLikesCount(_id);
+    public int getLikesCount(FilmIdType id) {
+        log.debug("Вызов {}.getLikesCount({})", this.getClass().getName(), id);
+        return dao.getLikesCount(id);
     }
 
     @Override
-    public void addLike(FilmIdType _filmId, UserIdType _userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
-        dao.addLike(_filmId, _userId);
+    public void addLike(FilmIdType filmId, UserIdType userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+        dao.addLike(filmId, userId);
     }
 
     @Override
-    public void removeLike(FilmIdType _filmId, UserIdType _userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
-        dao.removeLike(_filmId, _userId);
+    public void removeLike(FilmIdType filmId, UserIdType userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+        dao.removeLike(filmId, userId);
     }
 
     @Override
-    public List<Film> getFilmsByDirector(DirectorIdType _directorId, FilmsByDirectorSortByMode _sortBy) {
-        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), _directorId, _sortBy);
-        if (directorDAO.notExists(_directorId)) {
-            throw new KeyNotFoundException(DirectorDAO.idNotFoundMsg(_directorId), this.getClass(), log);
+    public List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy) {
+        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
+        if (directorDAO.notExists(directorId)) {
+            throw new KeyNotFoundException(DirectorDAO.idNotFoundMsg(directorId), this.getClass(), log);
         }
-        return dao.getFilmsByDirector(_directorId, _sortBy);
+        return dao.getFilmsByDirector(directorId, sortBy);
     }
 }

@@ -24,27 +24,27 @@ public abstract class BaseItemDbStorage<K extends ValueType<?>, T extends Item<K
     }
 
     @Override
-    public T readItem(K _id) {
-        log.debug("Вызов {}.readItem({})", this.getClass().getName(), _id);
-        return dao.read(_id);
+    public T readItem(K id) {
+        log.debug("Вызов {}.readItem({})", this.getClass().getName(), id);
+        return dao.read(id);
     }
 
     @Override
-    public T createItem(T _item) {
-        log.debug("Вызов {}.createItem({})", this.getClass().getName(), _item);
-        return dao.create(_item);
+    public T createItem(T item) {
+        log.debug("Вызов {}.createItem({})", this.getClass().getName(), item);
+        return dao.create(item);
     }
 
     @Override
-    public T updateItem(T _item) {
-        log.debug("Вызов {}.updateItem({})", this.getClass().getName(), _item);
-        dao.update(_item);
-        return dao.read(_item.getId());
+    public T updateItem(T item) {
+        log.debug("Вызов {}.updateItem({})", this.getClass().getName(), item);
+        dao.update(item);
+        return dao.read(item.getId());
     }
 
     @Override
-    public void deleteItem(K _id) {
-        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), _id);
-        dao.delete(_id);
+    public void deleteItem(K id) {
+        log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), id);
+        dao.delete(id);
     }
 }

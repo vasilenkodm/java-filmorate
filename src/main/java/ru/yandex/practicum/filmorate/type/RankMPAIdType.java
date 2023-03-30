@@ -5,7 +5,7 @@ public final class RankMPAIdType extends ValueType<Integer> {
         super(value);
     }
 
-    public static RankMPAIdType of(Integer _value) {
-        return new RankMPAIdType(_value);
+    public static RankMPAIdType of(Integer value) {
+        return new RankMPAIdType(value);
     }
 }

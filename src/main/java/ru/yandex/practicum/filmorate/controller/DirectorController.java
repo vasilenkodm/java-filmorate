@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.type.DirectorIdType;
 @RestController
 @RequestMapping("/directors")
 public class DirectorController extends BaseItemController<DirectorIdType, Director, DirectorService> {
-    public DirectorController(DirectorService _service) {
-        super(_service);
+    public DirectorController(DirectorService service) {
+        super(service);
     }
 }

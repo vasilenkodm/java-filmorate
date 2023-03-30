@@ -5,13 +5,13 @@ import ru.yandex.practicum.filmorate.model.Item;
 import java.util.List;
 
 public interface ItemDAO<K, T extends Item<K, T>> {
-    T create(T _item);
+    T create(T item);
 
-    void update(T _item);
+    void update(T item);
 
-    T read(K _id);
+    T read(K id);
 
-    void delete(K _id);
+    void delete(K id);
 
     List<T> selectAll();
 

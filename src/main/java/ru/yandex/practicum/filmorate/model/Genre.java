@@ -25,7 +25,7 @@ public class Genre extends BaseItem<GenreIdType, Genre> implements Item<GenreIdT
     private String name;
 
     @Override
-    public void updateWith(Genre _source) {
-        this.name = _source.getName();
+    public void updateWith(Genre item) {
+        this.name = item.getName();
     }
 }
