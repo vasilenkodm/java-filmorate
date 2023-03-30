@@ -102,5 +102,4 @@ public class UserInMemoryStorage extends BaseItemInMemoryStorage<UserIdType, Use
         log.info("Выполнено {}.commonFriends({}, {})", this.getClass().getName(), _userIdOne, _userIdTwo);
         return result;
     }
-
 }

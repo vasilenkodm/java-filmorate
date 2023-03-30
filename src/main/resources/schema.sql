@@ -43,6 +43,15 @@ CREATE TABLE FilmGenre (
   PRIMARY KEY (film_id, genre_id)
 );
 
+CREATE TABLE if NOT EXISTS Events (
+    event_id BIGINT not null primary key auto_increment,
+    time_stamp BIGINT not null,
+    event_type varchar(255) not null,
+    operation varchar(255) not null,
+    user_id BIGINT not null references UserInfo (user_id) on delete cascade,
+    entity_id BIGINT not null
+);
+
 COMMENT ON TABLE UserInfo IS 'Данные пользователей';
 
 COMMENT ON COLUMN UserInfo.user_id IS 'Код пользователя';

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.type.UserIdType;
@@ -42,5 +43,12 @@ public class UserController  extends BaseItemController<UserIdType, User, UserSe
     @GetMapping("/{userId}/friends/common/{otherId}")
     public List<User> commonFriends(@PathVariable UserIdType userId, @PathVariable UserIdType otherId) {
         return service.commonFriends(userId, otherId);
+    }
+
+    //GET /users/{id}/feed - лента событий
+    @SuppressWarnings("unused")
+    @GetMapping("/{userId}/feed")
+    public List<Event> getFeed(@PathVariable UserIdType userId) {
+        return service.getFeed(userId);
     }
 }
