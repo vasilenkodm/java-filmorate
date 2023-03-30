@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverter(new StringToGenreIdTypeConverter());
         registry.addConverter(new StringToRankMPAIdTypeConverter());
         registry.addConverter(new StringToDirectorIdTypeConverter());
+        registry.addConverter(new StringToReviewIdTypeConverter());
     }
 
 }
