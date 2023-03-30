@@ -42,8 +42,8 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
 
     //GET /films/director/{directorId}?sortBy={sortBy}
     @GetMapping("/director/{directorId}")
-    public List<Film> getFilmsByDirector(@PathVariable DirectorIdType directorId
-            , @RequestParam(defaultValue = "year") String sortBy) {
+    public List<Film> getFilmsByDirector(@PathVariable DirectorIdType directorId,
+                                         @RequestParam(defaultValue = "year") String sortBy) {
         log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
         return service.getFilmsByDirector(directorId, FilmsByDirectorSortByMode.fromString(sortBy));
     }
