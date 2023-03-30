@@ -3,6 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.type.EventType;
+import ru.yandex.practicum.filmorate.type.OperationType;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.type.EventType;
 import ru.yandex.practicum.filmorate.type.OperationType;
@@ -10,17 +13,19 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
 
 @Slf4j
 @Service
-public class UserService  extends BaseItemService<UserIdType, User, UserStorage> {
+public class UserService extends BaseItemService<UserIdType, User, UserStorage> {
+
     private final EventStorage eventStorage;
 
-    public UserService(UserStorage userStorage, EventStorage eventStorage) {
-        super(userStorage);
+    public UserService(UserStorage storage, EventStorage eventStorage) {
+        super(storage);
         this.eventStorage = eventStorage;
     }
 
@@ -50,7 +55,7 @@ public class UserService  extends BaseItemService<UserIdType, User, UserStorage>
 
     //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
     public List<User> commonFriends(UserIdType userId1, UserIdType userId2) {
-        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), userId1, userId2);
+        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), _userId1, _userId2);
         return storage.commonFriends(userId1, userId2);
     }
 
