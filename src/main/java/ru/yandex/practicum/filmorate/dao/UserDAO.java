@@ -33,11 +33,21 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
 
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
-    private String idNotFoundMsg(UserIdType _id) {
+    public String idNotFoundMsg(UserIdType _id) {
         return idNotFoundMsg(_id.toString());
     }
+
     private String idNotFoundMsg(String _id) {
         return String.format("Не найден пользователь с кодом %s!", _id);
+    }
+
+    public boolean notExists(UserIdType _id) {
+        String sqlStatement = String.format("select count(*) from UserInfo where %1$s = :%1$s", ID_FIELD);
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(ID_FIELD, _id.getValue());
+        Integer count = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, Integer.class));
+        log.info("Выполнено {}.exists({})", this.getClass().getName(), _id);
+        return count == 0;
     }
 
     public User read(final UserIdType _id) {
@@ -47,7 +57,7 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
         User result;
         try {
             result = jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> makeUser(rs));
-        } catch (EmptyResultDataAccessException ex){
+        } catch (EmptyResultDataAccessException ex) {
             throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
         }
 
@@ -143,6 +153,9 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
     }
 
     public List<User> getCommonFriends(UserIdType _id1, UserIdType _id2) {
+        if (notExists(_id1)) throw new KeyNotFoundException(idNotFoundMsg(_id1), this.getClass(), log);
+        if (notExists(_id2)) throw new KeyNotFoundException(idNotFoundMsg(_id2), this.getClass(), log);
+
         final String sqlStatement = String.format("    select * " +
                 "    from " +
                 "    (select inv.invited_id " +

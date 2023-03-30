@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.type.DirectorIdType;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
@@ -13,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController extends BaseItemController<FilmIdType, Film, FilmService> {
-
     public FilmController(FilmService _filmService) {
         super(_filmService);
     }
@@ -34,8 +35,18 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
 
     //GET /films/popular?count={count}
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(name = "count", defaultValue="10") int _count) {
+    public List<Film> getPopular(@RequestParam(name = "count", defaultValue = "10") int _count) {
         log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _count);
         return service.getPopular(_count);
     }
+
+    //GET /films/director/{directorId}?sortBy={sortBy}
+    @GetMapping("/director/{directorId}")
+    public List<Film> getFilmsByDirector(@PathVariable(name = "directorId") DirectorIdType _directorId
+            , @RequestParam(name = "sortBy", defaultValue = "year") String _sortBy) {
+        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), _directorId, _sortBy);
+        return service.getFilmsByDirector(_directorId, FilmsByDirectorSortByMode.fromString(_sortBy));
+    }
+
+
 }

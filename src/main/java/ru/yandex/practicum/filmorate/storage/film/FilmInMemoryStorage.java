@@ -2,10 +2,13 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.FeatureNotSupportedException;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.BaseItemInMemoryStorage;
+import ru.yandex.practicum.filmorate.type.DirectorIdType;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.*;
@@ -88,6 +91,11 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
         }
         users.remove(_userId);
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
+    }
+
+    @Override
+    public List<Film> getFilmsByDirector(DirectorIdType _directorId, FilmsByDirectorSortByMode _sortBy) {
+        throw new FeatureNotSupportedException(this.getClass(), log);
     }
 
 }

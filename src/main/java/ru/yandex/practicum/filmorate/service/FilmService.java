@@ -7,7 +7,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.type.DirectorIdType;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
     }
 
     public void removeLike(FilmIdType _filmId, UserIdType _userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId,  _userId);
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
         storage.removeLike(_filmId, _userId);
         eventStorage.addEvent(_userId.getValue(), _filmId.getValue(), EventType.LIKE, OperationType.REMOVE);
     }
@@ -37,5 +39,10 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
     public List<Film> getPopular(int _maxCount) {
         log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _maxCount);
         return storage.getPopular(_maxCount);
+    }
+
+    public List<Film> getFilmsByDirector(DirectorIdType _directorId, FilmsByDirectorSortByMode _sortBy) {
+        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), _directorId, _sortBy);
+        return storage.getFilmsByDirector(_directorId, _sortBy);
     }
 }

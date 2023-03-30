@@ -14,4 +14,5 @@ public interface ItemDAO<K, T extends Item<K, T>> {
     void delete(K _id);
 
     List<T> selectAll();
+
 }
