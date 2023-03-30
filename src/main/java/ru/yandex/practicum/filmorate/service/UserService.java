@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
