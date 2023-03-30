@@ -5,7 +5,7 @@ public final class UserIdType extends ValueType<Long> {
         super(value);
     }
 
-    public static UserIdType of(Long _value) {
-        return new UserIdType(_value);
+    public static UserIdType of(Long value) {
+        return new UserIdType(value);
     }
 }

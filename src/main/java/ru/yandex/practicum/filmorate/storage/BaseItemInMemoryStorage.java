@@ -25,10 +25,10 @@ public abstract class BaseItemInMemoryStorage<K extends ValueType<?>, T extends 
     /**
      * Генерация теста сообщения о попытке обращения к несуществующему элементу
      *
-     * @param _id Идентификатор элемента
+     * @param id Идентификатор элемента
      * @return Текст сообщения о попытке обратиться к несуществующему элементу
      */
-    protected abstract String idNotFoundMsg(K _id);
+    protected abstract String idNotFoundMsg(K id);
 
     protected abstract K newItemId();
 
@@ -40,19 +40,21 @@ public abstract class BaseItemInMemoryStorage<K extends ValueType<?>, T extends 
     }
 
     @Override
-    public T readItem(K _id) {
-        T result = items.get(_id);
-        if (result == null) { throw new KeyNotFoundException(this.idNotFoundMsg(_id), this.getClass(), log); }
-        log.info("Выполнено {}.readItem({})", this.getClass().getName(), _id);
+    public T readItem(K id) {
+        T result = items.get(id);
+        if (result == null) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(id), this.getClass(), log);
+        }
+        log.info("Выполнено {}.readItem({})", this.getClass().getName(), id);
         return result;
     }
 
     @Override
-    public T createItem(T _item) {
+    public T createItem(T item) {
         T result;
 
         try {
-            Method builderMethod = _item.getClass().getMethod("builder");
+            Method builderMethod = item.getClass().getMethod("builder");
             Object builder = builderMethod.invoke(null);
             Method buildMethod = builder.getClass().getMethod("build");
             @SuppressWarnings("unchecked")
@@ -62,30 +64,30 @@ public abstract class BaseItemInMemoryStorage<K extends ValueType<?>, T extends 
             throw new UnexpectedErrorException(e.getMessage(), this.getClass(), log);
         }
         result.setId(newItemId());
-        result.updateWith(_item);
+        result.updateWith(item);
         items.put(result.getId(), result);
-        log.info("Выполнено {}.createItem({})", this.getClass().getName(), _item);
+        log.info("Выполнено {}.createItem({})", this.getClass().getName(), item);
         return result;
     }
 
     @Override
-    public T updateItem(T _item) {
-        K id = _item.getId();
+    public T updateItem(T item) {
+        K id = item.getId();
         T result = items.get(id);
         if (result == null) {
             throw new KeyNotFoundException(this.idNotFoundMsg(id), this.getClass(), log);
         }
-        result.updateWith(_item);
-        log.info("Выполнено {}.updateItem({})", this.getClass().getName(), _item);
+        result.updateWith(item);
+        log.info("Выполнено {}.updateItem({})", this.getClass().getName(), item);
         return result;
     }
 
     @Override
-    public void deleteItem(K _id) {
-        if (!items.containsKey(_id)) {
-            throw new KeyNotFoundException(this.idNotFoundMsg(_id), this.getClass(), log);
+    public void deleteItem(K id) {
+        if (!items.containsKey(id)) {
+            throw new KeyNotFoundException(this.idNotFoundMsg(id), this.getClass(), log);
         }
-        items.remove(_id);
-        log.info("Выполнено {}.deleteItem({})", this.getClass().getName(), _id);
+        items.remove(id);
+        log.info("Выполнено {}.deleteItem({})", this.getClass().getName(), id);
     }
 }

@@ -18,8 +18,8 @@ public class GenreInMemoryStorage extends BaseItemInMemoryStorage<GenreIdType, G
     }
 
     @Override
-    protected String idNotFoundMsg(GenreIdType _id) {
-        return String.format("Не найден жанр с кодом %s!", _id);
+    protected String idNotFoundMsg(GenreIdType id) {
+        return String.format("Не найден жанр с кодом %s!", id);
     }
 
 }
