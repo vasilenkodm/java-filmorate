@@ -33,35 +33,35 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
 
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
-    public String idNotFoundMsg(UserIdType _id) {
-        return idNotFoundMsg(_id.toString());
+    public String idNotFoundMsg(UserIdType id) {
+        return idNotFoundMsg(id.toString());
     }
 
-    private String idNotFoundMsg(String _id) {
-        return String.format("Не найден пользователь с кодом %s!", _id);
+    private String idNotFoundMsg(String id) {
+        return String.format("Не найден пользователь с кодом %s!", id);
     }
 
-    public boolean notExists(UserIdType _id) {
+    public boolean notExists(UserIdType id) {
         String sqlStatement = String.format("select count(*) from UserInfo where %1$s = :%1$s", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(ID_FIELD, _id.getValue());
+                .addValue(ID_FIELD, id.getValue());
         Integer count = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, Integer.class));
-        log.info("Выполнено {}.exists({})", this.getClass().getName(), _id);
+        log.info("Выполнено {}.exists({})", this.getClass().getName(), id);
         return count == 0;
     }
 
-    public User read(final UserIdType _id) {
+    public User read(final UserIdType id) {
         String sqlStatement = String.format("select * from UserInfo where %1$s = :%1$s", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(ID_FIELD, _id.getValue());
+                .addValue(ID_FIELD, id.getValue());
         User result;
         try {
             result = jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> makeUser(rs));
         } catch (EmptyResultDataAccessException ex) {
-            throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
+            throw new KeyNotFoundException(idNotFoundMsg(id), this.getClass(), log);
         }
 
-        log.info("Выполнено {}.read({})", this.getClass().getName(), _id);
+        log.info("Выполнено {}.read({})", this.getClass().getName(), id);
 
         return result;
     }
@@ -75,67 +75,67 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
         return result;
     }
 
-    public User create(User _source) {
+    public User create(User item) {
         final String sqlStatement = String.format("insert into UserInfo (%1$s, %2$s, %3$s, %4$s) values ( :%1$s, :%2$s, :%3$s, :%4$s )"
                 , NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(NAME_FIELD, _source.getName())
-                .addValue(LOGIN_FIELD, _source.getLogin())
-                .addValue(EMAIL_FIELD, _source.getEmail())
-                .addValue(BIRTHDAY_FIELD, _source.getBirthday());
+                .addValue(NAME_FIELD, item.getName())
+                .addValue(LOGIN_FIELD, item.getLogin())
+                .addValue(EMAIL_FIELD, item.getEmail())
+                .addValue(BIRTHDAY_FIELD, item.getBirthday());
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
         UserIdType newId = UserIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
-        User result = (User) _source.clone(); //Развязываем образец и результат
+        User result = (User) item.clone(); //Развязываем образец и результат
         result.setId(newId);
-        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), _source, newId);
+        log.info("Выполнено {}.create({}) => {}", this.getClass().getName(), item, newId);
         return result;
     }
 
-    public void update(User _user) {
+    public void update(User item) {
         final String sqlStatement = String.format("update UserInfo set %1$s = :%1$s, %2$s = :%2$s, %3$s = :%3$s, %4$s = :%4$s where %5$s = :%5$s",
-                            NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD, ID_FIELD);
+                NAME_FIELD, LOGIN_FIELD, EMAIL_FIELD, BIRTHDAY_FIELD, ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(NAME_FIELD, _user.getName())
-                .addValue(LOGIN_FIELD, _user.getLogin())
-                .addValue(EMAIL_FIELD, _user.getEmail())
-                .addValue(BIRTHDAY_FIELD, _user.getBirthday())
-                .addValue(ID_FIELD, _user.getId().getValue());
+                .addValue(NAME_FIELD, item.getName())
+                .addValue(LOGIN_FIELD, item.getLogin())
+                .addValue(EMAIL_FIELD, item.getEmail())
+                .addValue(BIRTHDAY_FIELD, item.getBirthday())
+                .addValue(ID_FIELD, item.getId().getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount==0) {
-            throw new KeyNotFoundException(idNotFoundMsg(_user.getId()), this.getClass(), log);
+            throw new KeyNotFoundException(idNotFoundMsg(item.getId()), this.getClass(), log);
         }
 
-        log.info("Выполнено {}.update({})", this.getClass().getName(), _user);
+        log.info("Выполнено {}.update({})", this.getClass().getName(), item);
     }
 
-    public void delete(UserIdType _id) {
+    public void delete(UserIdType id) {
         final String sqlStatement = String.format("delete from UserInfo where %1$s = :%1$s", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(ID_FIELD, _id.getValue());
+                .addValue(ID_FIELD, id.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
-            throw new KeyNotFoundException(idNotFoundMsg(_id), this.getClass(), log);
+            throw new KeyNotFoundException(idNotFoundMsg(id), this.getClass(), log);
         }
 
-        log.info("Выполнено {}.delete({})", this.getClass().getName(), _id);
+        log.info("Выполнено {}.delete({})", this.getClass().getName(), id);
     }
 
-    private static User makeUser(ResultSet _rs) throws SQLException {
-        log.debug("Вызов {}.makeUser({})", UserDAO.class.getName(), _rs);
+    private static User makeUser(ResultSet rs) throws SQLException {
+        log.debug("Вызов {}.makeUser({})", UserDAO.class.getName(), rs);
         return User.builder()
-                .id(UserIdType.of(_rs.getLong(ID_FIELD)))
-                .name(_rs.getString(NAME_FIELD))
-                .email(_rs.getString(EMAIL_FIELD))
-                .login(_rs.getString(LOGIN_FIELD))
-                .birthday(_rs.getDate(BIRTHDAY_FIELD).toLocalDate())
+                .id(UserIdType.of(rs.getLong(ID_FIELD)))
+                .name(rs.getString(NAME_FIELD))
+                .email(rs.getString(EMAIL_FIELD))
+                .login(rs.getString(LOGIN_FIELD))
+                .birthday(rs.getDate(BIRTHDAY_FIELD).toLocalDate())
                 .build();
     }
 
-    public List<User> getFriends(UserIdType _id) {
+    public List<User> getFriends(UserIdType id) {
         final String sqlStatement = String.format(" select u.* " +
                 " from Friendship inv /* Приглашение к дружбе */ " +
                 " join UserInfo u " +
@@ -143,18 +143,18 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
                 " where inv.proposer_id = :%1$s " +
                 " order by u.user_id ", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(ID_FIELD, _id.getValue());
+                .addValue(ID_FIELD, id.getValue());
 
         List<User> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeUser(rs));
 
-        log.info("Выполнено {}.getFriends({})", this.getClass().getName(), _id);
+        log.info("Выполнено {}.getFriends({})", this.getClass().getName(), id);
 
         return result;
     }
 
-    public List<User> getCommonFriends(UserIdType _id1, UserIdType _id2) {
-        if (notExists(_id1)) throw new KeyNotFoundException(idNotFoundMsg(_id1), this.getClass(), log);
-        if (notExists(_id2)) throw new KeyNotFoundException(idNotFoundMsg(_id2), this.getClass(), log);
+    public List<User> getCommonFriends(UserIdType id1, UserIdType id2) {
+        if (notExists(id1)) throw new KeyNotFoundException(idNotFoundMsg(id1), this.getClass(), log);
+        if (notExists(id2)) throw new KeyNotFoundException(idNotFoundMsg(id2), this.getClass(), log);
 
         final String sqlStatement = String.format("    select * " +
                 "    from " +
@@ -171,47 +171,47 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
                 "        on u.user_id = f1.invited_id " +
                 "    order by u.user_id;    ", PROPOSER_ID, INVITED_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(PROPOSER_ID, _id1.getValue())
-                .addValue(INVITED_ID, _id2.getValue());
+                .addValue(PROPOSER_ID, id1.getValue())
+                .addValue(INVITED_ID, id2.getValue());
 
         List<User> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeUser(rs));
 
-        log.info("Выполнено {}.getCommonFriends({}, {})", this.getClass().getName(), _id1, _id2);
+        log.info("Выполнено {}.getCommonFriends({}, {})", this.getClass().getName(), id1, id2);
 
         return result;
     }
 
-    public void addFriend(UserIdType _idFrom, UserIdType _idTo) {
+    public void addFriend(UserIdType idFrom, UserIdType idTo) {
         final String sqlStatement = String.format("insert into Friendship ( %1$s , %2$s ) values ( :%1$s , :%2$s )"
                 , PROPOSER_ID, INVITED_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(PROPOSER_ID, _idFrom.getValue())
-                .addValue(INVITED_ID, _idTo.getValue());
-        int rowCount =0;
+                .addValue(PROPOSER_ID, idFrom.getValue())
+                .addValue(INVITED_ID, idTo.getValue());
+        int rowCount = 0;
         try {
             rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
         } catch (Exception e) {
             log.debug("Ошибка выполнения запроса: {}", e.getMessage());
         }
-        if (rowCount==0) {
+        if (rowCount == 0) {
             log.debug("0 обработанных строк для запроса {} [{}]", sqlStatement, sqlParams);
-            throw new KeyNotFoundException(idNotFoundMsg( _idFrom + " или " + _idTo), this.getClass(), log);
+            throw new KeyNotFoundException(idNotFoundMsg(idFrom + " или " + idTo), this.getClass(), log);
         }
-        log.info("Выполнено {}.makeFriendship({}, {})", this.getClass().getName(), _idFrom, _idTo);
+        log.info("Выполнено {}.makeFriendship({}, {})", this.getClass().getName(), idFrom, idTo);
     }
 
-    public void removeFriend(UserIdType _idFrom, UserIdType _idTo) {
-        final String sqlStatement = String.format(" delete from Friendship "+
+    public void removeFriend(UserIdType idFrom, UserIdType idTo) {
+        final String sqlStatement = String.format(" delete from Friendship " +
                 " where %1$s = :%1$s and %2$s = :%2$s ", PROPOSER_ID, INVITED_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue(PROPOSER_ID, _idFrom.getValue())
-                .addValue(INVITED_ID, _idTo.getValue());
+                .addValue(PROPOSER_ID, idFrom.getValue())
+                .addValue(INVITED_ID, idTo.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
-        if (rowCount==0) {
+        if (rowCount == 0) {
             log.debug("0 обработанных строк для запроса {} [{}]", sqlStatement, sqlParams);
-            throw new KeyNotFoundException(idNotFoundMsg( _idFrom + " или " + _idTo), this.getClass(), log);
+            throw new KeyNotFoundException(idNotFoundMsg(idFrom + " или " + idTo), this.getClass(), log);
         }
-        log.info("Выполнено {}.breakFriendship({}, {})", this.getClass().getName(), _idFrom, _idTo);
+        log.info("Выполнено {}.breakFriendship({}, {})", this.getClass().getName(), idFrom, idTo);
     }
 }

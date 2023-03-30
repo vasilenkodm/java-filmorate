@@ -19,30 +19,30 @@ import java.util.List;
 public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> {
     final EventStorage eventStorage;;
 
-    public FilmService(FilmStorage _storage, EventStorage eventStorage) {
-        super(_storage);
+    public FilmService(FilmStorage filmStorage, EventStorage eventStorage) {
+        super(filmStorage);
         this.eventStorage = eventStorage;
     }
 
-    public void addLike(FilmIdType _filmId, UserIdType _userId) {
-        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _filmId,  _userId);
-        storage.addLike(_filmId, _userId);
-        eventStorage.addEvent(_userId.getValue(), _filmId.getValue(), EventType.LIKE, OperationType.ADD);
+    public void addLike(FilmIdType filmId, UserIdType userId) {
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), filmId, userId);
+        storage.addLike(filmId, userId);
+        eventStorage.addEvent(userId.getValue(), filmId.getValue(), EventType.LIKE, OperationType.ADD);
     }
 
-    public void removeLike(FilmIdType _filmId, UserIdType _userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
-        storage.removeLike(_filmId, _userId);
-        eventStorage.addEvent(_userId.getValue(), _filmId.getValue(), EventType.LIKE, OperationType.REMOVE);
+    public void removeLike(FilmIdType filmId, UserIdType userId) {
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+        storage.removeLike(filmId, userId);
+        eventStorage.addEvent(userId.getValue(), filmId.getValue(), EventType.LIKE, OperationType.REMOVE);
     }
 
-    public List<Film> getPopular(int _maxCount) {
-        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), _maxCount);
-        return storage.getPopular(_maxCount);
+    public List<Film> getPopular(int maxCount) {
+        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), maxCount);
+        return storage.getPopular(maxCount);
     }
 
-    public List<Film> getFilmsByDirector(DirectorIdType _directorId, FilmsByDirectorSortByMode _sortBy) {
-        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), _directorId, _sortBy);
-        return storage.getFilmsByDirector(_directorId, _sortBy);
+    public List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy) {
+        log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
+        return storage.getFilmsByDirector(directorId, sortBy);
     }
 }

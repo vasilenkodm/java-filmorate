@@ -25,7 +25,7 @@ public class Director extends BaseItem<DirectorIdType, Director> implements Item
     private String name;
 
     @Override
-    public void updateWith(Director _source) {
-        this.name = _source.getName();
+    public void updateWith(Director item) {
+        this.name = item.getName();
     }
 }

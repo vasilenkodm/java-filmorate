@@ -7,7 +7,7 @@ public final class DirectorIdType extends ValueType<Integer> implements Serializ
         super(value);
     }
 
-    public static DirectorIdType of(Integer _value) {
-        return new DirectorIdType(_value);
+    public static DirectorIdType of(Integer value) {
+        return new DirectorIdType(value);
     }
 }

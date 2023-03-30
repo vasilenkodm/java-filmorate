@@ -15,27 +15,29 @@ import java.util.List;
 @Component
 @Primary
 public class UserDbStorage extends BaseItemDbStorage<UserIdType, User, UserDAO> implements UserStorage {
-    UserDbStorage(UserDAO _dao) { super(_dao); }
-
-    @Override
-    public List<User> getFriends(UserIdType _userId) {
-        log.debug("Вызов {}.getFriends({})", this.getClass().getName(), _userId);
-        if (dao.notExists(_userId)) {
-            throw new KeyNotFoundException(dao.idNotFoundMsg(_userId), this.getClass(), log);
-        }
-        return dao.getFriends(_userId);
+    UserDbStorage(UserDAO userDAO) {
+        super(userDAO);
     }
 
     @Override
-    public List<User> commonFriends(UserIdType _userIdOne, UserIdType _userIdTwo) {
-        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), _userIdOne, _userIdTwo);
-        if (dao.notExists(_userIdOne)) {
-            throw new KeyNotFoundException(dao.idNotFoundMsg(_userIdOne), this.getClass(), log);
+    public List<User> getFriends(UserIdType userId) {
+        log.debug("Вызов {}.getFriends({})", this.getClass().getName(), userId);
+        if (dao.notExists(userId)) {
+            throw new KeyNotFoundException(dao.idNotFoundMsg(userId), this.getClass(), log);
         }
-        if (dao.notExists(_userIdTwo)) {
-            throw new KeyNotFoundException(dao.idNotFoundMsg(_userIdTwo), this.getClass(), log);
+        return dao.getFriends(userId);
+    }
+
+    @Override
+    public List<User> commonFriends(UserIdType userIdOne, UserIdType userIdTwo) {
+        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), userIdOne, userIdTwo);
+        if (dao.notExists(userIdOne)) {
+            throw new KeyNotFoundException(dao.idNotFoundMsg(userIdOne), this.getClass(), log);
         }
-        return dao.getCommonFriends(_userIdOne, _userIdTwo);
+        if (dao.notExists(userIdTwo)) {
+            throw new KeyNotFoundException(dao.idNotFoundMsg(userIdTwo), this.getClass(), log);
+        }
+        return dao.getCommonFriends(userIdOne, userIdTwo);
     }
 
 //    @Override
@@ -44,14 +46,14 @@ public class UserDbStorage extends BaseItemDbStorage<UserIdType, User, UserDAO> 
 //    }
 
     @Override
-    public void addFriend(UserIdType _userId, UserIdType _friendId) {
-        log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), _userId, _friendId);
-        dao.addFriend(_userId, _friendId);
+    public void addFriend(UserIdType userId, UserIdType friendId) {
+        log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), userId, friendId);
+        dao.addFriend(userId, friendId);
     }
 
     @Override
-    public void removeFriend(UserIdType _userId, UserIdType _friendId) {
-        log.debug("Вызов {}.removeFriend({}, {})", this.getClass().getName(), _userId, _friendId);
-        dao.removeFriend(_userId, _friendId);
+    public void removeFriend(UserIdType userId, UserIdType friendId) {
+        log.debug("Вызов {}.removeFriend({}, {})", this.getClass().getName(), userId, friendId);
+        dao.removeFriend(userId, friendId);
     }
 }

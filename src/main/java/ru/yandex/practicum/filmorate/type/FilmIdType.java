@@ -7,7 +7,7 @@ public final class FilmIdType extends ValueType<Long> implements Serializable {
         super(value);
     }
 
-    public static FilmIdType of(Long _value) {
-        return new FilmIdType(_value);
+    public static FilmIdType of(Long value) {
+        return new FilmIdType(value);
     }
 }
