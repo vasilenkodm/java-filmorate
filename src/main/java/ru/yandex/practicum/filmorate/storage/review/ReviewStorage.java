@@ -9,10 +9,13 @@ import ru.yandex.practicum.filmorate.type.UserIdType;
 import java.util.List;
 
 public interface ReviewStorage extends ItemStorage<ReviewIdType, Review> {
-    void addLike(ReviewIdType _reviewId, UserIdType _userId);
-    void deleteLike(ReviewIdType _reviewId, UserIdType _userId);
-    void addDisLike(ReviewIdType _reviewId, UserIdType _userId);
-    void deleteDisLike(ReviewIdType _reviewId, UserIdType _userId);
+    void addLike(ReviewIdType reviewId, UserIdType userId);
+
+    void deleteLike(ReviewIdType reviewId, UserIdType userId);
+
+    void addDisLike(ReviewIdType reviewId, UserIdType userId);
+
+    void deleteDisLike(ReviewIdType reviewId, UserIdType userId);
 
     List<Review> getReviewsForFilm(FilmIdType filmId, int count);
 }

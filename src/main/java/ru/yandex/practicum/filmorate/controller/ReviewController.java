@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/reviews")
-public class ReviewController{
+public class ReviewController {
 
     private final ReviewService reviewService;
 

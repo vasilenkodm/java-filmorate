@@ -16,7 +16,9 @@ import javax.validation.constraints.NotNull;
 @ToString
 @EqualsAndHashCode
 public class Review implements Item<ReviewIdType, Review> {
-    public Review() { super();}
+    public Review() {
+        super();
+    }
 
     private ReviewIdType reviewId;
     @NotNull
@@ -33,13 +35,31 @@ public class Review implements Item<ReviewIdType, Review> {
 
     @Override
     public ReviewIdType getId() {
+        return getReviewId();
+    }
+
+    @Override
+    public void setId(ReviewIdType id) {
+        setReviewId(id);
+    }
+
+    public ReviewIdType getReviewId() {
+        return reviewId;
+    }
+
+    public void setReviewId(ReviewIdType reviewId) {
+        this.reviewId = reviewId;
+    }
+
+    /*@Override
+    public ReviewIdType getId() {
         return reviewId;
     }
 
     @Override
     public void setId(ReviewIdType id) {
         this.reviewId = id;
-    }
+    }*/
 
 
     @Override
