@@ -103,9 +103,4 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
         return null;
     }
 
-    @Override
-    public List<Film> getRecommendations(UserIdType userId) {
-        return null;
-    }
-
 }
