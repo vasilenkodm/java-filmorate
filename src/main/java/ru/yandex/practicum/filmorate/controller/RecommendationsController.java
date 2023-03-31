@@ -16,8 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping
 public class RecommendationsController extends BaseItemController<FilmIdType, Film, RecommendationsService> {
-    public RecommendationsController(RecommendationsService _service) {
-        super(_service);
+    public RecommendationsController(RecommendationsService service) {
+        super(service);
     }
 
     //GET /users/{userId}/recommendations — список рекомендаций фильмов для пользователя.
