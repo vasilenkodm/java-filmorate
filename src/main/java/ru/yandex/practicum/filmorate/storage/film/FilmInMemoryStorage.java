@@ -6,10 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.FeatureNotSupportedException;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.BaseItemInMemoryStorage;
-import ru.yandex.practicum.filmorate.type.DirectorIdType;
-import ru.yandex.practicum.filmorate.type.FilmIdType;
-import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
-import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,7 +56,7 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
     }
 
     @Override
-    public List<Film> getPopular(int maxCount) {
+    public List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year) {
         List<Film> result = items.keySet()
                 .stream()
                 .sorted(Comparator.comparing(this::getLikesCount).reversed().thenComparing(FilmIdType::getValue))
