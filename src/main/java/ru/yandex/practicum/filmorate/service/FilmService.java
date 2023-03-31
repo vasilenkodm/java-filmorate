@@ -40,8 +40,8 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
         return storage.getFilmsByDirector(directorId, sortBy);
     }
 
-    public List<Film> getSearchedFilms(String _query, Set<String> _by) { //add-search
-        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), _query,  _by);
-        return storage.getSearchedFilms(_query, _by);
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
+        return storage.getSearchedFilms(query, by);
     }
 }

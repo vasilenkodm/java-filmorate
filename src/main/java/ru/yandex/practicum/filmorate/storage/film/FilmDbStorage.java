@@ -62,8 +62,8 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
     }
 
     @Override
-    public List<Film> getSearchedFilms(String _query, Set<String> _by) { //add-search
-        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), _query,  _by);
-        return dao.getSearchedFilms(_query, _by);
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
+        return dao.getSearchedFilms(query, by);
     }
 }

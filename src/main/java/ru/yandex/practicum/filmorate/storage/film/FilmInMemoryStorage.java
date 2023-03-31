@@ -99,7 +99,7 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
     }
 
     @Override
-    public List<Film> getSearchedFilms(String _query, Set<String> _by) { //add-search
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
         throw new FeatureNotSupportedException("Функция не поддерживается", this.getClass(), log);
     }
 

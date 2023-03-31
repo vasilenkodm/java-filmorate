@@ -21,5 +21,5 @@ public interface FilmStorage extends ItemStorage<FilmIdType, Film> {
 
     List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy);
 
-    List<Film> getSearchedFilms(String _query, Set<String> _by);
+    List<Film> getSearchedFilms(String query, Set<String> by);
 }
