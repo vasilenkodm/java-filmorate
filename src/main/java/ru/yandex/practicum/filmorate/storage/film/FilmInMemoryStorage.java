@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.exceptions.FeatureNotSupportedException;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.BaseItemInMemoryStorage;
@@ -88,6 +89,11 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
         }
         users.remove(_userId);
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
+    }
+
+    @Override
+    public List<Film> getSearchedFilms(String _query, Set<String> _by) { //add-search
+        throw new FeatureNotSupportedException("Функция не поддерживается", this.getClass(), log);
     }
 
 }

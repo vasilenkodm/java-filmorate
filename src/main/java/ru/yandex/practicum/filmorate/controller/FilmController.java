@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -40,9 +41,10 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
     }
 
     //GET /films/search?query=крад&by=director,title
-    @GetMapping("/search") //Доделать
+    @GetMapping("/search") //add-search
     public List<Film> getSearchedFilms(@RequestParam(name = "query") String _query,
-                                       @RequestParam(name = "by") String _by) { //Или by сделать другим типом?
-        return null;
+                                       @RequestParam(name = "by", defaultValue = "title,director") Set<String> _by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), _query,  _by);
+        return service.getSearchedFilms(_query, _by);
     }
 }

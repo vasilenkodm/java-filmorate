@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -41,5 +42,11 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
     public void removeLike(FilmIdType _filmId, UserIdType _userId) {
         log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
         dao.removeLike(_filmId, _userId);
+    }
+
+    @Override
+    public List<Film> getSearchedFilms(String _query, Set<String> _by) { //add-search
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), _query,  _by);
+        return dao.getSearchedFilms(_query, _by);
     }
 }

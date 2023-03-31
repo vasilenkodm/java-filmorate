@@ -16,13 +16,9 @@ import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.GenreIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
+import java.sql.*;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -41,6 +37,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     public static final String FILMLIKES_USER_ID = "user_id";
     public static final String MAX_COUNT = "max_count";
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
+    private final List<String> validColumns = List.of(NAME_FIELD, DESCRIPRTION_FIELD);
 
     private String idNotFoundMsg(FilmIdType _id) {
         return String.format("Не найден фильм с кодом %s!", _id);
@@ -228,4 +225,36 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
     }
 
+    public List<Film> getSearchedFilms(String _query, Set<String> _by) { //add-search
+        if (_by.contains("title")) {
+            _by.remove("title");
+            _by.add(NAME_FIELD);
+        }
+        StringBuilder sqlStatementBuilder = new StringBuilder("SELECT f.*, r.RankMPA_name FROM Film AS f " +
+                "LEFT JOIN FilmLikes AS fl ON f.film_id = fl.film_id " +
+                "LEFT JOIN RankMPA AS r on r.rankMPA_id=f.rankMPA_id " +
+                "WHERE ");
+        if (areValidNames(_by) && !_query.contains("'") && !_query.contains(";")) {
+            for (int i = 0; i < _by.size(); i++) {
+                sqlStatementBuilder.append(i == _by.size() - 1 ? "f." + _by.toArray()[i] : "f." + _by.toArray()[i] +
+                        " ILIKE '%" + _query + "%' OR ");
+            }
+            sqlStatementBuilder.append(" ILIKE '%" + _query + "%' " +
+                    "GROUP BY f.film_id " +
+                    "ORDER BY COUNT(fl.film_id) DESC, f.film_name");
+            List<Film> result = jdbcNamedTemplate.query(sqlStatementBuilder.toString(), (rs, rowNum) -> makeFilm(rs));
+            log.info("Выполнено {}.getSearchedFilms(query: {}, by: {})", this.getClass().getName(), _query, _by);
+            return result;
+        }
+        throw new KeyNotFoundException("Неверные параметры запроса", this.getClass(), log);
+    }
+
+    private boolean areValidNames(Set<String> by) {
+        for (String s : by) {
+            if (!validColumns.contains(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
