@@ -21,27 +21,27 @@ public class ReviewDbStorage extends BaseItemDbStorage<ReviewIdType, Review, Rev
     }
 
     @Override
-    public void addLike(ReviewIdType _reviewId, UserIdType _userId) {
-        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), _reviewId, _userId);
-        dao.addLike(_reviewId, _userId);
+    public void addLike(ReviewIdType reviewId, UserIdType userId) {
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), reviewId, userId);
+        dao.addLike(reviewId, userId);
     }
 
     @Override
-    public void deleteLike(ReviewIdType _reviewId, UserIdType _userId) {
-        log.debug("Вызов {}.deleteLike({}, {})", this.getClass().getName(), _reviewId, _userId);
-        dao.removeLike(_reviewId, _userId);
+    public void deleteLike(ReviewIdType reviewId, UserIdType userId) {
+        log.debug("Вызов {}.deleteLike({}, {})", this.getClass().getName(), reviewId, userId);
+        dao.removeLike(reviewId, userId);
     }
 
     @Override
-    public void addDisLike(ReviewIdType _reviewId, UserIdType _userId) {
-        log.debug("Вызов {}.addDisLike({}, {})", this.getClass().getName(), _reviewId, _userId);
-        dao.addDisLike(_reviewId, _userId);
+    public void addDisLike(ReviewIdType reviewId, UserIdType userId) {
+        log.debug("Вызов {}.addDisLike({}, {})", this.getClass().getName(), reviewId, userId);
+        dao.addDisLike(reviewId, userId);
     }
 
     @Override
-    public void deleteDisLike(ReviewIdType _reviewId, UserIdType _userId) {
-        log.debug("Вызов {}.deleteDisLike({}, {})", this.getClass().getName(), _reviewId, _userId);
-        dao.removeDisLike(_reviewId, _userId);
+    public void deleteDisLike(ReviewIdType reviewId, UserIdType userId) {
+        log.debug("Вызов {}.deleteDisLike({}, {})", this.getClass().getName(), reviewId, userId);
+        dao.removeDisLike(reviewId, userId);
     }
 
     @Override
