@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import ru.yandex.practicum.filmorate.type.RankMPAIdType;
+import ru.yandex.practicum.filmorate.type.DirectorIdType;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -15,17 +15,17 @@ import javax.validation.constraints.Size;
 @SuperBuilder(toBuilder = true)
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class RankMPA extends BaseItem<RankMPAIdType, RankMPA> implements Item<RankMPAIdType, RankMPA> {
-    public RankMPA() {
+public class Director extends BaseItem<DirectorIdType, Director> implements Item<DirectorIdType, Director> {
+    public Director() {
         super();
     }
 
     @NotBlank
-    @Size(max = 10)
+    @Size(max = 100)
     private String name;
 
     @Override
-    public void updateWith(RankMPA item) {
+    public void updateWith(Director item) {
         this.name = item.getName();
     }
 }

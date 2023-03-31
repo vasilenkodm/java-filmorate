@@ -5,7 +5,7 @@ public final class GenreIdType extends ValueType<Integer> {
         super(value);
     }
 
-    public static GenreIdType of(Integer _value) {
-        return new GenreIdType(_value);
+    public static GenreIdType of(Integer value) {
+        return new GenreIdType(value);
     }
 }

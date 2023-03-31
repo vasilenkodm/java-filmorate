@@ -11,9 +11,9 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
-public class UserController  extends BaseItemController<UserIdType, User, UserService> {
-    public UserController(UserService _service) {
-        super(_service);
+public class UserController extends BaseItemController<UserIdType, User, UserService> {
+    public UserController(UserService service) {
+        super(service);
     }
 
     //PUT /users/{id}/friends/{friendId}  — добавление в друзья.
