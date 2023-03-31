@@ -90,4 +90,9 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
     }
 
+    @Override
+    public List<Film> getRecommendations(UserIdType userId) {
+        return null;
+    }
+
 }

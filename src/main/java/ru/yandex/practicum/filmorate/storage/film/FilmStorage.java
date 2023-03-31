@@ -12,4 +12,6 @@ public interface FilmStorage extends ItemStorage<FilmIdType, Film> {
     int getLikesCount(FilmIdType _id);
     void addLike(FilmIdType _filmId, UserIdType _userId);
     void removeLike(FilmIdType _filmId, UserIdType _userId);
+
+    List<Film> getRecommendations(UserIdType userId);
 }

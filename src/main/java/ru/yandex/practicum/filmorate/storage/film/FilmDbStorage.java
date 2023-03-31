@@ -42,4 +42,10 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
         log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
         dao.removeLike(_filmId, _userId);
     }
+
+    @Override
+    public List<Film> getRecommendations(UserIdType userId) {
+        log.debug("Вызов {}.getRecommendations({})", this.getClass().getName(), userId);
+        return dao.getRecommendations(userId);
+    }
 }

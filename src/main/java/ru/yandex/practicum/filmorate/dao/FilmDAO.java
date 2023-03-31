@@ -228,4 +228,33 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), _filmId, _userId);
     }
 
+    public List<Film> getRecommendations(UserIdType userId) {
+        final String sqlStatement = String.format("" +
+                "select * " +
+                "from Film f " +
+                "left outer join RankMPA on RankMPA.rankMPA_id = f.RankMPA_id " +
+                "where film_id in (select film_id " +
+                                  "from FilmLikes fl " +
+                                  "where user_id = (select user_id " +
+                                                   "from (select user_id, " +
+                                                         "count(film_id) as count " +
+                                                         "from FilmLikes fl " +
+                                                         "where film_id in (select film_id " +
+                                                                           "from FilmLikes " +
+                                                                           "where %1$s = :%1$s) " +
+                                                         "and %1$s <> :%1$s " +
+                                                         "group by user_id " +
+                                                         "order by count desc limit 1)) " +
+                                  "and film_id not in (select film_id " +
+                                                      "from FilmLikes " +
+                                                      "where %1$s = :%1$s)) ", FILMLIKES_USER_ID);
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(FILMLIKES_USER_ID, userId.getValue());
+
+        List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
+
+        log.info("Выполнено {}.getRecommendations({})", this.getClass().getName(), userId);
+
+        return result;
+    }
 }
