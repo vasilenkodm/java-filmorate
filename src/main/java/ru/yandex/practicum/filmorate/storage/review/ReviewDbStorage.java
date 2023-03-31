@@ -45,8 +45,8 @@ public class ReviewDbStorage extends BaseItemDbStorage<ReviewIdType, Review, Rev
     }
 
     @Override
-    public List<Review> getReviewsForFilm(FilmIdType filmId, int count) {
+    public List<Review> readAllItems(FilmIdType filmId, int count) {
         log.debug("Вызов {}.getReviewsForFilm({})", this.getClass().getName(), filmId);
-        return dao.getReviewsForFilm(filmId, count);
+        return dao.readAllItems(filmId, count);
     }
 }

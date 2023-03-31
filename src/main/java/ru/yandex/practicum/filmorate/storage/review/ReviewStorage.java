@@ -17,5 +17,5 @@ public interface ReviewStorage extends ItemStorage<ReviewIdType, Review> {
 
     void deleteDisLike(ReviewIdType reviewId, UserIdType userId);
 
-    List<Review> getReviewsForFilm(FilmIdType filmId, int count);
+    List<Review> readAllItems(FilmIdType filmId, int count);
 }

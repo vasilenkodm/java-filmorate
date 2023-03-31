@@ -34,6 +34,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     public static final String IS_POSITIVE_FIELD = "is_positive";
     public static final String USER_ID_FIELD = "user_id";
     public static final String FILM_ID_FIELD = "film_id";
+    public static final String IS_LIKE_FIELD = "is_like";
+    public static final String COUNT_FIELD = "count";
 
     public static String idNotFoundMsg(ReviewIdType id) {
         return String.format("Не найден отзыв с кодом %s!", id);
@@ -86,9 +88,9 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
 
     @Override
     public Review read(ReviewIdType id) {
-        String sqlStatement = String.format("select * from review where %1$s = :%1$s", "review_id");
+        String sqlStatement = String.format("select * from review where %1$s = :%1$s", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue("review_id", id.getValue());
+                .addValue(ID_FIELD, id.getValue());
         Review result;
         try {
             result = jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> makeReview(rs));
@@ -117,7 +119,7 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
 
     @Override
     public List<Review> selectAll() {
-        final String sqlStatement = String.format("select * from Review order by %1$s", "review_id");
+        final String sqlStatement = String.format("select * from Review order by %1$s", ID_FIELD);
         List<Review> result = jdbcNamedTemplate.query(sqlStatement, (rs, row) -> makeReview(rs))
                 .stream().sorted(Comparator.comparing(Review::getUseful).reversed()).collect(Collectors.toList());
 
@@ -127,11 +129,11 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     }
 
     public void addLike(ReviewIdType reviewId, UserIdType userId) {
-        final String sqlStatement = String.format("insert into  ReviewLikes (%1$s, %2$s, %3$s) values( :%1$s , :%2$s , :%3$s )", "review_id", "user_id", "is_like");
+        final String sqlStatement = String.format("insert into  ReviewLikes (%1$s, %2$s, %3$s) values( :%1$s , :%2$s , :%3$s )", ID_FIELD, USER_ID_FIELD, IS_LIKE_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue("review_id", reviewId.getValue())
-                .addValue("user_id", userId.getValue())
-                .addValue("is_like", true);
+                .addValue(ID_FIELD, reviewId.getValue())
+                .addValue(USER_ID_FIELD, userId.getValue())
+                .addValue(IS_LIKE_FIELD, true);
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
@@ -143,8 +145,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     public void removeLike(ReviewIdType reviewId, UserIdType userId) {
         final String sqlStatement = String.format("delete from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, USER_ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue("review_id", reviewId.getValue())
-                .addValue("user_id", userId.getValue());
+                .addValue(ID_FIELD, reviewId.getValue())
+                .addValue(USER_ID_FIELD, userId.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
         if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(reviewId), this.getClass(), log);
@@ -153,11 +155,11 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     }
 
     public void addDisLike(ReviewIdType reviewId, UserIdType userId) {
-        final String sqlStatement = String.format("insert into  ReviewLikes (%1$s, %2$s, %3$s) values( :%1$s , :%2$s , :%3$s )", ID_FIELD, USER_ID_FIELD, "is_like");
+        final String sqlStatement = String.format("insert into  ReviewLikes (%1$s, %2$s, %3$s) values( :%1$s , :%2$s , :%3$s )", ID_FIELD, USER_ID_FIELD, IS_LIKE_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue("review_id", reviewId.getValue())
-                .addValue("user_id", userId.getValue())
-                .addValue("is_like", false);
+                .addValue(ID_FIELD, reviewId.getValue())
+                .addValue(USER_ID_FIELD, userId.getValue())
+                .addValue(IS_LIKE_FIELD, false);
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
@@ -170,8 +172,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     public void removeDisLike(ReviewIdType reviewId, UserIdType userId) {
         final String sqlStatement = String.format("delete from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, USER_ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
-                .addValue("review_id", reviewId.getValue())
-                .addValue("user_id", userId.getValue());
+                .addValue(ID_FIELD, reviewId.getValue())
+                .addValue(USER_ID_FIELD, userId.getValue());
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
         if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(reviewId), this.getClass(), log);
@@ -179,7 +181,7 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
         log.info("Выполнено {}.removeDisLike({}, {})", this.getClass().getName(), reviewId, userId);
     }
 
-    public List<Review> getReviewsForFilm(FilmIdType filmId, int count) {
+    public List<Review> readAllItems(FilmIdType filmId, int count) {
         if (filmId != null) {
             return getReviewsByFilmId(filmId, count);
         } else {
@@ -188,10 +190,10 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     }
 
     private List<Review> getReviewsByFilmId(FilmIdType filmId, int count) {
-        final String sqlStatement = String.format("select top :%2$s * from Review where %1$s = :%1$s ", FILM_ID_FIELD, "count");
+        final String sqlStatement = String.format("select top :%2$s * from Review where %1$s = :%1$s ", FILM_ID_FIELD, COUNT_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILM_ID_FIELD, filmId.getValue())
-                .addValue("count", count);
+                .addValue(COUNT_FIELD, count);
         List<Review> result =  jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeReview(rs))
                 .stream().sorted(Comparator.comparing(Review::getUseful).reversed()).collect(Collectors.toList());
 
@@ -200,20 +202,20 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
     }
 
     private Integer getUsefulRateForReview(ReviewIdType reviewId) {
-        final String sqlStatement = String.format("select count(*) as %3$s from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, "is_like", "count");
+        final String sqlStatement = String.format("select count(*) as %3$s from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, IS_LIKE_FIELD, COUNT_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, reviewId.getValue())
-                .addValue("is_like", true);
+                .addValue(IS_LIKE_FIELD, true);
         int countLikes;
 
-        final String sqlStatement2 = String.format("select count(*) as %3$s from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, "is_like", "count");
+        final String sqlStatement2 = String.format("select count(*) as %3$s from ReviewLikes where %1$s = :%1$s and %2$s = :%2$s", ID_FIELD, IS_LIKE_FIELD, COUNT_FIELD);
         SqlParameterSource sqlParams2 = new MapSqlParameterSource()
                 .addValue(ID_FIELD, reviewId.getValue())
-                .addValue("is_like", false);
+                .addValue(IS_LIKE_FIELD, false);
         int countDisLikes;
         try {
-            countLikes = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> rs.getInt("count")));
-            countDisLikes = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement2, sqlParams2, (rs, row) -> rs.getInt("count")));
+            countLikes = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, (rs, row) -> rs.getInt(COUNT_FIELD)));
+            countDisLikes = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement2, sqlParams2, (rs, row) -> rs.getInt(COUNT_FIELD)));
         } catch (EmptyResultDataAccessException ex) {
             throw new KeyNotFoundException(idNotFoundMsg(reviewId), this.getClass(), log);
         }

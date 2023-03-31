@@ -38,8 +38,8 @@ public class ReviewService extends BaseItemService<ReviewIdType, Review, ReviewS
         storage.deleteDisLike(reviewId, userId);
     }
 
-    public List<Review> getReviewsForFilm(FilmIdType filmId, int count) {
+    public List<Review> readAllItems(FilmIdType filmId, int count) {
         log.debug("Вызов {}.getReviewsForFilm({})", this.getClass().getName(), filmId);
-        return storage.getReviewsForFilm(filmId, count);
+        return storage.readAllItems(filmId, count);
     }
 }

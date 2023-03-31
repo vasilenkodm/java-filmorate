@@ -43,25 +43,6 @@ public class Review implements Item<ReviewIdType, Review> {
         setReviewId(id);
     }
 
-    public ReviewIdType getReviewId() {
-        return reviewId;
-    }
-
-    public void setReviewId(ReviewIdType reviewId) {
-        this.reviewId = reviewId;
-    }
-
-    /*@Override
-    public ReviewIdType getId() {
-        return reviewId;
-    }
-
-    @Override
-    public void setId(ReviewIdType id) {
-        this.reviewId = id;
-    }*/
-
-
     @Override
     public void updateWith(Review item) {
         this.content = item.content;
