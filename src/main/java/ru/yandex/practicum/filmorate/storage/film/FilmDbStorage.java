@@ -39,7 +39,7 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
 
     @Override
     public void addLike(FilmIdType filmId, UserIdType userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), filmId, userId);
         dao.addLike(filmId, userId);
     }
 

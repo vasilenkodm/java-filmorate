@@ -33,11 +33,11 @@ public class UserDAO implements ItemDAO<UserIdType, User> {
 
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
-    public String idNotFoundMsg(UserIdType id) {
+    public static String idNotFoundMsg(UserIdType id) {
         return idNotFoundMsg(id.toString());
     }
 
-    private String idNotFoundMsg(String id) {
+    private static String idNotFoundMsg(String id) {
         return String.format("Не найден пользователь с кодом %s!", id);
     }
 

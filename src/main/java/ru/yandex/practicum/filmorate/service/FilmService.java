@@ -2,21 +2,18 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.type.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
-import ru.yandex.practicum.filmorate.type.OperationType;
-import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.type.FilmIdType;
-import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
 public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> {
-    private final EventStorage eventStorage;;
+    private final EventStorage eventStorage;
 
     public FilmService(FilmStorage storage, EventStorage eventStorage) {
         super(storage);

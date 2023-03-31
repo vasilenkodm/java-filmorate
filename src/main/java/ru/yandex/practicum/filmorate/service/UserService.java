@@ -3,12 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Event;
-import ru.yandex.practicum.filmorate.type.EventType;
-import ru.yandex.practicum.filmorate.type.OperationType;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
+import ru.yandex.practicum.filmorate.type.EventType;
+import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
@@ -56,7 +55,6 @@ public class UserService extends BaseItemService<UserIdType, User, UserStorage> 
 
     public List<Event> getFeed(UserIdType userId) {
         log.debug("Вызов {}.getFeed({})", this.getClass().getName(), userId);
-        storage.getFriends(userId);
         return eventStorage.getFeedForUser(userId);
     }
 }
