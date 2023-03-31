@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.type.DirectorIdType;
-import ru.yandex.practicum.filmorate.type.FilmIdType;
-import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
-import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
 
@@ -33,11 +30,13 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
         service.removeLike(filmId, userId);
     }
 
-    //GET /films/popular?count={count}
+    //GET /films/popular?count={limit}&genreId={genreId}&year={year}
     @GetMapping("/popular")
-    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count) {
-        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), count);
-        return service.getPopular(count);
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count,
+                                 @RequestParam(required = false) GenreIdType genreId,
+                                 @RequestParam(required = false) Integer year) {
+        log.debug("Вызов {}.getPopular({}, {}, {})", this.getClass().getName(), count, genreId, year);
+        return service.getPopular(count, genreId, year);
     }
 
     //GET /films/director/{directorId}?sortBy={sortBy}
@@ -47,6 +46,5 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
         log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
         return service.getFilmsByDirector(directorId, FilmsByDirectorSortByMode.fromString(sortBy));
     }
-
 
 }
