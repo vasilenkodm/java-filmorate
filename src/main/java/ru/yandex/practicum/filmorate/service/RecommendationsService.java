@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 public class RecommendationsService extends BaseItemService<FilmIdType, Film, FilmStorage> {
 
-    public RecommendationsService(FilmStorage _storage) {
-        super(_storage);
+    public RecommendationsService(FilmStorage storage) {
+        super(storage);
     }
 
     //GET /users/{userId}/recommendations — список рекомендаций по фильмам.
