@@ -8,10 +8,7 @@ import ru.yandex.practicum.filmorate.dao.FilmDAO;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.BaseItemDbStorage;
-import ru.yandex.practicum.filmorate.type.DirectorIdType;
-import ru.yandex.practicum.filmorate.type.FilmIdType;
-import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
-import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
 import java.util.Set;
@@ -28,10 +25,10 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
     }
 
     @Override
-    public List<Film> getPopular(int maxCount) {
-        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), maxCount);
+    public List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year) {
+        log.debug("Вызов {}.getPopular({}, {}, {})", this.getClass().getName(), maxCount, genreId, year);
 
-        return dao.getPopular(maxCount);
+        return dao.getPopular(maxCount, genreId, year);
     }
 
     @Override

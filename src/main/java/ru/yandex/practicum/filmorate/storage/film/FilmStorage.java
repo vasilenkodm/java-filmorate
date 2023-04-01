@@ -2,16 +2,17 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.ItemStorage;
-import ru.yandex.practicum.filmorate.type.DirectorIdType;
-import ru.yandex.practicum.filmorate.type.FilmIdType;
-import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
-import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
 import java.util.Set;
 
 public interface FilmStorage extends ItemStorage<FilmIdType, Film> {
-    List<Film> getPopular(int maxCount);
+    List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year);
+
+    default List<Film> getPopular(int maxCount) {
+        return getPopular(maxCount, null, null);
+    }
 
     int getLikesCount(FilmIdType id);
 
