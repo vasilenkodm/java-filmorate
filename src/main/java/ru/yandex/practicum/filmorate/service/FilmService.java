@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> {
-    final EventStorage eventStorage;;
+    private final EventStorage eventStorage;;
 
     public FilmService(FilmStorage filmStorage, EventStorage eventStorage) {
         super(filmStorage);
