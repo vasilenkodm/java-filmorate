@@ -46,7 +46,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     public static final String MAX_COUNT = "max_count";
     public static final String LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID = "left outer join RankMPA on RankMPA.rankMPA_id=Film.rankMPA_id ";
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
-    private final List<String> validColumns = List.of(NAME_FIELD, DESCRIPTION_FIELD);
+    private final List<String> validColumns = List.of(NAME_FIELD, DIRECTOR_NAME);
 
     public static String idNotFoundMsg(FilmIdType id) {
         return String.format("Не найден фильм с кодом %s!", id);
@@ -318,8 +318,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
                 "FROM Film AS f " +
                 "LEFT JOIN FilmLikes AS fl ON f.film_id = fl.film_id " +
                 "LEFT JOIN RankMPA AS r ON r.rankMPA_id = f.rankMPA_id " +
-                "JOIN FilmDirector AS fd ON fd.film_id = f.film_id " +
-                "JOIN Director AS d ON d.director_id = fd.director_id " +
+                "LEFT JOIN FilmDirector AS fd ON fd.film_id = f.film_id " +
+                "LEFT JOIN Director AS d ON d.director_id = fd.director_id " +
                 "WHERE ");
         if (areValidNames(by) && !query.contains("'") && !query.contains(";")) {
             for (int i = 0; i < by.size(); i++) {
@@ -328,7 +328,9 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
             }
             sqlStatementBuilder.append(" ILIKE '%")
                     .append(query)
-                    .append("%' GROUP BY f.film_id ORDER BY COUNT(fl.film_id) DESC, f.film_name");
+                    .append("%'")
+                    .append(" GROUP BY f.film_id")
+                    .append(" ORDER BY COUNT(fl.film_id) DESC, f.film_name");
             List<Film> result = jdbcNamedTemplate.query(sqlStatementBuilder.toString(), (rs, rowNum) -> makeFilm(rs));
             log.info("Выполнено {}.getSearchedFilms(query: {}, by: {})", this.getClass().getName(), query, by);
             return result;
