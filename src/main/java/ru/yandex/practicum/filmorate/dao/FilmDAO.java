@@ -217,16 +217,27 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
                 .build();
     }
 
-    public List<Film> getPopular(int maxCount) {
+    public List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year) {
         final String sqlStatement = String.format(" select top :%1$s film.*, RankMPA.*, Likes.count " +
-                "from film " +
-                LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
-                "left outer join (select film_id, count(*) as count from FilmLikes group by film_id) as Likes on Likes.film_id=film.film_id " +
-                "order by Likes.count desc, film.film_id", MAX_COUNT);
-        SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(MAX_COUNT, maxCount);
+                        "from film " +
+                        LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
+                        " %2$s " +
+                        "left outer join (select film_id, count(*) as count from FilmLikes group by film_id) as Likes on Likes.film_id=film.film_id " +
+                        " %3$s " +
+                        "order by Likes.count desc, film.film_id ",
+                MAX_COUNT,
+                (genreId == null) ? "" : String.format("join FilmGenre on FilmGenre.film_id = film.film_id and FilmGenre.genre_id = :%1$s ",
+                        FILMGENRE_GENRE_ID),
+                (year == null) ? "" : String.format("where  extract(year from film.release_date) = :%1$s ",
+                        RELEASE_FIELD)
+        );
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(MAX_COUNT, maxCount)
+                .addValue(FILMGENRE_GENRE_ID, (genreId == null) ? null : genreId.getValue())
+                .addValue(RELEASE_FIELD, year);
         List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
 
-        log.info("Выполнено {}.getPopular({})", this.getClass().getName(), maxCount);
+        log.info("Выполнено {}.getPopular({}, {}, {})", this.getClass().getName(), maxCount, genreId, year);
 
         return result;
     }

@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.type.DirectorIdType;
-import ru.yandex.practicum.filmorate.type.FilmIdType;
-import ru.yandex.practicum.filmorate.type.FilmsByDirectorSortByMode;
-import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
 import java.util.Set;
@@ -30,9 +27,9 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
         storage.removeLike(filmId, userId);
     }
 
-    public List<Film> getPopular(int maxCount) {
-        log.debug("Вызов {}.getPopular({})", this.getClass().getName(), maxCount);
-        return storage.getPopular(maxCount);
+    public List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year) {
+        log.debug("Вызов {}.getPopular({}, {}, {})", this.getClass().getName(), maxCount, genreId, year);
+        return storage.getPopular(maxCount, genreId, year);
     }
 
     public List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy) {
