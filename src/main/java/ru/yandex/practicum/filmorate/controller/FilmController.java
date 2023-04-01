@@ -49,13 +49,11 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
         return service.getFilmsByDirector(directorId, FilmsByDirectorSortByMode.fromString(sortBy));
     }
 
-
-
     //GET /films/search?query=крад&by=director,title
     @GetMapping("/search") //add-search
-    public List<Film> getSearchedFilms(@RequestParam(name = "query") String _query,
-                                       @RequestParam(name = "by", defaultValue = "title,director") Set<String> _by) {
-        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), _query,  _by);
-        return service.getSearchedFilms(_query, _by);
+    public List<Film> getSearchedFilms(@RequestParam(name = "query") String query,
+                                       @RequestParam(name = "by", defaultValue = "title,director") Set<String> by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
+        return service.getSearchedFilms(query, by);
     }
 }
