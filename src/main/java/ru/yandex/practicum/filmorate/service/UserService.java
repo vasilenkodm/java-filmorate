@@ -7,8 +7,6 @@ import ru.yandex.practicum.filmorate.type.EventType;
 import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.type.EventType;
-import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 
@@ -20,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class UserService extends BaseItemService<UserIdType, User, UserStorage> {
+public class UserService  extends BaseItemService<UserIdType, User, UserStorage> {
 
     private final EventStorage eventStorage;
 
@@ -55,14 +53,13 @@ public class UserService extends BaseItemService<UserIdType, User, UserStorage> 
 
     //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
     public List<User> commonFriends(UserIdType userId1, UserIdType userId2) {
-        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), _userId1, _userId2);
+        log.debug("Вызов {}.commonFriends({}, {})", this.getClass().getName(), userId1, userId2);
         return storage.commonFriends(userId1, userId2);
     }
 
-
-    //GET /users/{id}/feed - список ленты событий
-    public List<Event> getFeed(UserIdType _userId) {
-        log.debug("Вызов {}.getFeed({})", this.getClass().getName(), _userId);
-        return eventStorage.getFeedForUser(_userId);
+    public List<Event> getFeed(UserIdType userId) {
+        log.debug("Вызов {}.getFeed({})", this.getClass().getName(), userId);
+        storage.getFriends(userId);
+        return eventStorage.getFeedForUser(userId);
     }
 }

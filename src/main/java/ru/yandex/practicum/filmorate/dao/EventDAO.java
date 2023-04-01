@@ -2,12 +2,7 @@ package ru.yandex.practicum.filmorate.dao;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.jdbc.repository.query.Modifying;
-import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
@@ -18,7 +13,6 @@ import ru.yandex.practicum.filmorate.type.UserIdType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -44,9 +38,6 @@ public class EventDAO {
         String sql = "Select * from Events where user_id = ?";
         List<Event> userFeed = jdbcTemplate.query(sql, this::mapRowToEvent, userId.getValue());
 
-        if (userFeed.isEmpty()) {
-            throw new KeyNotFoundException("Пользователь не найден.", this.getClass(), log);
-        }
         log.info("Выполнено {}.getFeedForUser({})", this.getClass(), userId.getValue());
         return userFeed;
     }
