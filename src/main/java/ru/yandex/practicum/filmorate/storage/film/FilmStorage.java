@@ -20,4 +20,6 @@ public interface FilmStorage extends ItemStorage<FilmIdType, Film> {
     void removeLike(FilmIdType filmId, UserIdType userId);
 
     List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy);
+
+    List<Film> getRecommendations(UserIdType userId);
 }

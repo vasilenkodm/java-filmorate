@@ -95,4 +95,9 @@ public class FilmInMemoryStorage extends BaseItemInMemoryStorage<FilmIdType, Fil
         throw new FeatureNotSupportedException(this.getClass(), log);
     }
 
+    @Override
+    public List<Film> getRecommendations(UserIdType userId) {
+        throw new FeatureNotSupportedException(this.getClass(), log);
+    }
+
 }
