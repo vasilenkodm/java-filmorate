@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.ReviewDAO;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.review.ReviewStorage;
@@ -23,6 +24,25 @@ public class ReviewService extends BaseItemService<ReviewIdType, Review, ReviewS
         this.eventStorage = eventStorage;
     }
 
+    public Review createReview(Review review) {
+        Review res = storage.createItem(review);
+        eventStorage.addEvent(res.getUserId(), res.getReviewId().getValue(), EventType.REVIEW, OperationType.ADD);
+        return res;
+    }
+
+    public Review updateReview(Review review) {
+        Review res = storage.updateItem(review);
+        eventStorage.addEvent(res.getUserId(), res.getReviewId().getValue(), EventType.REVIEW, OperationType.UPDATE);
+        return res;
+    }
+
+    public void deleteReview(ReviewIdType reviewId) {
+        Long userId = storage.readItem(reviewId).getUserId();
+        System.out.println("user:" + userId);
+        eventStorage.addEvent(userId, reviewId.getValue(), EventType.REVIEW, OperationType.REMOVE);
+        storage.deleteItem(reviewId);
+    }
+
     public void addLike(ReviewIdType reviewId, UserIdType userId) {
         log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), reviewId,  userId);
         storage.addLike(reviewId, userId);
@@ -38,7 +58,6 @@ public class ReviewService extends BaseItemService<ReviewIdType, Review, ReviewS
     public void addDisLike(ReviewIdType reviewId, UserIdType userId) {
         log.debug("Вызов {}.addDisLike({}, {})", this.getClass().getName(), reviewId,  userId);
         storage.addDisLike(reviewId, userId);
-        //eventStorage.addEvent(userId.getValue(), reviewId.getValue(), EventType.REVIEW , OperationType.REMOVE);
     }
 
     public void deleteDisLike(ReviewIdType reviewId, UserIdType userId) {

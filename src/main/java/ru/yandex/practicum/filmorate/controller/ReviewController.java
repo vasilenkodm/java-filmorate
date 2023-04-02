@@ -71,19 +71,21 @@ public class ReviewController {
     @PostMapping
     public Review createItem(@Valid @RequestBody Review item) {
         log.debug("Вызов {}.createItem({})", this.getClass().getName(), item);
-        return reviewService.createItem(item);
+        //return reviewService.createItem(item);
+        return reviewService.createReview(item);
     }
 
     @PutMapping
     public Review updateItem(@Valid @RequestBody Review item) {
         log.debug("Вызов {}.updateItem({})", this.getClass().getName(), item);
-        return reviewService.updateItem(item);
+        //return reviewService.updateItem(item);
+        return reviewService.updateReview(item);
     }
 
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable ReviewIdType id) {
         log.debug("Вызов {}.deleteItem({})", this.getClass().getName(), id);
-        reviewService.deleteItem(id);
+        //reviewService.deleteItem(id);
+        reviewService.deleteReview(id);
     }
-
 }

@@ -44,11 +44,11 @@ public class EventDAO {
 
     private Event mapRowToEvent(ResultSet rs, int rowNum) throws SQLException {
         return Event.builder()
-                .eventId(rs.getLong(ID_EVENT_FIELD))
                 .timestamp(rs.getLong(TIMESTAMP_FIELD))
+                .userId(UserIdType.of(rs.getLong(ID_FIELD)))
                 .eventType(rs.getString(EVENT_TYPE_FIELD))
                 .operation(rs.getString(OPERATION_FIELD))
-                .userId(UserIdType.of(rs.getLong(ID_FIELD)))
+                .eventId(rs.getLong(ID_EVENT_FIELD))
                 .entityId(rs.getLong(ENTITY_ID_FIELD))
                 .build();
     }

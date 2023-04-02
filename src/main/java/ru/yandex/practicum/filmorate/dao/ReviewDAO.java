@@ -11,7 +11,10 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.event.EventStorage;
+import ru.yandex.practicum.filmorate.type.EventType;
 import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.type.ReviewIdType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
@@ -82,7 +85,6 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
         if (rowCount == 0) {
             throw new KeyNotFoundException(idNotFoundMsg(item.getId()), this.getClass(), log);
         }
-
         log.info("Выполнено {}.update({})", this.getClass().getName(), item);
     }
 
