@@ -35,4 +35,9 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
         log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
         return storage.getFilmsByDirector(directorId, sortBy);
     }
+
+    public List<Film> getCommonFilms(UserIdType userId, UserIdType friendId) {
+        log.debug("Вызов {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
+        return storage.getCommonFilms(userId, friendId);
+    }
 }

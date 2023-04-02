@@ -19,10 +19,7 @@ import ru.yandex.practicum.filmorate.type.*;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -311,5 +308,44 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
     }
 
+    public List<Film> getCommonFilms(UserIdType userId, UserIdType friendId) {
+        final String sqlStatement = String.format("select f.*, r.* " +
+                "from film f left join RankMPA r using(RankMPA_id) " +
+                "where f.film_id in " +
+                "(select film_id from FilmLikes fl where fl.%1$s = :%1$s and fl.film_id in " +
+                "(select film_id from FilmLikes where %2$s = :%2$s)) " +
+                "order by f.film_id ASC", FILMLIKES_USER_ID, FILMLIKES_USER_ID);
 
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(FILMLIKES_USER_ID, userId.getValue())
+                .addValue(FILMLIKES_USER_ID, friendId.getValue());
+
+        List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
+
+        log.info("Выполнено {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
+
+        return result;
+    }
+
+    public List<FilmIdType> getLikedFilmsForUser(UserIdType id) {
+        final String sqlStatement = String.format("select film_id from FilmLikes where %1$s = :%1$s", FILMLIKES_USER_ID);
+        SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(FILMLIKES_USER_ID, id.getValue());
+        List<FilmIdType> result = jdbcNamedTemplate.queryForList(sqlStatement, sqlParams, FilmIdType.class);
+        log.info("Выполнено {}.getLikedFilmsForUser({})", this.getClass().getName(), id);
+        return result;
+    }
+
+    public List<Film> checkCommonFilms(UserIdType userId, UserIdType friendId) {
+        List<FilmIdType> result = getLikedFilmsForUser(userId);
+        List<FilmIdType> result2 = getLikedFilmsForUser(friendId);
+        List<Film> commonFilms = new ArrayList<>();
+        for (FilmIdType id : result) {
+            if (result2.contains(id)) {
+                commonFilms.add(read(id));
+            }
+        }
+        commonFilms.sort((o1, o2) -> getLikesCount(o1.getId()) - getLikesCount(o2.getId()));
+        log.info("Выполнено {}.exists({}, {})", this.getClass().getName(), userId, friendId);
+        return commonFilms;
+    }
 }
