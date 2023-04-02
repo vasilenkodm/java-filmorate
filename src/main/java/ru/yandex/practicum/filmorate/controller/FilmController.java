@@ -47,4 +47,10 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
         return service.getFilmsByDirector(directorId, FilmsByDirectorSortByMode.fromString(sortBy));
     }
 
+    //GET /films/common?userId={userId}&friendId={friendId}
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam UserIdType userId, @RequestParam UserIdType friendId) {
+        log.debug("Вызов {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
+        return service.getCommonFilms(userId, friendId);
+    }
 }

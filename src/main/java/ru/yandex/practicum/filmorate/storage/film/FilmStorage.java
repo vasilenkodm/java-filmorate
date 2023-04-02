@@ -22,4 +22,6 @@ public interface FilmStorage extends ItemStorage<FilmIdType, Film> {
     List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy);
 
     List<Film> getRecommendations(UserIdType userId);
+
+    List<Film> getCommonFilms(UserIdType userId, UserIdType friendId);
 }
