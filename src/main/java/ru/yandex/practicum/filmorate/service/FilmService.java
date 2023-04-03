@@ -8,7 +8,8 @@ import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.type.*;
+import ru.yandex.practicum.filmorate.type.FilmIdType;
+import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import java.util.List;
 
@@ -42,5 +43,10 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
     public List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy) {
         log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
         return storage.getFilmsByDirector(directorId, sortBy);
+    }
+
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
+        return storage.getSearchedFilms(query, by);
     }
 }

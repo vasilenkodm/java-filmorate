@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.type.EventType;
 import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.type.UserIdType;
 
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class UserService  extends BaseItemService<UserIdType, User, UserStorage> {
+public class UserService extends BaseItemService<UserIdType, User, UserStorage> {
 
     private final EventStorage eventStorage;
 

@@ -39,11 +39,6 @@ public class UserDbStorage extends BaseItemDbStorage<UserIdType, User, UserDAO> 
         return dao.getCommonFriends(userIdOne, userIdTwo);
     }
 
-//    @Override
-//    public List<Feed> getUserFeed(UserIdType _userId) {
-//        return dao.userFeed(_userId);
-//    }
-
     @Override
     public void addFriend(UserIdType userId, UserIdType friendId) {
         log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), userId, friendId);

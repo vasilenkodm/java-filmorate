@@ -41,6 +41,10 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     public static final String FILMLIKES_USER_ID = "user_id";
     public static final String FILMDIRECTOR_DIRECTOR_ID = "director_id";
     public static final String FILMDIRECTOR_FILM_ID = "film_id";
+    public static final String DIRECTOR_NAME = "director_name";
+    public static final String DIRECTOR = "director";
+    public static final String TITLE = "title";
+    public static final String QUERY = "query";
 
     public static final String MAX_COUNT = "max_count";
     public static final String LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID = "left outer join RankMPA on RankMPA.rankMPA_id=Film.rankMPA_id ";
@@ -311,5 +315,73 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
     }
 
+    public List<Film> getRecommendations(UserIdType userId) {
+        final String sqlStatement = String.format("" +
+                "select * " +
+                "from Film " +
+                LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
+                "where film_id in (select film_id " +
+                                  "from FilmLikes fl " +
+                                  "where user_id = (select user_id " +
+                                                   "from (select user_id, " +
+                                                         "count(film_id) as count " +
+                                                         "from FilmLikes fl " +
+                                                         "where film_id in (select film_id " +
+                                                                           "from FilmLikes " +
+                                                                           "where %1$s = :%1$s) " +
+                                                         "and %1$s <> :%1$s " +
+                                                         "group by user_id " +
+                                                         "order by count desc limit 1)) " +
+                                  "and film_id not in (select film_id " +
+                                                      "from FilmLikes " +
+                                                      "where %1$s = :%1$s)) ",
+                FILMLIKES_USER_ID
+        );
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(FILMLIKES_USER_ID, userId.getValue());
+                
+        List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
 
+        log.info("Выполнено {}.getRecommendations({})", this.getClass().getName(), userId);
+        
+        return result;
+    }
+
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
+        if (by.isEmpty()) {
+            throw new KeyNotFoundException("Неверные параметры запроса", this.getClass(), log);
+        }
+
+        StringBuilder sqlBuilder = new StringBuilder("SELECT Film.*, RankMPA.*, Likes.likes_count FROM Film " +
+                "LEFT JOIN (select film_id, count(*) as likes_count from FilmLikes GROUP BY film_id) " +
+                "AS Likes on Likes.film_id=Film.film_id " +
+                LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
+                "WHERE ");
+        boolean needOR = false;
+            for (String s : by) {
+                if (needOR) {
+                    sqlBuilder.append(" OR ");
+                }
+                switch (s) {
+                    case DIRECTOR:
+                        sqlBuilder.append("Film.film_id IN " + "(SELECT FILM_ID FROM FILMDIRECTOR WHERE director_id IN")
+                                .append(String.format(" (SELECT director_id FROM DIRECTOR WHERE director_name " +
+                                        "ILIKE '%%' || :%1$s || '%%')) ", QUERY));
+                        break;
+                    case TITLE:
+                        sqlBuilder.append(String.format("film_name ILIKE '%%' || :%1$s || '%%' ", QUERY));
+                        break;
+                    default:
+                        throw new KeyNotFoundException("Неверные параметры запроса", this.getClass(), log);
+                }
+                needOR = true;
+            }
+
+        sqlBuilder.append("ORDER BY Likes.likes_count DESC, Film.film_name");
+        SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(QUERY, query);
+        List<Film> result = jdbcNamedTemplate.query(sqlBuilder.toString(), sqlParams, (rs, rowNum) -> makeFilm(rs));
+        log.info("Выполнено {}.getSearchedFilms(query: {}, by: {})", this.getClass().getName(), query, by);
+
+        return result;
+    }
 }
