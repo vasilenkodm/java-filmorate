@@ -351,6 +351,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKES_USER_ID, userId.getValue())
                 .addValue(FILMLIKES_USER_ID, friendId.getValue());
+
         List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
 
         log.info("Выполнено {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
@@ -358,7 +359,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         return result;
     }
 
-    private List<FilmIdType> getLikedFilmsForUser(UserIdType id) {
+    public List<FilmIdType> getLikedFilmsForUser(UserIdType id) {
         final String sqlStatement = String.format("select film_id from FilmLikes where %1$s = :%1$s", FILMLIKES_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(FILMLIKES_USER_ID, id.getValue());
         List<FilmIdType> result = jdbcNamedTemplate.queryForList(sqlStatement, sqlParams, FilmIdType.class);
