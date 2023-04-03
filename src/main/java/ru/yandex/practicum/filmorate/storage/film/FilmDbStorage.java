@@ -82,10 +82,6 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
             throw new KeyNotFoundException(UserDAO.idNotFoundMsg(friendId), this.getClass(), log);
         }
         log.debug("Вызов {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
-        if (dao.checkCommonFilms(userId, friendId).size() != 0) {
-            return dao.getCommonFilms(userId, friendId);
-        } else {
-            return dao.checkCommonFilms(userId, friendId);
-        }
+        return dao.getCommonFilms(userId, friendId);
     }
 }
