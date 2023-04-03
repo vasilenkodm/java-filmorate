@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.event.EventStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.type.*;
 
@@ -12,19 +13,23 @@ import java.util.Set;
 @Slf4j
 @Service
 public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> {
+    private final EventStorage eventStorage;
 
-    public FilmService(FilmStorage filmStorage) {
-        super(filmStorage);
+    public FilmService(FilmStorage storage, EventStorage eventStorage) {
+        super(storage);
+        this.eventStorage = eventStorage;
     }
 
     public void addLike(FilmIdType filmId, UserIdType userId) {
-        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), filmId, userId);
+        log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), filmId,  userId);
         storage.addLike(filmId, userId);
+        eventStorage.addEvent(userId.getValue(), filmId.getValue(), EventType.LIKE, OperationType.ADD);
     }
 
     public void removeLike(FilmIdType filmId, UserIdType userId) {
-        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
+        log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId,  userId);
         storage.removeLike(filmId, userId);
+        eventStorage.addEvent(userId.getValue(), filmId.getValue(), EventType.LIKE, OperationType.REMOVE);
     }
 
     public List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year) {

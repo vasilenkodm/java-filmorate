@@ -19,7 +19,10 @@ import ru.yandex.practicum.filmorate.type.*;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -38,7 +41,6 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     public static final String FILMLIKES_USER_ID = "user_id";
     public static final String FILMDIRECTOR_DIRECTOR_ID = "director_id";
     public static final String FILMDIRECTOR_FILM_ID = "film_id";
-    public static final String DIRECTOR_NAME = "director_name";
     public static final String DIRECTOR = "director";
     public static final String TITLE = "title";
     public static final String QUERY = "query";
@@ -337,11 +339,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         );
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKES_USER_ID, userId.getValue());
-
         List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
-
         log.info("Выполнено {}.getRecommendations({})", this.getClass().getName(), userId);
-
         return result;
     }
 
