@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.BaseItemDbStorage;
 import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Component
@@ -55,6 +56,12 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
             throw new KeyNotFoundException(DirectorDAO.idNotFoundMsg(directorId), this.getClass(), log);
         }
         return dao.getFilmsByDirector(directorId, sortBy);
+    }
+
+    @Override
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
+        return dao.getSearchedFilms(query, by);
     }
 
     @Override
