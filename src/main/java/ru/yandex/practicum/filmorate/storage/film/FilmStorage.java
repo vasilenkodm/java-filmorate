@@ -25,4 +25,6 @@ public interface FilmStorage extends ItemStorage<FilmIdType, Film> {
     List<Film> getSearchedFilms(String query, Set<String> by);
 
     List<Film> getRecommendations(UserIdType userId);
+
+    List<Film> getCommonFilms(UserIdType userId, UserIdType friendId);
 }
