@@ -315,6 +315,37 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         log.info("Выполнено {}.removeLike({}, {})", this.getClass().getName(), filmId, userId);
     }
 
+    public List<Film> getRecommendations(UserIdType userId) {
+        final String sqlStatement = String.format("" +
+                "select * " +
+                "from Film " +
+                LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
+                "where film_id in (select film_id " +
+                                  "from FilmLikes fl " +
+                                  "where user_id = (select user_id " +
+                                                   "from (select user_id, " +
+                                                         "count(film_id) as count " +
+                                                         "from FilmLikes fl " +
+                                                         "where film_id in (select film_id " +
+                                                                           "from FilmLikes " +
+                                                                           "where %1$s = :%1$s) " +
+                                                         "and %1$s <> :%1$s " +
+                                                         "group by user_id " +
+                                                         "order by count desc limit 1)) " +
+                                  "and film_id not in (select film_id " +
+                                                      "from FilmLikes " +
+                                                      "where %1$s = :%1$s)) ",
+                FILMLIKES_USER_ID
+        );
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(FILMLIKES_USER_ID, userId.getValue());
+                
+        List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
+
+        log.info("Выполнено {}.getRecommendations({})", this.getClass().getName(), userId);
+        
+        return result;
+    }
 
     public List<Film> getSearchedFilms(String query, Set<String> by) {
         if (by.isEmpty()) {
@@ -350,6 +381,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(QUERY, query);
         List<Film> result = jdbcNamedTemplate.query(sqlBuilder.toString(), sqlParams, (rs, rowNum) -> makeFilm(rs));
         log.info("Выполнено {}.getSearchedFilms(query: {}, by: {})", this.getClass().getName(), query, by);
+
         return result;
     }
 }

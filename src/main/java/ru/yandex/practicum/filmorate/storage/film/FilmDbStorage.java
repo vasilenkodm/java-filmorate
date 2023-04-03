@@ -63,4 +63,10 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
         log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
         return dao.getSearchedFilms(query, by);
     }
+
+    @Override
+    public List<Film> getRecommendations(UserIdType userId) {
+        log.debug("Вызов {}.getRecommendations({})", this.getClass().getName(), userId);
+        return dao.getRecommendations(userId);
+    }
 }
