@@ -46,6 +46,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     public static final String QUERY = "query";
 
     public static final String MAX_COUNT = "max_count";
+    public static final String FRIEND_ID = "friend_id";
     public static final String LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID = "left outer join RankMPA on RankMPA.rankMPA_id=Film.rankMPA_id ";
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
@@ -287,14 +288,10 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public void addLike(FilmIdType filmId, UserIdType userId) {
+        final String sqlStatement = String.format("insert into  FilmLikes (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKES_FILM_ID, filmId.getValue())
                 .addValue(FILMLIKES_USER_ID, userId.getValue());
-
-        final String sqlStatementClenup = String.format("delete from FilmLikes where %1$s = :%1$s and %2$s= :%2$s", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
-        jdbcNamedTemplate.update(sqlStatementClenup, sqlParams);
-
-        final String sqlStatement = String.format("insert into  FilmLikes (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
@@ -381,6 +378,26 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(QUERY, query);
         List<Film> result = jdbcNamedTemplate.query(sqlBuilder.toString(), sqlParams, (rs, rowNum) -> makeFilm(rs));
         log.info("Выполнено {}.getSearchedFilms(query: {}, by: {})", this.getClass().getName(), query, by);
+
+        return result;
+    }
+
+    public List<Film> getCommonFilms(UserIdType userId, UserIdType friendId) {
+
+        final String sqlStatement = String.format("select f.*, r.* " +
+                "from film f left join RankMPA r using(RankMPA_id) " +
+                "where f.film_id in " +
+                "(select film_id from FilmLikes fl where fl.%1$s = :%1$s and fl.film_id in " +
+                "(select film_id from FilmLikes where %1$s = :%2$s)) " +
+                "order by f.film_id ASC", FILMLIKES_USER_ID, FRIEND_ID);
+
+        SqlParameterSource sqlParams = new MapSqlParameterSource()
+                .addValue(FILMLIKES_USER_ID, userId.getValue())
+                .addValue(FRIEND_ID, friendId.getValue());
+
+        List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
+
+        log.info("Выполнено {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
 
         return result;
     }

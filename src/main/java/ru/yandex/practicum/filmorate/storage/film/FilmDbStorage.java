@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.DirectorDAO;
 import ru.yandex.practicum.filmorate.dao.FilmDAO;
+import ru.yandex.practicum.filmorate.dao.UserDAO;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.BaseItemDbStorage;
@@ -18,10 +19,12 @@ import java.util.Set;
 @Primary
 public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> implements FilmStorage {
     private final DirectorDAO directorDAO;
+    private final UserDAO userDAO;
 
-    public FilmDbStorage(FilmDAO dao, DirectorDAO directorDAO) {
+    public FilmDbStorage(FilmDAO dao, DirectorDAO directorDAO, UserDAO userDAO) {
         super(dao);
         this.directorDAO = directorDAO;
+        this.userDAO = userDAO;
     }
 
     @Override
@@ -68,5 +71,17 @@ public class FilmDbStorage extends BaseItemDbStorage<FilmIdType, Film, FilmDAO> 
     public List<Film> getRecommendations(UserIdType userId) {
         log.debug("Вызов {}.getRecommendations({})", this.getClass().getName(), userId);
         return dao.getRecommendations(userId);
+    }
+
+    @Override
+    public List<Film> getCommonFilms(UserIdType userId, UserIdType friendId) {
+        if (userDAO.notExists(userId)) {
+            throw new KeyNotFoundException(UserDAO.idNotFoundMsg(userId), this.getClass(), log);
+        }
+        if (userDAO.notExists(friendId)) {
+            throw new KeyNotFoundException(UserDAO.idNotFoundMsg(friendId), this.getClass(), log);
+        }
+        log.debug("Вызов {}.getCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
+        return dao.getCommonFilms(userId, friendId);
     }
 }
