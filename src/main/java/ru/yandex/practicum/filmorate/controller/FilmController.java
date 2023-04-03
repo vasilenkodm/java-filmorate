@@ -55,6 +55,7 @@ public class FilmController extends BaseItemController<FilmIdType, Film, FilmSer
         log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
         return service.getSearchedFilms(query, by);
     }
+
     //GET /films/common?userId={userId}&friendId={friendId}
     @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam UserIdType userId, @RequestParam UserIdType friendId) {

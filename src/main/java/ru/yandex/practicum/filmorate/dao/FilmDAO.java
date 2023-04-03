@@ -336,11 +336,11 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         );
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKES_USER_ID, userId.getValue());
-                
+
         List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
 
         log.info("Выполнено {}.getRecommendations({})", this.getClass().getName(), userId);
-        
+
         return result;
     }
 
@@ -401,11 +401,11 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
         return result;
     }
 
-    public List<FilmIdType> getLikedFilmsForUser(UserIdType id) {
+    private List<FilmIdType> getLikedFilmsForUser(UserIdType id) {
+        log.info("Вызов {}.getLikedFilmsForUser({})", this.getClass().getName(), id);
         final String sqlStatement = String.format("select film_id from FilmLikes where %1$s = :%1$s", FILMLIKES_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource().addValue(FILMLIKES_USER_ID, id.getValue());
         List<FilmIdType> result = jdbcNamedTemplate.queryForList(sqlStatement, sqlParams, FilmIdType.class);
-        log.info("Выполнено {}.getLikedFilmsForUser({})", this.getClass().getName(), id);
         return result;
     }
 
@@ -419,7 +419,7 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
             }
         }
         commonFilms.sort((o1, o2) -> getLikesCount(o1.getId()) - getLikesCount(o2.getId()));
-        log.info("Выполнено {}.exists({}, {})", this.getClass().getName(), userId, friendId);
+        log.info("Выполнено {}.checkCommonFilms({}, {})", this.getClass().getName(), userId, friendId);
         return commonFilms;
     }
 }
