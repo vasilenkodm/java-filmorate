@@ -288,10 +288,14 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public void addLike(FilmIdType filmId, UserIdType userId) {
-        final String sqlStatement = String.format("insert into  FilmLikes (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKES_FILM_ID, filmId.getValue())
                 .addValue(FILMLIKES_USER_ID, userId.getValue());
+
+        final String sqlStatementClenup = String.format("delete from FilmLikes where %1$s = :%1$s and %2$s= :%2$s", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
+        jdbcNamedTemplate.update(sqlStatementClenup, sqlParams);
+
+        final String sqlStatement = String.format("insert into  FilmLikes (%1$s, %2$s) values( :%1$s , :%2$s )", FILMLIKES_FILM_ID, FILMLIKES_USER_ID);
         int rowCount = jdbcNamedTemplate.update(sqlStatement, sqlParams);
 
         if (rowCount == 0) {
