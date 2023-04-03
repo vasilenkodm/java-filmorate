@@ -69,8 +69,6 @@ CREATE TABLE IF NOT EXISTS ReviewLikes(
   PRIMARY KEY(review_id, user_id)
 );
 
---CREATE INDEX ON FilmDirector (director_id);
-
 
 COMMENT ON TABLE UserInfo IS 'Данные пользователей';
 

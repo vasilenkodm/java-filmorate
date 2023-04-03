@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.type.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -34,6 +35,11 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
     public List<Film> getFilmsByDirector(DirectorIdType directorId, FilmsByDirectorSortByMode sortBy) {
         log.debug("Вызов {}.getFilmsByDirector({}, {})", this.getClass().getName(), directorId, sortBy);
         return storage.getFilmsByDirector(directorId, sortBy);
+    }
+
+    public List<Film> getSearchedFilms(String query, Set<String> by) {
+        log.debug("Вызов {}.getSearchedFilms({}, {})", this.getClass().getName(), query,  by);
+        return storage.getSearchedFilms(query, by);
     }
 
     public List<Film> getCommonFilms(UserIdType userId, UserIdType friendId) {
