@@ -29,7 +29,7 @@ public class ReviewController {
 
     @GetMapping
     public List<Review> readAllItems(@RequestParam(required = false) FilmIdType filmId,
-                                     @RequestParam(defaultValue = "10", required = false) Integer count) {
+                                     @RequestParam(defaultValue = "10") Integer count) {
         log.debug("Вызов {}.readAllItems({})", this.getClass().getName(), filmId);
         return reviewService.readAllItems(filmId, count);
     }

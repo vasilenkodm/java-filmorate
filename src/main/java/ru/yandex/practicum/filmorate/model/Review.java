@@ -57,10 +57,6 @@ public class Review implements Item<ReviewIdType, Review> {
         this.useful = item.useful;
     }
 
-    public Boolean getIsPositive() {
-        return isPositive;
-    }
-
     public Review clone() {
         try {
             return (Review) SerializationUtils.deserialize(SerializationUtils.serialize(this));
