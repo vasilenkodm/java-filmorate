@@ -28,7 +28,7 @@ public class UserService extends BaseItemService<UserIdType, User, UserStorage> 
     public void addFriend(UserIdType userId, UserIdType friendId) {
         log.debug("Вызов {}.addFriend({}, {})", this.getClass().getName(), userId, friendId);
         storage.addFriend(userId, friendId);
-        eventStorage.addEvent(userId.getValue(), friendId.getValue(), EventType.FRIEND, OperationType.ADD);
+        eventStorage.addEvent(userId, friendId, EventType.FRIEND, OperationType.ADD);
     }
 
 
@@ -36,7 +36,7 @@ public class UserService extends BaseItemService<UserIdType, User, UserStorage> 
     public void deleteFriend(UserIdType userId, UserIdType friendId) {
         log.debug("Вызов {}.deleteFriend({}, {})", this.getClass().getName(), userId, friendId);
         storage.removeFriend(userId, friendId);
-        eventStorage.addEvent(userId.getValue(), friendId.getValue(), EventType.FRIEND, OperationType.REMOVE);
+        eventStorage.addEvent(userId, friendId, EventType.FRIEND, OperationType.REMOVE);
     }
 
 

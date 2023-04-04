@@ -23,13 +23,13 @@ public class FilmService extends BaseItemService<FilmIdType, Film, FilmStorage> 
     public void addLike(FilmIdType filmId, UserIdType userId) {
         log.debug("Вызов {}.addLike({}, {})", this.getClass().getName(), filmId,  userId);
         storage.addLike(filmId, userId);
-        eventStorage.addEvent(userId.getValue(), filmId.getValue(), EventType.LIKE, OperationType.ADD);
+        eventStorage.addEvent(userId, filmId, EventType.LIKE, OperationType.ADD);
     }
 
     public void removeLike(FilmIdType filmId, UserIdType userId) {
         log.debug("Вызов {}.removeLike({}, {})", this.getClass().getName(), filmId,  userId);
         storage.removeLike(filmId, userId);
-        eventStorage.addEvent(userId.getValue(), filmId.getValue(), EventType.LIKE, OperationType.REMOVE);
+        eventStorage.addEvent(userId, filmId, EventType.LIKE, OperationType.REMOVE);
     }
 
     public List<Film> getPopular(int maxCount, GenreIdType genreId, Integer year) {

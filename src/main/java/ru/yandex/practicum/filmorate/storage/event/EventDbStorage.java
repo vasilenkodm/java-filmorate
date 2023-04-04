@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.type.EventType;
 import ru.yandex.practicum.filmorate.type.OperationType;
 import ru.yandex.practicum.filmorate.type.UserIdType;
+import ru.yandex.practicum.filmorate.type.ValueType;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class EventDbStorage implements EventStorage {
     private final UserDAO userDAO;
 
     @Override
-    public void addEvent(Long userId, Long entityId, EventType eventType, OperationType operationType) {
+    public void addEvent(UserIdType userId, ValueType<Long> entityId, EventType eventType, OperationType operationType) {
         dao.addEvent(userId, entityId, eventType, operationType);
     }
 

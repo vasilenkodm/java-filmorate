@@ -1,11 +1,16 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.SerializationUtils;
 import ru.yandex.practicum.filmorate.exceptions.UnexpectedErrorException;
+import ru.yandex.practicum.filmorate.type.FilmIdType;
 import ru.yandex.practicum.filmorate.type.ReviewIdType;
+import ru.yandex.practicum.filmorate.type.UserIdType;
 
 import javax.validation.constraints.NotNull;
 
@@ -27,10 +32,10 @@ public class Review implements Item<ReviewIdType, Review> {
     private Boolean isPositive;
 
     @NotNull
-    private Long userId;
+    private UserIdType userId;
 
     @NotNull
-    private Long filmId;
+    private FilmIdType filmId;
     private int useful;
 
     @Override
