@@ -58,8 +58,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
                 .addValue(IS_POSITIVE_FIELD, item.getIsPositive())
                 .addValue(USER_ID_FIELD, item.getUserId())
                 .addValue(FILM_ID_FIELD, item.getFilmId());
-        isFilmExists(FilmIdType.of(item.getFilmId()));
-        isUserExists(UserIdType.of(item.getUserId()));
+        isFilmExists(item.getFilmId());
+        isUserExists(item.getUserId());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcNamedTemplate.update(sqlStatement, sqlParams, keyHolder, new String[]{ID_FIELD});
         ReviewIdType newId = ReviewIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
@@ -230,8 +230,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
                 .reviewId(ReviewIdType.of(rs.getLong(ID_FIELD)))
                 .content(rs.getString(CONTENT_FIELD))
                 .isPositive(rs.getBoolean(IS_POSITIVE_FIELD))
-                .userId(rs.getLong(USER_ID_FIELD))
-                .filmId(rs.getLong(FILM_ID_FIELD))
+                .userId(UserIdType.of(rs.getLong(USER_ID_FIELD)))
+                .filmId(FilmIdType.of(rs.getLong(FILM_ID_FIELD)))
                 .useful(getUsefulRateForReview(ReviewIdType.of(rs.getLong(ID_FIELD))))
                 .build();
     }

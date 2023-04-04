@@ -17,14 +17,14 @@ public class ReviewService extends BaseItemService<ReviewIdType, Review, ReviewS
     @Override
     public Review createItem(final Review item) {
         Review result = super.createItem(item);
-        eventStorage.addEvent(result.getUserId(), result.getReviewId().getValue(), EventType.REVIEW, OperationType.ADD);
+        eventStorage.addEvent(result.getUserId(), result.getReviewId(), EventType.REVIEW, OperationType.ADD);
         return result;
     }
 
     @Override
     public Review updateItem(final Review item) {
         Review result = super.updateItem(item);
-        eventStorage.addEvent(result.getUserId(), result.getReviewId().getValue(), EventType.REVIEW, OperationType.UPDATE);
+        eventStorage.addEvent(result.getUserId(), result.getReviewId(), EventType.REVIEW, OperationType.UPDATE);
         return result;
     }
 
@@ -32,7 +32,7 @@ public class ReviewService extends BaseItemService<ReviewIdType, Review, ReviewS
     public void deleteItem(final ReviewIdType id) {
         Review review = this.readItem(id);
         super.deleteItem(id);
-        eventStorage.addEvent(review.getUserId(), review.getReviewId().getValue(), EventType.REVIEW, OperationType.REMOVE);
+        eventStorage.addEvent(review.getUserId(), review.getReviewId(), EventType.REVIEW, OperationType.REMOVE);
     }
 
     public ReviewService(ReviewStorage reviewStorage, EventStorage eventStorage) {
