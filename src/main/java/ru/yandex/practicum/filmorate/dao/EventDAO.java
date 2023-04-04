@@ -5,14 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.type.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -26,7 +28,7 @@ public class EventDAO {
     private static final String ENTITY_FIELD = "entity_id";
     private final NamedParameterJdbcTemplate jdbcNamedTemplate;
 
-    public void addEvent(UserIdType userId, ValueType<Long> entityId, EventType eventType, OperationType operationType) {
+    public EventIdType addEvent(UserIdType userId, ValueType<Long> entityId, EventType eventType, OperationType operationType) {
         String sql = String.format("insert into Events ( %1$s,  %2$s,  %3$s,  %4$s) " +
                         "values ( :%1$s,  :%2$s,  :%3$s,  :%4$s)",
                 EVENT_TYPE_FIELD, OPERATION_FIELD, USER_FIELD, ENTITY_FIELD);
@@ -35,13 +37,12 @@ public class EventDAO {
                 .addValue(OPERATION_FIELD, operationType.toString())
                 .addValue(USER_FIELD, userId.getValue())
                 .addValue(ENTITY_FIELD, entityId.getValue());
-        int rowCount = jdbcNamedTemplate.update(sql, sqlParams);
 
-        if (rowCount == 0) {
-            throw new KeyNotFoundException(UserDAO.idNotFoundMsg(userId), this.getClass(), log);
-        }
-
-        log.debug("Выполнено {}.addEvent({}, {}, {}, {})", this.getClass().getName(), userId, entityId, eventType, operationType);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcNamedTemplate.update(sql, sqlParams, keyHolder, new String[]{ID_FIELD});
+        EventIdType newId = EventIdType.of(Objects.requireNonNull(keyHolder.getKey()).longValue());
+        log.debug("Выполнено {}.addEvent({}, {}, {}, {}) => {} ", this.getClass().getName(), userId, entityId, eventType, operationType, newId);
+        return newId;
     }
 
     public List<Event> getFeedForUser(UserIdType userId) {
