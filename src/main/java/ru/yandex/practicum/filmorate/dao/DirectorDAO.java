@@ -32,7 +32,7 @@ public class DirectorDAO implements ItemDAO<DirectorIdType, Director> {
     }
 
     public boolean notExists(DirectorIdType id) {
-        String sqlStatement = String.format("select count(*) from Director where %1$s = :%1$s", ID_FIELD);
+        String sqlStatement = String.format("select count( %1$s ) from Director where %1$s = :%1$s", ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(ID_FIELD, id.getValue());
         Integer count = Objects.requireNonNull(jdbcNamedTemplate.queryForObject(sqlStatement, sqlParams, Integer.class));
