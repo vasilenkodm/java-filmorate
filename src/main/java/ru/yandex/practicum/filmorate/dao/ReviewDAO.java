@@ -56,8 +56,8 @@ public class ReviewDAO implements ItemDAO<ReviewIdType, Review> {
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(CONTENT_FIELD, item.getContent())
                 .addValue(IS_POSITIVE_FIELD, item.getIsPositive())
-                .addValue(USER_ID_FIELD, item.getUserId())
-                .addValue(FILM_ID_FIELD, item.getFilmId());
+                .addValue(USER_ID_FIELD, item.getUserId().getValue())
+                .addValue(FILM_ID_FIELD, item.getFilmId().getValue());
         isFilmExists(item.getFilmId());
         isUserExists(item.getUserId());
         KeyHolder keyHolder = new GeneratedKeyHolder();

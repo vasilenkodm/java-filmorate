@@ -8,10 +8,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.KeyNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
-import ru.yandex.practicum.filmorate.type.EventType;
-import ru.yandex.practicum.filmorate.type.OperationType;
-import ru.yandex.practicum.filmorate.type.UserIdType;
-import ru.yandex.practicum.filmorate.type.ValueType;
+import ru.yandex.practicum.filmorate.type.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,11 +45,11 @@ public class EventDAO {
     }
 
     public List<Event> getFeedForUser(UserIdType userId) {
-        String sql = String.format("Select * from Events where %1$s = :%1$s order by :%2$s ", USER_FIELD, ID_FIELD);
+        String sql = String.format("Select * from Events where %1$s = :%1$s order by %2$s ", USER_FIELD, ID_FIELD);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(USER_FIELD, userId.getValue());
 
-        List<Event> result = jdbcNamedTemplate.query(sql, this::mapRowToEvent);
+        List<Event> result = jdbcNamedTemplate.query(sql, sqlParams, this::mapRowToEvent);
 
         log.info("Выполнено {}.getFeedForUser({})", this.getClass(), userId);
 
@@ -61,11 +58,11 @@ public class EventDAO {
 
     private Event mapRowToEvent(ResultSet rs, int rowNum) throws SQLException {
         return Event.builder()
-                .timestamp(rs.getTimestamp(TIMESTAMP_FIELD).toInstant())
-                .userId(UserIdType.of(rs.getLong(ID_FIELD)))
+                .timestamp(rs.getTimestamp(TIMESTAMP_FIELD).toInstant().toEpochMilli())
+                .userId(UserIdType.of(rs.getLong(USER_FIELD)))
                 .eventType(rs.getString(EVENT_TYPE_FIELD))
                 .operation(rs.getString(OPERATION_FIELD))
-                .eventId(rs.getLong(ID_FIELD))
+                .eventId(EventIdType.of(rs.getLong(ID_FIELD)))
                 .entityId(rs.getLong(ENTITY_FIELD))
                 .build();
     }
