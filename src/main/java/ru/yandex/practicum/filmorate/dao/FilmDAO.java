@@ -330,21 +330,20 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
                 "select * " +
                 "from Film " +
                 LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
-                "where film_id in (select film_id " +
-                                  "from FilmLikes fl " +
-                                  "where user_id = (select user_id " +
-                                                   "from (select user_id, " +
-                                                         "count(film_id) as count " +
-                                                         "from FilmLikes fl " +
-                                                         "where film_id in (select film_id " +
-                                                                           "from FilmLikes " +
-                                                                           "where %1$s = :%1$s) " +
-                                                         "and %1$s <> :%1$s " +
-                                                         "group by user_id " +
-                                                         "order by count desc limit 1)) " +
-                                  "and film_id not in (select film_id " +
-                                                      "from FilmLikes " +
-                                                      "where %1$s = :%1$s)) ",
+                "join (select fl.film_id " +
+                      "from FilmLikes fl " +
+                      "join (select user_id " +
+                            "from FilmLikes fl " +
+                            "join (select film_id " +
+                                  "from FilmLikes " +
+                                  "where %1$s = :%1$s) as f_u2 on fl.film_id = f_u2.film_id " +
+                            "and %1$s <> :%1$s " +
+                            "group by user_id " +
+                            "order by count(fl.film_id) desc limit 1) as u on fl.user_id = u.user_id " +
+                      "left join (select film_id " +
+                                 "from FilmLikes " +
+                                 "where %1$s = :%1$s) as f_u2 on fl.film_id = f_u2.film_id " +
+                      "where f_u2.film_id is null) as rf on Film.film_id = rf.film_id",
                 FILMLIKES_USER_ID
         );
         SqlParameterSource sqlParams = new MapSqlParameterSource()
