@@ -17,7 +17,6 @@ public class RecommendationsService extends BaseItemService<FilmIdType, Film, Fi
         super(storage);
     }
 
-    //GET /users/{userId}/recommendations — список рекомендаций по фильмам.
     public List<Film> getRecommendations(UserIdType userId) {
         log.debug("Вызов {}.getRecommendations({})", this.getClass().getName(), userId);
         return storage.getRecommendations(userId);
