@@ -256,8 +256,9 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
             case YEAR:
                 String sqlStatementYear = String.format(" select film.*, RankMPA.* " +
                         " from film " +
+                        " join filmDirector on filmDirector.film_id = film.film_id " +
                         " left outer join RankMPA on RankMPA.rankMPA_id=Film.rankMPA_id " +
-                        " where film.film_id in (select film_id from filmDirector where filmDirector.director_id= :%1$s) " +
+                        " where filmDirector.%1$s = :%1$s " +
                         " order by  film.release_date, film.film_id", FILMDIRECTOR_DIRECTOR_ID);
                 SqlParameterSource sqlParamsYear = new MapSqlParameterSource().addValue(FILMDIRECTOR_DIRECTOR_ID, directorId.getValue());
                 result = jdbcNamedTemplate.query(sqlStatementYear, sqlParamsYear, (rs, row) -> makeFilm(rs));
@@ -267,7 +268,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
                         " from film " +
                         " left outer join RankMPA on RankMPA.rankMPA_id=Film.rankMPA_id " +
                         " left outer join (select film_id, count(*) as count from FilmLikes group by film_id) as Likes on Likes.film_id=film.film_id " +
-                        " where film.film_id in (select film_id from filmDirector where filmDirector.director_id= :%1$s) " +
+                        " join filmDirector on filmDirector.film_id = film.film_id " +
+                        " where filmDirector.%1$s = :%1$s " +
                         " order by Likes.count, film.film_id", FILMDIRECTOR_DIRECTOR_ID);
                 SqlParameterSource sqlParamsLikes = new MapSqlParameterSource().addValue(FILMDIRECTOR_DIRECTOR_ID, directorId.getValue());
                 result = jdbcNamedTemplate.query(sqlStatementLikes, sqlParamsLikes, (rs, row) -> makeFilm(rs));
@@ -326,26 +328,20 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
     }
 
     public List<Film> getRecommendations(UserIdType userId) {
-        final String sqlStatement = String.format("" +
-                "select * " +
-                "from Film " +
-                LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
-                "join (select fl.film_id " +
-                      "from FilmLikes fl " +
-                      "join (select user_id " +
-                            "from FilmLikes fl " +
-                            "join (select film_id " +
-                                  "from FilmLikes " +
-                                  "where %1$s = :%1$s) as f_u2 on fl.film_id = f_u2.film_id " +
-                            "and %1$s <> :%1$s " +
-                            "group by user_id " +
-                            "order by count(fl.film_id) desc limit 1) as u on fl.user_id = u.user_id " +
-                      "left join (select film_id " +
-                                 "from FilmLikes " +
-                                 "where %1$s = :%1$s) as f_u2 on fl.film_id = f_u2.film_id " +
-                      "where f_u2.film_id is null) as rf on Film.film_id = rf.film_id",
+        final String sqlStatement = String.format("select FILM.*, RankMPA.* from film " +
+                        LEFT_OUTER_JOIN_RANK_MPA_ON_RANK_MPA_RANK_MPA_ID_FILM_RANK_MPA_ID +
+                        "join FilmLikes FL1 on FILM.film_id = FL1.film_id " +
+                        "left outer join FilmLikes FL2 on FILM.film_id = FL2.film_id and FL2.%1$s = :%1$s " +
+                        "join (select FLC.user_id, count(FLC.film_id) as count " +
+                        "from FilmLikes MyFL " +
+                        "join  FilmLikes FLC  on FLC.film_id = MyFL.film_id and FLC.user_id<>MyFL.user_id " +
+                        "where MyFL.%1$s = :%1$s " +
+                        "group by FLC.user_id  " +
+                        "order by  count(FLC.film_id) desc limit 1) as TopFL on  FL1.user_id = TopFL.user_id " +
+                        "where FL2.user_id is null ",
                 FILMLIKES_USER_ID
         );
+        log.debug(sqlStatement);
         SqlParameterSource sqlParams = new MapSqlParameterSource()
                 .addValue(FILMLIKES_USER_ID, userId.getValue());
         List<Film> result = jdbcNamedTemplate.query(sqlStatement, sqlParams, (rs, row) -> makeFilm(rs));
@@ -370,9 +366,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
                 }
                 switch (s) {
                     case DIRECTOR:
-                        sqlBuilder.append("Film.film_id IN " + "(SELECT FILM_ID FROM FILMDIRECTOR WHERE director_id IN")
-                                .append(String.format(" (SELECT director_id FROM DIRECTOR WHERE director_name " +
-                                        "ILIKE '%%' || :%1$s || '%%')) ", QUERY));
+                        sqlBuilder.append("Film.film_id in (SELECT FILM_ID FROM FILMDIRECTOR FD join DIRECTOR D on FD.director_id = D.director_id ")
+                                .append(String.format("WHERE D.director_name ILIKE '%%' || :%1$s || '%%') ", QUERY));
                         break;
                     case TITLE:
                         sqlBuilder.append(String.format("film_name ILIKE '%%' || :%1$s || '%%' ", QUERY));
@@ -395,9 +390,8 @@ public class FilmDAO implements ItemDAO<FilmIdType, Film> {
 
         final String sqlStatement = String.format("select f.*, r.* " +
                 "from film f left join RankMPA r using(RankMPA_id) " +
-                "where f.film_id in " +
-                "(select film_id from FilmLikes fl where fl.%1$s = :%1$s and fl.film_id in " +
-                "(select film_id from FilmLikes where %1$s = :%2$s)) " +
+                "join FilmLikes fl1 on fl1.film_id=film.film_id and fl1.%1$s = :%1$s " +
+                "join FilmLikes fl2 on fl2.film_id=film.film_id and fl2.%1$s = :%2$s " +
                 "order by f.film_id ASC", FILMLIKES_USER_ID, FRIEND_ID);
 
         SqlParameterSource sqlParams = new MapSqlParameterSource()
