@@ -25,7 +25,7 @@ public class RankMPA extends BaseItem<RankMPAIdType, RankMPA> implements Item<Ra
     private String name;
 
     @Override
-    public void updateWith(RankMPA _source) {
-        this.name = _source.getName();
+    public void updateWith(RankMPA item) {
+        this.name = item.getName();
     }
 }

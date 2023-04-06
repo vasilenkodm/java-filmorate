@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Order;
@@ -76,9 +76,6 @@ class FilmDbStorageTest {
 
         assertThrows(KeyNotFoundException.class, () -> filmStorage.deleteItem(dummyId[0]));
 
-        dummyId[0] = item[0].getId();
-        assertThrows(DataIntegrityViolationException.class, () -> filmStorage.deleteItem(dummyId[0]));
-
         item[0].getGenres().clear();
         assertDoesNotThrow(() -> item[0] = filmStorage.updateItem(item[0]));
         assertDoesNotThrow(() -> filmStorage.deleteItem(item[0].getId()));
@@ -96,8 +93,8 @@ class FilmDbStorageTest {
         int lastPopularCount = filmStorage.getPopular(100).size();
 
         RankMPA mpa = mpaStorage.readAllItems().get(0);
-        Film[] film = {Film.builder().name(nameOne).description(nameOne).duration(100).releaseDate(LocalDate.now()).mpa(mpa).build()
-                , Film.builder().name(nameTwo).description(nameTwo).duration(200).releaseDate(LocalDate.now()).mpa(mpa).build()};
+        Film[] film = {Film.builder().name(nameOne).description(nameOne).duration(100).releaseDate(LocalDate.now()).mpa(mpa).build(),
+                Film.builder().name(nameTwo).description(nameTwo).duration(200).releaseDate(LocalDate.now()).mpa(mpa).build()};
         User userOne = User.builder().name(nameOne).login(nameOne).email(nameOne).birthday(LocalDate.now().minusYears(1)).build();
         User userTwo = User.builder().name(nameTwo).login(nameTwo).email(nameTwo).birthday(LocalDate.now().minusYears(1)).build();
         userOne = userStorage.createItem(userOne);

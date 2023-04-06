@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.type.RankMPAIdType;
 @RestController
 @RequestMapping("/mpa")
 public class RankMPAController extends BaseItemController<RankMPAIdType, RankMPA, RankMPAService> {
-    public RankMPAController(RankMPAService _service) {
-        super(_service);
+    public RankMPAController(RankMPAService service) {
+        super(service);
     }
 }

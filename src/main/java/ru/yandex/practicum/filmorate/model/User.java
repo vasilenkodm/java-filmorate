@@ -36,15 +36,15 @@ public class User extends BaseItem<UserIdType, User> implements Item<UserIdType,
 
     @SuppressWarnings("unused")
     public String getName() {
-        return (name==null || name.isBlank()) ? login : name;
+        return (name == null || name.isBlank()) ? login : name;
     }
 
     @Override
-    public void updateWith(User _user) {
-        this.email = _user.email;
-        this.login = _user.login;
-        this.name = _user.name;
-        this.birthday = _user.birthday;
+    public void updateWith(User item) {
+        this.email = item.email;
+        this.login = item.login;
+        this.name = item.name;
+        this.birthday = item.birthday;
     }
 
 }

@@ -14,13 +14,13 @@ public class LocalDateConstraintValidator implements ConstraintValidator<LocalDa
         String parmMaxDate = constraint.maxDate();
         if (!parmMinDate.isBlank()) {
             String[] parts = parmMinDate.split("\\D");
-            if (parts.length==3) {
+            if (parts.length == 3) {
                 minDate = LocalDate.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
             }
         }
         if (!parmMaxDate.isBlank()) {
             String[] parts = parmMaxDate.split("\\D");
-            if (parts.length==3) {
+            if (parts.length == 3) {
                 maxDate = LocalDate.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
             }
         }
@@ -28,8 +28,8 @@ public class LocalDateConstraintValidator implements ConstraintValidator<LocalDa
 
     @Override
     public boolean isValid(LocalDate date, ConstraintValidatorContext context) {
-        if (date==null) return false;
-        if (minDate!=null && minDate.compareTo(date)>0) return false;
+        if (date == null) return false;
+        if (minDate != null && minDate.compareTo(date) > 0) return false;
         return maxDate == null || maxDate.compareTo(date) >= 0;
     }
 }

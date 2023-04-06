@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.type.GenreIdType;
 @RestController
 @RequestMapping("/genres")
 public class GenreController extends BaseItemController<GenreIdType, Genre, GenreService> {
-    public GenreController(GenreService _service) {
-        super(_service);
+    public GenreController(GenreService service) {
+        super(service);
     }
 }

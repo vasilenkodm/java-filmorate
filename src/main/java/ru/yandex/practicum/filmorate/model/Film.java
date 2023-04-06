@@ -35,7 +35,8 @@ public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType,
     @Size(max = MAX_DESCRIPTION_LENGTH, message = "Максимальная длина описания — " + MAX_DESCRIPTION_LENGTH + " символов!")
     private String description; //описание — description;
 
-    @NotNull(message = "Требуется указать дату резиза!") @LocalDateConstraint(minDate= "1895-12-28", message = "Релиз не может быть ранее 28.12.1895!")
+    @NotNull(message = "Требуется указать дату резиза!")
+    @LocalDateConstraint(minDate = "1895-12-28", message = "Релиз не может быть ранее 28.12.1895!")
     private LocalDate releaseDate; //дата релиза — releaseDate;
 
     @Positive(message = "Продолжительность фильма должна быть положительной!")
@@ -45,14 +46,17 @@ public class Film extends BaseItem<FilmIdType, Film> implements Item<FilmIdType,
 
     private List<Genre> genres;
 
+    private List<Director> directors;
+
     @Override
-    public void updateWith(Film _source) {
-        this.name = _source.name;
-        this.description = _source.description;
-        this.releaseDate = _source.releaseDate;
-        this.duration = _source.duration;
-        this.mpa = _source.mpa;
-        this.genres = (_source.genres == null) ? null : new ArrayList<>(_source.genres);
+    public void updateWith(Film item) {
+        this.name = item.name;
+        this.description = item.description;
+        this.releaseDate = item.releaseDate;
+        this.duration = item.duration;
+        this.mpa = item.mpa;
+        this.genres = (item.genres == null) ? null : new ArrayList<>(item.genres);
+        this.directors = (item.directors == null) ? null : new ArrayList<>(item.directors);
     }
 
 }
